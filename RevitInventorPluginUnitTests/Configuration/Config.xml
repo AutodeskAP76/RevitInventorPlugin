@@ -1,0 +1,23 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<Configuration>
+  <key name="DEVMODE" value="true">
+    <key name="SaveRevitParamsValueFile" value="true"/>
+  </key>
+  <key name="BIM360">   
+    <key name="HUB" value="ATDSK ​DEV​"/>
+    <key name="Project" value="Sample Project"/>
+    <key name="InventorTemplateFolder" value="Project Files\Libraries"/>
+  </key>
+  <key name="Forge">
+    <key name="ClientID" value="txSv5RooCcXxTpkMM2AvwMzQR13iHRdW"/>
+    <key name="ClientSecret" value="57EQiy8kSi63HeLV"/>
+    <key name="DABaseURL" value="https://developer.api.autodesk.com/da/us-east/v3/"/>
+    <key name="DABaseLinkURL" value="https://developer.api.autodesk.com/oss/v2/" />
+    <key name="DMBaseProjectURL" value="https://developer.api.autodesk.com/project/v1/"/>
+    <key name="DMBaseDataURL" value="https://developer.api.autodesk.com/data/v1/"/>
+    <key name="ActivityId" value="DH_POC_App.ChangeParamActivity+my_current_version" />
+    <key name="RequestDocInputArgName" value="InventorDoc" />
+    <key name="RequestParamInputArgName" value="InventorParams" />
+    <key name="RequestParamOutput" value="OutputIpt" />
+  </key>
+</Configuration>

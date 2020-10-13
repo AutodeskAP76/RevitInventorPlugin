@@ -1,0 +1,166 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{9C8E8655-928D-4346-92A5-47E4B84ED46F}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>RevitInventorExchange</RootNamespace>
+    <AssemblyName>RevitInventorPlugin</AssemblyName>
+    <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <Deterministic>true</Deterministic>
+    <TargetFrameworkProfile />
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup>
+    <StartupObject />
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="autodesk.inventor.interop, Version=25.0.0.0, Culture=neutral, PublicKeyToken=d84147f8b4276564, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <EmbedInteropTypes>False</EmbedInteropTypes>
+      <HintPath>C:\Windows\Microsoft.NET\assembly\GAC_MSIL\Autodesk.Inventor.Interop\v4.0_25.0.0.0__d84147f8b4276564\autodesk.inventor.interop.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="Newtonsoft.Json, Version=12.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.12.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="NLog, Version=4.0.0.0, Culture=neutral, PublicKeyToken=5120e14c03d0593c, processorArchitecture=MSIL">
+      <HintPath>..\packages\NLog.4.7.5\lib\net45\NLog.dll</HintPath>
+    </Reference>
+    <Reference Include="RestSharp, Version=106.8.10.0, Culture=neutral, PublicKeyToken=598062e77f915f75, processorArchitecture=MSIL">
+      <HintPath>..\packages\RestSharp.106.11.5\lib\net452\RestSharp.dll</HintPath>
+    </Reference>
+    <Reference Include="RevitAPI">
+      <HintPath>F:\Program Files\Autodesk\Revit 2021\RevitAPI.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="RevitAPIUI">
+      <HintPath>F:\Program Files\Autodesk\Revit 2021\RevitAPIUI.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="stdole, Version=7.0.3300.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+      <SpecificVersion>False</SpecificVersion>
+      <EmbedInteropTypes>True</EmbedInteropTypes>
+      <HintPath>C:\Windows\assembly\GAC\stdole\7.0.3300.0__b03f5f7f11d50a3a\stdole.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Configuration" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.IO.Compression" />
+    <Reference Include="System.Linq.Dynamic, Version=1.0.6132.35681, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Linq.Dynamic.1.0.8\lib\net40\System.Linq.Dynamic.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.ServiceModel" />
+    <Reference Include="System.Transactions" />
+    <Reference Include="System.Web" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="CoreBusinessLayer\BIM360StructureBuilder.cs" />
+    <Compile Include="CoreBusinessLayer\DesignAutomationHandler.cs" />
+    <Compile Include="CoreBusinessLayer\ExportDataHandler.cs" />
+    <Compile Include="CoreBusinessLayer\ForgeClientHandler.cs" />
+    <Compile Include="CoreBusinessLayer\InventorElementsHandler.cs" />
+    <Compile Include="CoreBusinessLayer\RevitElementsHandler.cs" />
+    <Compile Include="CoreBusinessLayer\RevitFiltersHandler.cs" />
+    <Compile Include="CoreDataStructures\BIM360DocsStructure.cs" />
+    <Compile Include="CoreDataStructures\BIM360DocsStructure1.cs" />
+    <Compile Include="CoreDataStructures\DesignAutomationStructure.cs" />
+    <Compile Include="CoreDataStructures\ElementStructure.cs" />
+    <Compile Include="CoreDataStructures\InventorParameterStructure.cs" />
+    <Compile Include="CoreBusinessLayer\InventorRevitMappingHandler.cs" />
+    <Compile Include="CoreDataStructures\InventorRevitMappingStructure.cs" />
+    <Compile Include="RevitInventorExchangeCommand.cs" />
+    <Compile Include="Utilities\DAEventHandlerUtilities.cs" />
+    <Compile Include="Utilities\NLogger.cs" />
+    <Compile Include="WindowsFormBusinessLayer\RevitFamiliesParamsSelectionPopupHandler.cs" />
+    <Compile Include="WindowsFormDataGridSourceDataStructures\ElementsDataGridSourceData.cs" />
+    <Compile Include="Utilities\ConfigUtilities.cs" />
+    <Compile Include="WindowsFormDataGridSourceDataStructures\InvRevMappingDataGridSourceData.cs" />
+    <Compile Include="WindowsFormBusinessLayer\RevitFamiliesSelectionPopupHandler.cs" />
+    <Compile Include="WindowsFormDataGridSourceDataStructures\PropertiesDataGridSourceData.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Utilities\Utilities.cs" />
+    <Compile Include="WindowsFormBusinessLayer\BaseFormHandler.cs" />
+    <Compile Include="WindowsFormBusinessLayer\OffsitePanelHandler.cs" />
+    <Compile Include="WindowsFormBusinessLayer\PropertiesCollectorFormHandler.cs" />
+    <Compile Include="WindowsFormDataGridSourceDataStructures\RevitFamiliesDataGridSourceData.cs" />
+    <Compile Include="WindowsFormDataGridSourceDataStructures\RevitFamiliesParamsDataGridSourceData.cs" />
+    <Compile Include="WindowsFormUI\OffsiteForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="WindowsFormUI\OffsiteForm.Designer.cs">
+      <DependentUpon>OffsiteForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="WindowsFormUI\PropertiesCollectorForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="WindowsFormUI\PropertiesCollectorForm.Designer.cs">
+      <DependentUpon>PropertiesCollectorForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="WindowsFormUI\RevitFamiliesParametersSelectionPopup.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="WindowsFormUI\RevitFamiliesParametersSelectionPopup.Designer.cs">
+      <DependentUpon>RevitFamiliesParametersSelectionPopup.cs</DependentUpon>
+    </Compile>
+    <Compile Include="WindowsFormUI\RevitFamiliesSelectionPopup.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="WindowsFormUI\RevitFamiliesSelectionPopup.Designer.cs">
+      <DependentUpon>RevitFamiliesSelectionPopup.cs</DependentUpon>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="WindowsFormUI\OffsiteForm.resx">
+      <DependentUpon>OffsiteForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="WindowsFormUI\PropertiesCollectorForm.resx">
+      <DependentUpon>PropertiesCollectorForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="WindowsFormUI\RevitFamiliesParametersSelectionPopup.resx">
+      <DependentUpon>RevitFamiliesParametersSelectionPopup.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="WindowsFormUI\RevitFamiliesSelectionPopup.resx">
+      <DependentUpon>RevitFamiliesSelectionPopup.cs</DependentUpon>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="NLog.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Configuration\Config.xml" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+</Project>
