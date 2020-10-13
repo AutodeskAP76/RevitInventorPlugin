@@ -68,6 +68,8 @@ namespace RevitInventorExchange.CoreBusinessLayer
         //  Extract from returned json the project info
         internal string SetProjectStructure(ForgeRestResponse ret, string parentId)
         {
+            NLogger.LogText("Entered SetProjectStructure");
+
             string projectId = "";
             JObject res = JObject.Parse(ret.ResponseContent);
             var data = res.SelectTokens("$.data").Children();
@@ -92,12 +94,16 @@ namespace RevitInventorExchange.CoreBusinessLayer
                 }
             }
 
+            NLogger.LogText("Exit SetProjectStructure");
+
             return projectId;
         }
 
         //  Extract from returned json the subfolder info
         internal string SetFolderStructure(ForgeRestResponse ret, string parentId, string folderName)
         {
+            NLogger.LogText("Entered SetFolderStructure");
+
             string topFolderId = "";
             JObject res = JObject.Parse(ret.ResponseContent);
             var data = res.SelectTokens("$.data").Children();
@@ -122,12 +128,16 @@ namespace RevitInventorExchange.CoreBusinessLayer
                 }
             }
 
+            NLogger.LogText("Exit SetFolderStructure");
+
             return topFolderId;
         }
 
 
         internal string SetFileStructure(ForgeRestResponse ret, string parentId, string fileName)
         {
+            NLogger.LogText("Enter SetFileStructure");
+
             string fileId = "";
             JObject res = JObject.Parse(ret.ResponseContent);
             var data = res.SelectTokens("$.data").Children();
@@ -182,6 +192,8 @@ namespace RevitInventorExchange.CoreBusinessLayer
                     });
                 }
             }
+
+            NLogger.LogText("Exit SetFileStructure");
 
             return fileId;
         }
