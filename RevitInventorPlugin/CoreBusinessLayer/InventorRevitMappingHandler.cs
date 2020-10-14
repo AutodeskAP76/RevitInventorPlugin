@@ -99,7 +99,14 @@ namespace RevitInventorExchange.CoreBusinessLayer
 
             var selInventor = invRevMappingStructList.FirstOrDefault(o => o.InventorTemplate == invTemplateFileName);
             selInventor.RevitFamily = selRevFamily;
-            selInventor.ParametersMapping = new List<InventorRevitParameterMappingStructure>();
+
+            //  Clear Inventor Params - revit prop association as a new Revit Family has been selected
+            NLogger.LogText("Clear Inventor Parameters - Revit Properties association");
+
+            foreach (var map in selInventor.ParametersMapping)
+            {
+                map.RevitParamName = "";
+            }
 
             NLogger.LogText("Exit UpdateMappingStructure method");
 

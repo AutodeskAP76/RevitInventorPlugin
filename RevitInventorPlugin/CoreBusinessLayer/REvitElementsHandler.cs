@@ -25,16 +25,13 @@ namespace RevitInventorExchange.CoreBusinessLayer
             revitFilterHandler = new RevitFiltersHandler();
         }
 
-        public void EnableFilters()
-        {            
-            //revitFilterHandler.LoadFilters();
-        }
-
         //  Extract all relevant information from selected elements and create an internal structure for passing parameters around
         public List<ElementStructure> ProcessElements(List<Element> RevitElements)
         {
+            NLogger.LogText("Entered ProcessElements");
+
             //  Extract information from received Revit elements
-            foreach(var elem in RevitElements)
+            foreach (var elem in RevitElements)
             {
                 var elementOrderedParamsList = new List<ElementOrderedParameter>();
                 var elementTypeOrderedParamsList = new List<ElementOrderedParameter>();
@@ -62,36 +59,49 @@ namespace RevitInventorExchange.CoreBusinessLayer
                 });
             }
 
+            NLogger.LogText("Exit ProcessElements");
+
             return elementStructureList;
         }
 
         //  extract parameters from element
         private List<ElementOrderedParameter> GetParameters(Element el)
         {
+            NLogger.LogText("Entered GetParameters");
+
             var elementParams = new List<ElementOrderedParameter>();
-            
-            var elParams = el.GetOrderedParameters();
 
-            //  Extract all parameters for each element
-            foreach (Parameter param in elParams)
+            if (el != null)
             {
-                
-                string name = param.Definition.Name;
-                bool transferParam = false;
+                var elParams = el.GetOrderedParameters();
 
-                //  Flag the parameter to be transferred to Inventor or not, based on a filtering file
+                //  Extract all parameters for each element
+                foreach (Parameter param in elParams)
+                {
 
-                //  TODO: MOVE FILTER OUTSIDE
+                    string name = param.Definition.Name;
+                    bool transferParam = false;
 
-                //if (revitFilterHandler.checkValue(name))
-                //{
-                //    transferParam = true;
-                //}
+                    //  Flag the parameter to be transferred to Inventor or not, based on a filtering file
 
-                var val = Utilities.ParameterToString(doc, param);
+                    //  TODO: MOVE FILTER OUTSIDE
 
-                elementParams.Add(new ElementOrderedParameter { ParameterId = param.Id.IntegerValue, ParameterName = name, ParameterValue = val, TransferParam = transferParam });
+                    //if (revitFilterHandler.checkValue(name))
+                    //{
+                    //    transferParam = true;
+                    //}
+
+                    var val = Utilities.ParameterToString(doc, param);
+
+                    elementParams.Add(new ElementOrderedParameter { ParameterId = param.Id.IntegerValue, ParameterName = name, ParameterValue = val, TransferParam = transferParam });
+                }
             }
+            else
+            {
+                NLogger.LogText("Received Revit element is null");
+            }
+
+            NLogger.LogText("Exit GetParameters");
 
             return elementParams;
         }
@@ -99,8 +109,13 @@ namespace RevitInventorExchange.CoreBusinessLayer
         //  Extract single parameter from element
         private string GetSingleParameter(Element el, BuiltInParameter parameter)
         {
+            NLogger.LogText("Entered GetSingleParameter");
+
             var par = el.get_Parameter(parameter);
             var parVal = Utilities.ParameterToString(doc, par);
+
+            NLogger.LogText("Exit GetSingleParameter");
+
             return parVal;
         }
 

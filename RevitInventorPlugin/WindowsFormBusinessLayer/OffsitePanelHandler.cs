@@ -41,7 +41,9 @@ namespace RevitInventorExchange.WindowsFormBusinesslayer
 
         //  Create the datasource for datagrid, from elementStructurelist, based on fields shown in the UI
         public Dictionary<string, List<ElementsDataGridSourceData>> GetElementsDataGridSource(List<ElementStructure> elementStructureList)
-        {
+        {            
+            NLogger.LogText("Entered GetElementsDataGridSource method");
+
             var ret = new Dictionary<string, List<ElementsDataGridSourceData>>();
             var sourceData = new List<ElementsDataGridSourceData>();
 
@@ -55,6 +57,8 @@ namespace RevitInventorExchange.WindowsFormBusinesslayer
 
             ret.Add("Elements", sourceData);
 
+            NLogger.LogText("Exit GetElementsDataGridSource method");
+
             return ret;
         }
 
@@ -64,6 +68,8 @@ namespace RevitInventorExchange.WindowsFormBusinesslayer
         /// <param name="elStructureList"></param>
         public void ExportPropertiesValues(string json)
         {
+            NLogger.LogText("Entered ExportPropertiesValues method");
+
             //  Check if folder exists. If not it is created automatically
             var tempFolder = "C:\\Temp\\ElemProperties\\";
             Directory.CreateDirectory(tempFolder);
@@ -72,6 +78,8 @@ namespace RevitInventorExchange.WindowsFormBusinesslayer
 
             //  Export data creating an xml file
             expDataHandler.ExportDataToJson(filePath, json);
+
+            NLogger.LogText("Exit ExportPropertiesValues method");
         }
 
         internal Dictionary<string, List<InvRevMappingDataGridSourceData>> GetInvRevitMappingDataGridSource(string selectedPath)
@@ -120,6 +128,8 @@ namespace RevitInventorExchange.WindowsFormBusinesslayer
 
         internal Dictionary<string, List<InvRevParamMappingDataGridSourceData>> GetInvRevitParamsMappingDataGridSource(string invTemplateFileName, string invTemplatePath)
         {
+            NLogger.LogText("Entered GetInvRevitParamsMappingDataGridSource");
+
             var ret = new Dictionary<string, List<InvRevParamMappingDataGridSourceData>>();
             var sourceData = new List<InvRevParamMappingDataGridSourceData>();
 
@@ -132,11 +142,15 @@ namespace RevitInventorExchange.WindowsFormBusinesslayer
 
             ret.Add("ParamsMapping", sourceData);
 
+            NLogger.LogText("Exit GetInvRevitParamsMappingDataGridSource");
+
             return ret;
         }
 
         internal Dictionary<string, List<InvRevParamMappingDataGridSourceData>> RefreshInvRevitParamsMappingDataGridSource(string revitFamily, string inventorTemplate, string selInvParam, string selRevFamilyParam)
         {
+            NLogger.LogText("Entered RefreshInvRevitParamsMappingDataGridSource");
+
             var ret = new Dictionary<string, List<InvRevParamMappingDataGridSourceData>>();
             var sourceData = new List<InvRevParamMappingDataGridSourceData>();
            
@@ -149,11 +163,15 @@ namespace RevitInventorExchange.WindowsFormBusinesslayer
 
             ret.Add("ParamsMapping", sourceData);
 
+            NLogger.LogText("Exit RefreshInvRevitParamsMappingDataGridSource");
+
             return ret;
         }
 
         internal string GetRevitPropertiesValues(List<ElementStructure> elStructureList)
         {
+            NLogger.LogText("Entered GetRevitPropertiesValues");
+
             var paramJson = invRevMappingHandler.ExtractRevitPropertiesValues(elStructureList);
 
             //  Create json file containing Revid mapped values id "dev mode" and "Save to file" are enabled
@@ -164,6 +182,8 @@ namespace RevitInventorExchange.WindowsFormBusinesslayer
             {
                 ExportPropertiesValues(paramJson.ToString());
             }
+
+            NLogger.LogText("Exit GetRevitPropertiesValues");
 
             return paramJson.ToString();
         }

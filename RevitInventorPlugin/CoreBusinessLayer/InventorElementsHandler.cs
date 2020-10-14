@@ -117,16 +117,29 @@ namespace RevitInventorExchange.CoreBusinessLayer
             }
             catch (Exception ex)
             {
+                NLogger.LogText("An error has occurred casting to an Inventor Assembly document. Try casting to a Part document");
+
                 try
                 {
+                    NLogger.LogText("Open Part document");
+
                     m_PartDocument = (PartDocument)m_InventorApplication.Documents.Open(fullPath, false);
 
                     //  Load params
+                    NLogger.LogText("Load Part document parameters");
+
                     InventorParams = m_PartDocument.ComponentDefinition.Parameters;
                 }
                 catch (Exception ex1)
-                { }
+                {
+                    NLogger.LogText("An error has occurred casting to an Inventor Part document");
+
+                    NLogger.LogError(ex1);
+                    throw (ex1);
+                }
             }
+
+            NLogger.LogText("Create 'InventorParameterStructure'");
 
             for (int h = 1; h <= InventorParams.Count; h++)
             {

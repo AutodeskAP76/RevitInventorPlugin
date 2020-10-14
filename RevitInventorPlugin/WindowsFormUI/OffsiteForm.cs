@@ -57,6 +57,8 @@ namespace RevitInventorExchange.WindowsFormUI
         //  Fill logs textbox with messages coming from background
         private void DaEvHandler_DACurrentStepHandler(object sender, string e)
         {
+            NLogger.LogText("Entered DaEvHandler_DACurrentStepHandler");
+
             if (!string.IsNullOrWhiteSpace(richTextBoxLogs.Text))
             {
                 richTextBoxLogs.AppendText("\r\n" + e);
@@ -66,16 +68,22 @@ namespace RevitInventorExchange.WindowsFormUI
                 richTextBoxLogs.AppendText(e);
             }
             richTextBoxLogs.ScrollToCaret();
+
+            NLogger.LogText("Exit DaEvHandler_DACurrentStepHandler");
         }
 
         private void ElementsForm_Load(object sender, EventArgs e)
         {
+            NLogger.LogText("Entered ElementsForm_Load");
+
             // Populate the Element datagrid
             var dataSources = offsitePanelHandler.GetElementsDataGridSource(elStructureList);
 
             elementList = dataSources["Elements"];
 
             offsitePanelHandler.FillPropertiesGrid(dgElements, elementList);
+
+            NLogger.LogText("Exit ElementsForm_Load");
         }
 
         #region SOW
@@ -333,6 +341,8 @@ namespace RevitInventorExchange.WindowsFormUI
 
         private void dgInvRevMapping_SelectionChanged(object sender, EventArgs e)
         {
+            NLogger.LogText("Entered dgInvRevMapping_SelectionChanged");
+
             var rowsCount = dgInvRevMapping.Rows.GetRowCount(DataGridViewElementStates.Selected);
             var inventorTemplatePath = txtInventorTemplatesPath.Text;
 
@@ -340,7 +350,7 @@ namespace RevitInventorExchange.WindowsFormUI
             {
                 var invTemplateFileName = dgInvRevMapping.SelectedRows[0].Cells["Inventor Template"].Value.ToString();
 
-                // Populate the Prperties datagrid
+                // Populate the Properties datagrid
                 var dataSources = offsitePanelHandler.GetInvRevitParamsMappingDataGridSource(invTemplateFileName, inventorTemplatePath);
 
                 var elementList = dataSources["ParamsMapping"];
@@ -351,6 +361,8 @@ namespace RevitInventorExchange.WindowsFormUI
                 dgParamsMapping.ClearSelection();
                 dgParamsMapping.Rows[0].Selected = true;
             }
+
+            NLogger.LogText("Exit dgInvRevMapping_SelectionChanged");
         }               
 
         private void HandleRowSelectionParams()
