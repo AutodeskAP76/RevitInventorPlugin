@@ -211,7 +211,12 @@ namespace RevitInventorExchange.CoreBusinessLayer
             paramJson.ILogicParams = new JArray();
 
             //  Extract currently mapped Revit - Inventor files
-            var invRevMapped = invRevMappingStructList.Where(p => !string.IsNullOrEmpty(p.RevitFamily) && p.ParametersMapping != null);
+            var invRevMapped = invRevMappingStructList.Where(p => 
+                !string.IsNullOrEmpty(p.RevitFamily) 
+                && p.RevitFamily != "null" 
+                && p.ParametersMapping != null 
+                && p.ParametersMapping.Any(n => !string.IsNullOrEmpty(n.InventorParamName))
+                );
 
             //  Loop on Revit families in mapping structure
             foreach (var map in invRevMapped)

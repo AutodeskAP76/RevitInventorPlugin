@@ -146,6 +146,8 @@ namespace RevitInventorExchange.CoreBusinessLayer
                 inventorParams.Add(new InventorParameterStructure { Name = InventorParams[h].Name.ToString() });
             }
 
+            NLogger.LogText("Remove documents from  Inventor application instance");
+
             m_InventorApplication.Documents.CloseAll();
 
             NLogger.LogText("Exit LoadInventorTemplateParameters method");

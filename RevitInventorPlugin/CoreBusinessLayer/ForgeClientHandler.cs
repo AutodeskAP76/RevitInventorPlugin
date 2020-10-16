@@ -63,9 +63,18 @@ namespace RevitInventorExchange.CoreBusinessLayer
         /// <returns></returns>
         public async Task<ForgeRestResponse> RequestAsync(string path, string payload, Method method)
         {
+            NLogger.LogText($"Entered RequestAsync with url {Client.BaseUrl}{path}, method {method.ToString()}");
+            
+            if (!string.IsNullOrEmpty(payload))
+                NLogger.LogText($"Entered RequestAsync with payload {payload}");
+
             RestRequest request = new RestRequest(path, method);
             request.AddParameter("application/json", payload, ParameterType.RequestBody);
+
+            NLogger.LogText("Execute Async HTTP call");
             IRestResponse response = await Client.ExecuteAsync(request);
+
+            NLogger.LogText("Exit RequestAsync");
 
             return new ForgeRestResponse(response);
         }
@@ -80,9 +89,18 @@ namespace RevitInventorExchange.CoreBusinessLayer
         /// <returns></returns>
         public async Task<ForgeRestResponse> RequestAsync(string path, string payload, string application, Method method)
         {
+            NLogger.LogText($"Entered RequestAsync with url: {Client.BaseUrl}{path}, method: {method.ToString()}, application: {application}");
+
+            if (!string.IsNullOrEmpty(payload))
+                NLogger.LogText($"Entered RequestAsync with payload {payload}");
+
             RestRequest request = new RestRequest(path, method);
             request.AddParameter(application, payload, ParameterType.RequestBody);
+
+            NLogger.LogText("Execute Async HTTP call");
             IRestResponse response = await Client.ExecuteAsync(request);
+
+            NLogger.LogText("Exit RequestAsync");
 
             return new ForgeRestResponse(response);
         }

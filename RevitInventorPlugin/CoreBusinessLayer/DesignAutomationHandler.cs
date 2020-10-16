@@ -63,7 +63,7 @@ namespace RevitInventorExchange.CoreBusinessLayer
                 daStructure = GetDataFromInputJson1();
 
                 //  Create output storage object, submit workitem and create version
-                CreateStorageObject(projId);
+                HandleDesignAutomationFlow(projId);
 
                 daEventHandler.TriggerDACurrentStepHandler("Workflow completed");
             }
@@ -86,8 +86,10 @@ namespace RevitInventorExchange.CoreBusinessLayer
                 }
                 catch(Exception ex1)
                 {
-                    daEventHandler.TriggerDACurrentStepHandler("Some error has occurred:");
-                    daEventHandler.TriggerDACurrentStepHandler(ex.Message);
+                    daEventHandler.TriggerDACurrentStepHandler("Some error has occurred: please check logs");
+                    NLogger.LogError(ex);
+
+                    //daEventHandler.TriggerDACurrentStepHandler(ex.Message);
                 }
             }
 
@@ -186,7 +188,18 @@ namespace RevitInventorExchange.CoreBusinessLayer
             if (res.IsSuccessStatusCode())
             {
                 var folderId = bIM360DocsStructBuilder.SetFolderStructure(res, projectId, folderName);
-                NLogger.LogText("Exit BuildTopFolderStructure sucessfully");
+
+                if (!string.IsNullOrEmpty(folderId))
+                {
+                    NLogger.LogText("Exit BuildTopFolderStructure sucessfully");
+                }
+                else
+                {
+                    string errStr = $"There are no folders under project '{projectId}' with name '{folderName}'";
+                    NLogger.LogError($"Exit BuildTopFolderStructure with Error");
+
+                    throw new Exception(errStr);
+                }
 
                 return folderId;
             }
@@ -216,6 +229,14 @@ namespace RevitInventorExchange.CoreBusinessLayer
                 {
                     //  Create the structure of subfolders contained in parent folder
                     folderId = bIM360DocsStructBuilder.SetFolderStructure(res, parentFolderId, folderName);
+                   
+                    if (string.IsNullOrEmpty(folderId))
+                    {
+                        string errStr = $"There are no folders under project '{projectId}', parent folder '{parentFolderId}' with name '{folderName}'";
+                        NLogger.LogError($"Exit BuildFolderStructure with Error");
+
+                        throw new Exception(errStr);
+                    }
                 }
 
                 //  Create the structure of files contained in parent folder
@@ -263,16 +284,24 @@ namespace RevitInventorExchange.CoreBusinessLayer
 
                 if (res2.IsSuccessStatusCode())
                 {
-                    daEventHandler.TriggerDACurrentStepHandler("WorkItem processing completed");
-
                     JObject res3 = JObject.Parse(res2.ResponseContent);
-
-                    NLogger.LogText("Exit SubmitWokItem sucessfully");
-
+                    
                     status = res3.SelectToken("$.status").ToString();
                     id = resSWIContent.SelectToken("$.id").ToString();
 
                     NLogger.LogText($"Work Item {id} in status {status}");
+
+                    if (status == "failedInstructions")
+                    {
+                        daEventHandler.TriggerDACurrentStepHandler("WorkItem processing completed with error. Please check logs");
+
+                        string errString = res2.ResponseContent;
+                        throw new Exception(errString);
+                    }
+
+                    daEventHandler.TriggerDACurrentStepHandler("WorkItem processing completed sucessfully");
+
+                    NLogger.LogText("Exit SubmitWokItem sucessfully");                    
                 }
             }
             else
@@ -395,6 +424,8 @@ namespace RevitInventorExchange.CoreBusinessLayer
             NLogger.LogText("Entered GetDataFromInputJson1");
 
             //  Initialize internal structure keepin Forge relevant informations for output files creation
+
+            NLogger.LogText("initialize internal structre for Design Automation files creation");
             var daStructure = new DesignAutomationStructure();
 
             JObject res = JObject.Parse(jsonStruct);
@@ -412,8 +443,14 @@ namespace RevitInventorExchange.CoreBusinessLayer
                     string inputLink = GetInputLink(inventorFileName);
                     var outputFileNameParts = inventorFileName.Split(new char[] { '.' });
                     var outputFileName = outputFileNameParts[0] + "_Out_001." + outputFileNameParts[1];
-                    //  TODO: REMOVE HARDCODED FOLDER
-                    var outputFileFolderId = bIM360DocsStructBuilder.GetFolderIdByName(outputFolder);
+
+                    //  Get path from Config file where Inventor Templates are stored
+                    var relativePath = ConfigUtilities.GetInventorTemplateFolder();
+
+                    //  Split path in folders
+                    var outputFolders = relativePath.Split(new char[] { '\\' });
+
+                    var outputFileFolderId = bIM360DocsStructBuilder.GetFolderIdByName(outputFolders[outputFolders.Length - 1]);
 
                     NLogger.LogText($"Currently processing {inventorFileName} Inventor file");
                     NLogger.LogText($"Output file: {outputFileName}");
@@ -464,10 +501,44 @@ namespace RevitInventorExchange.CoreBusinessLayer
             return outLink;
         }
 
-        //  Create Storage Object for output files to be generated
-        private void CreateStorageObject(string projId)
+
+        private string CreateStorageObject(string projId, string inputFile, string outputFile)
         {
             NLogger.LogText("Entered CreateStorageObject");
+
+            string OutFileStorageobjectId = "";
+
+            forgeDMClient.SetBaseURL(ConfigUtilities.GetDMBaseDataURL());
+
+            var ret = forgeDMClient.CreateStorageObject(projId, CreateStorageObjectPayload1(inputFile, outputFile));
+            ret.Wait();
+
+            var res = ret.Result;
+
+            if (res.IsSuccessStatusCode())
+            {
+                JObject root = JObject.Parse(res.ResponseContent);
+
+                var id = root["data"]["id"].ToString();
+
+                OutFileStorageobjectId = id;
+
+                daEventHandler.TriggerDACurrentStepHandler("Storage object created");             
+            }
+            else
+            {
+                Utilities.HandleErrorInForgeResponse("CreateStorageObject", res);
+            }
+            
+            NLogger.LogText("Exit CreateStorageObject");
+
+            return OutFileStorageobjectId;
+        }
+
+        //  Create Storage Object for output files to be generated
+        private void HandleDesignAutomationFlow(string projId)
+        {
+            NLogger.LogText("Entered HandleDesignAutomationFlow");
 
             forgeDMClient.SetBaseURL(ConfigUtilities.GetDMBaseDataURL());
 
@@ -478,33 +549,14 @@ namespace RevitInventorExchange.CoreBusinessLayer
                     string inputFile = item.InputFilename;
                     string outputFile = el.OutFileName;
 
-                    var ret = forgeDMClient.CreateStorageObject(projId, CreateStorageObjectPayload1(inputFile, outputFile));
-                    ret.Wait();
-
-                    var res = ret.Result;
-
-                    if (res.IsSuccessStatusCode())
-                    {
-                        JObject root = JObject.Parse(res.ResponseContent);
-
-                        var id = root["data"]["id"].ToString();
-
-                        el.OutFileStorageobject = id;
-
-                        daEventHandler.TriggerDACurrentStepHandler("Storage object created");
-
-                        //  Submit workItem and Create File version
-                        SubmitWokItem(inputFile, outputFile);
-                        CreateFileVersion(projId, inputFile, outputFile);
-                    }
-                    else
-                    {
-                        Utilities.HandleErrorInForgeResponse("CreateStorageObject", res);
-                    }
+                    //  Create Storage Object, Submit workItem and Create File version
+                    el.OutFileStorageobject = CreateStorageObject(projId, inputFile, outputFile);                    
+                    SubmitWokItem(inputFile, outputFile);
+                    CreateFileVersion(projId, inputFile, outputFile);
                 }
             }
 
-            NLogger.LogText("Exit CreateStorageObject");
+            NLogger.LogText("Exit HandleDesignAutomationFlow");
         }       
 
         //  Create json for Object storage creation

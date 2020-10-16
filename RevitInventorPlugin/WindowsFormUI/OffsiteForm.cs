@@ -13,9 +13,16 @@ using RevitInventorExchange.Data;
 using System.Linq.Dynamic;
 using System.IO;
 using NLog;
+using Inventor;
 
 namespace RevitInventorExchange.WindowsFormUI
 {
+    enum RevitFamilyHandling
+    {
+        ResetRevitFamily,
+        SetRevitFamily
+    }
+
     public partial class OffsiteForm : Form
     {
         //  Scope of Work tab
@@ -223,13 +230,13 @@ namespace RevitInventorExchange.WindowsFormUI
         {
             NLogger.LogText("Entered btnSelectFromScope_Click");
 
-            HandleRowSelection();
+            HandleRowSelection(RevitFamilyHandling.SetRevitFamily);
 
             NLogger.LogText("Exit btnSelectFromScope_Click");
-        }       
+        }
 
         //  Handles the UI logic of the row selected + button click on the InventorRevit mapping grid
-        private void HandleRowSelection()
+        private void HandleRowSelection(RevitFamilyHandling mode)
         {
             NLogger.LogText("Entered HandleRowSelection");
 
@@ -250,36 +257,55 @@ namespace RevitInventorExchange.WindowsFormUI
                 return;
             }
 
-            //  Open Revit families popup
-            var revitFamiliesSelectionPopup = new RevitFamiliesSelectionPopup(elStructureList);
-            var result = revitFamiliesSelectionPopup.ShowDialog();
+            //  Set or reset Revit Family
+            var selRevFamily = GetRevitFamily(mode);
 
-            //  Update Mapping grids with data coming from popup
-            if (result == DialogResult.OK)
-            {
-                //  Update RevitInventor mapping datagrid with Revit family selected in the popup
-                var selRevFamily = revitFamiliesSelectionPopup.SelectedRevitFamily;
+            NLogger.LogText($"Selected Revit Family {selRevFamily}");
 
-                NLogger.LogText($"Selected Revit Family {selRevFamily}");
+            var dataSource = offsitePanelHandler.RefreshInvRevitMappingDataGridSource(selRevFamily, invTemplateFileName);
 
-                var dataSource = offsitePanelHandler.RefreshInvRevitMappingDataGridSource(selRevFamily, invTemplateFileName);
+            var elementList = dataSource["InvRevMapping"];
 
-                var elementList = dataSource["InvRevMapping"];
+            NLogger.LogText("Fill InventorRevitMapping grid");
+            offsitePanelHandler.FillPropertiesGrid(dgInvRevMapping, elementList);
 
-                NLogger.LogText("Fill InventorRevitMapping grid");
-                offsitePanelHandler.FillPropertiesGrid(dgInvRevMapping, elementList);
+            NLogger.LogText("Set selected rows on  InventorRevitMapping and ParametersMapping grids");
+            dgInvRevMapping.ClearSelection();
+            dgInvRevMapping.CurrentCell = dgInvRevMapping.Rows[selectedRow].Cells["Inventor Template"];
+            dgInvRevMapping.CurrentRow.Selected = false;
+            dgInvRevMapping.Rows[selectedRow].Selected = true;
 
-                NLogger.LogText("Set selected rows on  InventorRevitMapping and ParametersMapping grids");
-                dgInvRevMapping.ClearSelection();
-                dgInvRevMapping.CurrentCell = dgInvRevMapping.Rows[selectedRow].Cells["Inventor Template"];
-                dgInvRevMapping.CurrentRow.Selected = false;
-                dgInvRevMapping.Rows[selectedRow].Selected = true;
-
-                dgParamsMapping.ClearSelection();
-                dgParamsMapping.Rows[0].Selected = true;
-            }
+            dgParamsMapping.ClearSelection();
+            dgParamsMapping.Rows[0].Selected = true;
 
             NLogger.LogText("Exit HandleRowSelection");
+        }
+
+        private string GetRevitFamily(RevitFamilyHandling mode)
+        {
+            string revitFamily = "";
+
+            switch (mode)
+            {
+                case RevitFamilyHandling.ResetRevitFamily:
+                    revitFamily = "null";
+                    break;
+                case RevitFamilyHandling.SetRevitFamily:
+
+                    //  Open Revit families popup
+                    var revitFamiliesSelectionPopup = new RevitFamiliesSelectionPopup(elStructureList);
+                    var result = revitFamiliesSelectionPopup.ShowDialog();
+
+                    //  Update Mapping grids with data coming from popup
+                    if (result == DialogResult.OK)
+                    {
+                        //  Update RevitInventor mapping datagrid with Revit family selected in the popup
+                        revitFamily = revitFamiliesSelectionPopup.SelectedRevitFamily;
+                    }
+                    break;
+            }
+
+            return revitFamily;
         }
 
         private void InitializeMappingGrid(DataGridView dataGrid)
@@ -334,7 +360,7 @@ namespace RevitInventorExchange.WindowsFormUI
         {
             NLogger.LogText("Entered btnRevitParametersSel_Click");
 
-            HandleRowSelectionParams();
+            HandleRowSelectionParams(RevitFamilyHandling.SetRevitFamily);
 
             NLogger.LogText("Exit btnRevitParametersSel_Click");
         }
@@ -364,8 +390,8 @@ namespace RevitInventorExchange.WindowsFormUI
 
             NLogger.LogText("Exit dgInvRevMapping_SelectionChanged");
         }               
-
-        private void HandleRowSelectionParams()
+        
+        private void HandleRowSelectionParams(RevitFamilyHandling mode)
         {
             NLogger.LogText("Entered HandleRowSelectionParams");
 
@@ -376,6 +402,7 @@ namespace RevitInventorExchange.WindowsFormUI
             string inventorTemplate = "";
             int selectedRow = -1;
 
+            //  check if a row is selected in Inventor - revit mapping and if a family is associated
             if (invRevMapRowCount == 1)
             {
                 revitFamily = dgInvRevMapping.SelectedRows[0].Cells["Revit Family"].Value?.ToString();
@@ -404,10 +431,12 @@ namespace RevitInventorExchange.WindowsFormUI
             //  Force selection of a parameters
             var invRevParamRowCount = dgParamsMapping.Rows.GetRowCount(DataGridViewElementStates.Selected);
             string selInvParam = "";
+            string currentRevitParam = "";
 
             if (invRevParamRowCount == 1)
             {
                 selInvParam = dgParamsMapping.SelectedRows[0].Cells["Inventor Key Parameters"].Value.ToString();
+                currentRevitParam = dgParamsMapping.SelectedRows[0].Cells["Revit Parameters"].Value.ToString();
                 selectedRow = dgParamsMapping.SelectedRows[0].Index;
             }
             else
@@ -418,39 +447,97 @@ namespace RevitInventorExchange.WindowsFormUI
                 return;
             }
 
-            //  Open Revit families popup
-            var revitFamiliesParamsSelectionPopup = new RevitFamiliesParametersSelectionPopup(revitFamily, elStructureList);
-            var result = revitFamiliesParamsSelectionPopup.ShowDialog();
+            //  Read Revit Family Param from popup or reset it
+            var selRevFamilyParam = GetRevitFamilyParameter(mode, revitFamily, currentRevitParam);
 
-            //  Update Mapping grids with data coming from popup
-            if (result == DialogResult.OK)
+            var dataSource = offsitePanelHandler.RefreshInvRevitParamsMappingDataGridSource(revitFamily, inventorTemplate, selInvParam, selRevFamilyParam);
+
+            var elementList = dataSource["ParamsMapping"];
+
+            offsitePanelHandler.FillPropertiesGrid(dgParamsMapping, elementList);
+
+            if (selectedRow < (dgParamsMapping.Rows.Count - 1))
             {
-                //  Update RevitInventorParameters mapping datagrid with Revit family Parameter selected in the popup
-                var selRevFamilyParam = revitFamiliesParamsSelectionPopup.SelectedRevitFamilyParam;
+                dgParamsMapping.ClearSelection();
+                dgParamsMapping.CurrentCell = dgParamsMapping.Rows[selectedRow + 1].Cells["Inventor Key Parameters"];
+                dgParamsMapping.CurrentRow.Selected = false;
+                dgParamsMapping.Rows[selectedRow + 1].Selected = true;
 
-                var dataSource = offsitePanelHandler.RefreshInvRevitParamsMappingDataGridSource(revitFamily, inventorTemplate, selInvParam, selRevFamilyParam);
-
-                var elementList = dataSource["ParamsMapping"];
-
-                offsitePanelHandler.FillPropertiesGrid(dgParamsMapping, elementList);
-
-                if (selectedRow < (dgParamsMapping.Rows.Count - 1))
-                {
-                    dgParamsMapping.ClearSelection();
-                    dgParamsMapping.CurrentCell = dgParamsMapping.Rows[selectedRow + 1].Cells["Inventor Key Parameters"];
-                    dgParamsMapping.CurrentRow.Selected = false;
-                    dgParamsMapping.Rows[selectedRow + 1].Selected = true;
-
-                    selectedRow = selectedRow + 1;
-                }
+                selectedRow = selectedRow + 1;
+            }
+            else
+            {
+                dgParamsMapping.ClearSelection();
+                dgParamsMapping.CurrentCell = dgParamsMapping.Rows[selectedRow].Cells["Inventor Key Parameters"];
+                dgParamsMapping.CurrentRow.Selected = false;
+                dgParamsMapping.Rows[selectedRow].Selected = true;
             }
 
             NLogger.LogText("Exit HandleRowSelectionParams");
         }
 
+        private string GetRevitFamilyParameter(RevitFamilyHandling mode, string revitFamily, string currentRefParam)
+        {
+            NLogger.LogText("Entered GetRevitFamilyParameter");
+
+            string revitFamilyParam = "";
+
+            switch (mode)
+            {
+                case RevitFamilyHandling.ResetRevitFamily:
+                    revitFamilyParam = "";
+                    break;
+                case RevitFamilyHandling.SetRevitFamily:
+
+                    var revitFamiliesParamsSelectionPopup = new RevitFamiliesParametersSelectionPopup(revitFamily, elStructureList);
+                    var result = revitFamiliesParamsSelectionPopup.ShowDialog();
+
+                    //  Update Mapping grids with data coming from popup
+                    if (result == DialogResult.OK)
+                    {
+                        //  Update RevitInventorParameters mapping datagrid with Revit family Parameter selected in the popup
+                        revitFamilyParam = revitFamiliesParamsSelectionPopup.SelectedRevitFamilyParam;
+                    }
+                    else
+                    {
+                        revitFamilyParam = currentRefParam;
+                    }
+                    break;
+            }
+
+            NLogger.LogText("Exit GetRevitFamilyParameter");
+
+            return revitFamilyParam;
+        }
+
         private void OffsiteForm_FormClosing(object sender, FormClosingEventArgs e)
         {
             offsitePanelHandler.CloseInventorProcess();            
+        }
+
+        private void btnClearLogs_Click(object sender, EventArgs e)
+        {
+            richTextBoxLogs.Clear();
+        }
+
+        //  Clear Inventor - Revit mapping
+        private void btnClearSelectedMapping_Click(object sender, EventArgs e)
+        {
+            NLogger.LogText("Entered btnClearSelectedMapping_Click");
+          
+            HandleRowSelection(RevitFamilyHandling.ResetRevitFamily);
+           
+            NLogger.LogText("Exit btnClearSelectedMapping_Click");
+        }
+
+        //  Clear Inventor - Revit parameters mapping
+        private void btnClearSelectedParamMapping_Click(object sender, EventArgs e)
+        {
+            NLogger.LogText("Enter btnClearSelectedParamMapping_Click");
+
+            HandleRowSelectionParams(RevitFamilyHandling.ResetRevitFamily);
+
+            NLogger.LogText("Exit btnClearSelectedParamMapping_Click");
         }
     }
 }

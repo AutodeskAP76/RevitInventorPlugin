@@ -82,5 +82,16 @@ namespace RevitInventorExchange
         {
             logger?.Error(ex);          
         }
+
+        public static void LogError(string text)
+        {
+            var stack = new StackFrame(1).GetMethod();
+            var methodName = stack.Name;
+            var className = stack.DeclaringType.Name;
+
+            var fullText = ($"{className}: {methodName} - {text}");
+
+            logger?.Error(fullText);
+        }
     }
 }
