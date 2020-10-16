@@ -47,7 +47,7 @@ namespace RevitInventorExchange.WindowsFormUI
             //  Initialize Offsite Panel BL handler.
             //  Here inventor process is started / attached to
             offsitePanelHandler = new OffsitePanelHandler();
-            this.Size = new Size(1380, 750);
+            this.Size = new Size(1380, 800);
                         
             //  Set local BIM 360 folder as root path            
             rootPath = Utilities.GetInventorTemplateFolder(); // Utilities.GetBIM360RootPath();     

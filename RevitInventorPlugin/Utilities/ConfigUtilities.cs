@@ -98,7 +98,7 @@ namespace RevitInventorExchange
             return doc.SelectSingleNode("/Configuration/key[@name='DEVMODE']/key[@name='SaveRevitParamsValueFile']/@value").Value;
         }
 
-        public static string GetDAActivity()
+        public static string GetDAPartActivity()
         {
             return doc.SelectSingleNode("/Configuration/key[@name='Forge']/key[@name='ActivityId']/@value").Value;
         }
@@ -113,9 +113,14 @@ namespace RevitInventorExchange
             return doc.SelectSingleNode("/Configuration/key[@name='Forge']/key[@name='RequestParamInputArgName']/@value").Value;
         }
 
-        public static string GetDAWorkItemParamsOutput()
+        public static string GetDAWorkItemParamsOutputIpt()
         {
-            return doc.SelectSingleNode("/Configuration/key[@name='Forge']/key[@name='RequestParamOutput']/@value").Value;
+            return doc.SelectSingleNode("/Configuration/key[@name='Forge']/key[@name='RequestParamOutputIpt']/@value").Value;
+        }
+
+        public static string GetDAWorkItemParamsOutputIam()
+        {
+            return doc.SelectSingleNode("/Configuration/key[@name='Forge']/key[@name='RequestParamOutputIam']/@value").Value;
         }
     }
 }

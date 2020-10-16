@@ -273,7 +273,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(12F, 25F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(2726, 1456);
+            this.ClientSize = new System.Drawing.Size(2726, 1459);
             this.Controls.Add(this.tabControl1);
             this.Controls.Add(this.btnExportPropVals);
             this.Controls.Add(this.btnCancel);

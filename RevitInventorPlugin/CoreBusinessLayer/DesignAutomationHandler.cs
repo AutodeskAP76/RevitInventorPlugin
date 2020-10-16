@@ -1,9 +1,11 @@
 ﻿using Autodesk.Revit.DB.Architecture;
+using Inventor;
 using Newtonsoft.Json.Linq;
 using NLog;
 using NLog.Targets;
 using RevitInventorExchange.CoreDataStructures;
 using System;
+using System.IO;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
@@ -347,8 +349,30 @@ namespace RevitInventorExchange.CoreBusinessLayer
             string jsonParams = daStructureRow.ParamValues; // dataFromJson["paramsValues"];
             string jsonParam1 = jsonParams.Replace("\r\n", "");
 
+
+            var outputSignedUrlExtension = System.IO.Path.GetExtension(outputSignedUrl);
+           
+
+            var itemParamOutput = "";
+            var DAActivity = "";
+
+            //  Based on input file extension create json
+            if (outputSignedUrlExtension == ".ipt")
+            {
+                itemParamOutput = ConfigUtilities.GetDAWorkItemParamsOutputIpt();
+                DAActivity = ConfigUtilities.GetDAPartActivity();
+
+            }
+            if (outputSignedUrlExtension == ".iam")
+            {
+                itemParamOutput = ConfigUtilities.GetDAWorkItemParamsOutputIam();
+                outputSignedUrl = outputSignedUrl.Replace("iam", "zip");
+
+                DAActivity = ConfigUtilities.GetDAPartActivity();
+            }
+
             JObject payload = new JObject(
-                new JProperty("activityId", ConfigUtilities.GetDAActivity()),
+                new JProperty("activityId", DAActivity),
                 new JProperty("arguments", new JObject(
                     new JProperty(ConfigUtilities.GetDAWorkItemDocInputArgument(), new JObject(
                         new JProperty("url", inputSignedUrl),
@@ -359,7 +383,7 @@ namespace RevitInventorExchange.CoreBusinessLayer
                     new JProperty(ConfigUtilities.GetDAWorkItemParamsInputArgument(), new JObject(
                         new JProperty("url", "data:application/json, " + jsonParam1)
                     )),
-                    new JProperty(ConfigUtilities.GetDAWorkItemParamsOutput(), new JObject(
+                    new JProperty(itemParamOutput, new JObject(
                         new JProperty("url", outputSignedUrl),
                         new JProperty("verb", "put"),
                         new JProperty("headers", new JObject(
