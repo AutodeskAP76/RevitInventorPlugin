@@ -85,6 +85,11 @@ namespace RevitInventorExchange.CoreBusinessLayer
                         daEventHandler.TriggerDACurrentStepHandler("Some error has occurred:");
                         daEventHandler.TriggerDACurrentStepHandler(errorDetails);
                     }
+                    else
+                    {
+                        daEventHandler.TriggerDACurrentStepHandler("Some error has occurred: please check logs");
+                        NLogger.LogError(ex);
+                    }
                 }
                 catch(Exception ex1)
                 {
@@ -197,7 +202,9 @@ namespace RevitInventorExchange.CoreBusinessLayer
                 }
                 else
                 {
-                    string errStr = $"There are no folders under project '{projectId}' with name '{folderName}'";
+                    var projName = bIM360DocsStructBuilder.bIM360DocsStructure1.BIM360DataRows1.First(p => p.Id == projectId).Name;
+                    
+                    string errStr = $"There are no folders under project '{projName}' with name '{folderName}'";
                     NLogger.LogError($"Exit BuildTopFolderStructure with Error");
 
                     throw new Exception(errStr);
@@ -234,7 +241,10 @@ namespace RevitInventorExchange.CoreBusinessLayer
                    
                     if (string.IsNullOrEmpty(folderId))
                     {
-                        string errStr = $"There are no folders under project '{projectId}', parent folder '{parentFolderId}' with name '{folderName}'";
+                        var projName = bIM360DocsStructBuilder.bIM360DocsStructure1.BIM360DataRows1.First(p => p.Id == projectId).Name;
+                        var parentFoldername = bIM360DocsStructBuilder.bIM360DocsStructure1.BIM360DataRows1.First(p => p.Id == parentFolderId).Name;
+
+                        string errStr = $"There are no folders under project '{projName}', parent folder '{parentFoldername}' with name '{folderName}'";
                         NLogger.LogError($"Exit BuildFolderStructure with Error");
 
                         throw new Exception(errStr);
@@ -366,7 +376,7 @@ namespace RevitInventorExchange.CoreBusinessLayer
             if (outputSignedUrlExtension == ".iam")
             {
                 itemParamOutput = ConfigUtilities.GetDAWorkItemParamsOutputIam();
-                outputSignedUrl = outputSignedUrl.Replace("iam", "zip");
+                //outputSignedUrl = outputSignedUrl.Replace("iam", "zip");
 
                 DAActivity = ConfigUtilities.GetDAPartActivity();
             }
