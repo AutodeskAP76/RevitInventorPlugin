@@ -100,7 +100,12 @@ namespace RevitInventorExchange
 
         public static string GetDAPartActivity()
         {
-            return doc.SelectSingleNode("/Configuration/key[@name='Forge']/key[@name='ActivityId']/@value").Value;
+            return doc.SelectSingleNode("/Configuration/key[@name='Forge']/key[@name='PartActivityId']/@value").Value;
+        }
+
+        public static string GetDAAssemblyActivity()
+        {
+            return doc.SelectSingleNode("/Configuration/key[@name='Forge']/key[@name='AssemblyActivityId']/@value").Value;
         }
 
         public static string GetDAWorkItemDocInputArgument()

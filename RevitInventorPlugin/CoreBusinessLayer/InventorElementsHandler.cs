@@ -110,9 +110,12 @@ namespace RevitInventorExchange.CoreBusinessLayer
 
             try
             {
+                NLogger.LogText($"Try opening assembly document {fullPath}");
+
                 m_AssemblyDocument = (AssemblyDocument)m_InventorApplication.Documents.Open(fullPath, false);
 
                 //  Load params
+                NLogger.LogText("Load assembly document parameters");
                 InventorParams = m_AssemblyDocument.ComponentDefinition.Parameters;
             }
             catch (Exception ex)
@@ -121,7 +124,7 @@ namespace RevitInventorExchange.CoreBusinessLayer
 
                 try
                 {
-                    NLogger.LogText("Open Part document");
+                    NLogger.LogText($"Try opening part document {fullPath}");
 
                     m_PartDocument = (PartDocument)m_InventorApplication.Documents.Open(fullPath, false);
 

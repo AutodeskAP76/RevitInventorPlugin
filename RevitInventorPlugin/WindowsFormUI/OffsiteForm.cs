@@ -30,7 +30,8 @@ namespace RevitInventorExchange.WindowsFormUI
         private List<ElementStructure> elStructureList = null;
         private List<ElementsDataGridSourceData> elementList = null;
         private OffsitePanelHandler offsitePanelHandler = null;
-        private string rootPath = "";        
+        private string rootPath = "";
+        private string invTemplFolder = "";
 
         //  Initialize the form and its elements
         public OffsiteForm(List<ElementStructure> elementStructureList)
@@ -168,7 +169,7 @@ namespace RevitInventorExchange.WindowsFormUI
 
             //  Call Design Automation Forge APIs via HTTP calls to trigger Inventor Cloud execution engine
             
-            offsitePanelHandler.RunDesignAutomation(jsonParams);
+            offsitePanelHandler.RunDesignAutomation(jsonParams, invTemplFolder);
 
             daEvHandler.DACurrentStepHandler -= DaEvHandler_DACurrentStepHandler;
 
@@ -199,12 +200,12 @@ namespace RevitInventorExchange.WindowsFormUI
             if (result == DialogResult.OK)
             {
                 //  Handle selected path
-                string selectedPath = folderBrowserDialogInventorTemplates.SelectedPath;
+                invTemplFolder = folderBrowserDialogInventorTemplates.SelectedPath;
                 //string selectedPath = rootPath ;
-                txtInventorTemplatesPath.Text = selectedPath;                
+                txtInventorTemplatesPath.Text = invTemplFolder;                
 
                 //  handle internal structure creation
-                var dataSource = offsitePanelHandler.GetInvRevitMappingDataGridSource(selectedPath);
+                var dataSource = offsitePanelHandler.GetInvRevitMappingDataGridSource(invTemplFolder);
                 var elementList = dataSource["InvRevMapping"];
 
                 NLogger.LogText("Fill InventorRevitMapping grid");

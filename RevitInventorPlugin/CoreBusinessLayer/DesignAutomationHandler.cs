@@ -21,6 +21,8 @@ namespace RevitInventorExchange.CoreBusinessLayer
         private ForgeDMClient forgeDMClient = null;
         private ForgeDAClient forgeDAClient = null;
 
+        private string inventorTemplatesFolder = "";
+
         private const string outputFolder = "Libraries";
 
         private DesignAutomationStructure daStructure = null;
@@ -37,7 +39,7 @@ namespace RevitInventorExchange.CoreBusinessLayer
             forgeDAClient = new ForgeDAClient(ConfigUtilities.GetDABaseURL(), ConfigUtilities.GetClientID(), ConfigUtilities.GetClientSecret());
             forgeDAClient.GetToken();
 
-            daEventHandler = new DAEventHandlerUtilities();
+            daEventHandler = new DAEventHandlerUtilities();                        
 
             NLogger.LogText("Exit DesignAutomationHandler contructor");
 
@@ -45,11 +47,14 @@ namespace RevitInventorExchange.CoreBusinessLayer
         }        
                
         //  Workflow which handles the Forge API invocation
-        public void RunDesignAutomationForgeWorkflow(string json)
+        public void RunDesignAutomationForgeWorkflow(string json, string invTemplFolder)
         {            
             NLogger.LogText("Entered RunDesignAutomationForgeWorkflow");
 
+            inventorTemplatesFolder = invTemplFolder; // ConfigUtilities.GetInventorTemplateFolder();
             jsonStruct = json;
+
+            NLogger.LogText($"Inventor templates used folder: {inventorTemplatesFolder}");
 
             daEventHandler.TriggerDACurrentStepHandler("Workflow started");
 
@@ -71,33 +76,8 @@ namespace RevitInventorExchange.CoreBusinessLayer
             }
             catch (Exception ex)
             {
-                try
-                {
-                    //  Try to parse error message as a json file (in case it has been returned from Forge APIs)
-                    var messageParts = ex.Message.Split(new[] { ':' }, 2);
-
-                    if (messageParts.Length > 1)
-                    {
-                        JObject resSWIContent = JObject.Parse(messageParts[1]);
-
-                        var errorDetails = (string)resSWIContent["errors"][0]["detail"];
-
-                        daEventHandler.TriggerDACurrentStepHandler("Some error has occurred:");
-                        daEventHandler.TriggerDACurrentStepHandler(errorDetails);
-                    }
-                    else
-                    {
-                        daEventHandler.TriggerDACurrentStepHandler("Some error has occurred: please check logs");
-                        NLogger.LogError(ex);
-                    }
-                }
-                catch(Exception ex1)
-                {
-                    daEventHandler.TriggerDACurrentStepHandler("Some error has occurred: please check logs");
-                    NLogger.LogError(ex);
-
-                    //daEventHandler.TriggerDACurrentStepHandler(ex.Message);
-                }
+                daEventHandler.TriggerDACurrentStepHandler("Some error has occurred: please check logs");
+                NLogger.LogError(ex);
             }
 
             NLogger.LogText("Exit RunDesignAutomationForgeWorkflow");
@@ -158,11 +138,37 @@ namespace RevitInventorExchange.CoreBusinessLayer
         {
             NLogger.LogText("Entered BuildFoldersStructures");
 
-            //  Get path from Config file where Inventor Templates are stored
-            var relativePath = ConfigUtilities.GetInventorTemplateFolder();
+            //  Get path where Inventor Templates are stored
+            var fullPath = inventorTemplatesFolder;
+
+            NLogger.LogText($"Selected path for Inventor file: {inventorTemplatesFolder}");
+            NLogger.LogText("Extract subfolder structure from BIM 360 project down");
+
+            var relativePath = fullPath.Split(new string[] { ConfigUtilities.GetProject() }, StringSplitOptions.None);
+
+            if (relativePath.Length < 2)
+            {
+                throw new Exception($"The comfigured project {ConfigUtilities.GetProject()} is not part of the selected path");
+            }
 
             //  Split path in folders
-            var folders = relativePath.Split(new char[] { '\\' });
+            var foldersTemp = relativePath[1].Split(new char[] { '\\' });
+            List<string> folders = new List<string>();
+
+            if (foldersTemp[0] == "")
+            {
+                for (int h = 1; h < foldersTemp.Length; h++)
+                {
+                    folders.Add(foldersTemp[h]);
+                }
+            }
+            else
+            {
+                for (int h = 0; h < foldersTemp.Length; h++)
+                {
+                    folders.Add(foldersTemp[h]);
+                }
+            }            
 
             //  Handle Top folder
             var topFolderId = BuildTopFolderStructure(hubId, projId, folders[0]);
@@ -378,7 +384,7 @@ namespace RevitInventorExchange.CoreBusinessLayer
                 itemParamOutput = ConfigUtilities.GetDAWorkItemParamsOutputIam();
                 //outputSignedUrl = outputSignedUrl.Replace("iam", "zip");
 
-                DAActivity = ConfigUtilities.GetDAPartActivity();
+                DAActivity = ConfigUtilities.GetDAAssemblyActivity();
             }
 
             JObject payload = new JObject(
@@ -409,48 +415,7 @@ namespace RevitInventorExchange.CoreBusinessLayer
             NLogger.LogText("Exit CreateWorkItemPayload1");
 
             return ret;
-        }       
-
-        //  Extract data from Parameters values json file and put them into an internal structure to keep togehter data regarding input files and output files for Forge API automation
-        private DesignAutomationStructure GetDataFromInputJson1_ORIGINAL()
-        {
-            NLogger.LogText("Entered GetDataFromInputJson1");
-
-            //  Initialize internal structure keepin Forge relevant informations for output files creation
-            var daStructure = new DesignAutomationStructure();
-
-            JObject res = JObject.Parse(jsonStruct);
-            var items = res.SelectTokens("$.ILogicParams").Children();
-
-            foreach (var item in items)
-            {
-                var inventorFileName = ((string)item.SelectToken("$.InventorTemplate"));
-                string paramsValues = item.SelectToken("$.paramsValues").ToString();
-                string inputLink = GetInputLink(inventorFileName);
-                var outputFileNameParts = inventorFileName.Split(new char[] { '.' });
-                var outputFileName = outputFileNameParts[0] + "_Out_001." + outputFileNameParts[1];                              
-                //  TODO: REMOVE HARDCODED FOLDER
-                var outputFileFolderId = bIM360DocsStructBuilder.GetFolderIdByName(outputFolder);
-
-                NLogger.LogText($"Currently processing {inventorFileName} Inventor file");
-                NLogger.LogText($"Output file: {outputFileName}");
-                NLogger.LogText($"Output folder: {outputFileFolderId}");
-
-                daStructure.FilesStructure = new List<DesignAutomationFileStructure>() { new DesignAutomationFileStructure
-                {
-                    InputFilename = inventorFileName,
-                    ParamValues = paramsValues,
-                    InputLink = inputLink,
-                    OutputFileStructurelist = new List<DesignAutomationOutFileStructure>(){ new DesignAutomationOutFileStructure {  OutFileName = outputFileName, OutFileFolder = outputFileFolderId } }
-                }};
-            }
-
-            NLogger.LogText("Exit GetDataFromInputJson1");
-
-            return daStructure;
-        }
-
-
+        }              
 
         //  Extract data from Parameters values json file and put them into an internal structure to keep togehter data regarding input files and output files for Forge API automation
         private DesignAutomationStructure GetDataFromInputJson1()
@@ -479,7 +444,7 @@ namespace RevitInventorExchange.CoreBusinessLayer
                     var outputFileName = outputFileNameParts[0] + "_Out_001." + outputFileNameParts[1];
 
                     //  Get path from Config file where Inventor Templates are stored
-                    var relativePath = ConfigUtilities.GetInventorTemplateFolder();
+                    var relativePath = inventorTemplatesFolder;
 
                     //  Split path in folders
                     var outputFolders = relativePath.Split(new char[] { '\\' });
@@ -499,7 +464,6 @@ namespace RevitInventorExchange.CoreBusinessLayer
                         InputLink = inputLink,
                         OutputFileStructurelist = new List<DesignAutomationOutFileStructure>(){ new DesignAutomationOutFileStructure {  OutFileName = outputFileName, OutFileFolder = outputFileFolderId } }
                     }};
-
                 }
             }
 
