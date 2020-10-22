@@ -109,6 +109,16 @@ namespace RevitInventorExchange
         }
 
         /// <summary>
+        /// Given a a list of revit elements, returns their family Type
+        /// </summary>
+        /// <param name="el"></param>
+        /// <returns></returns>
+        public static List<string> GetFamilyTypes(List<ElementStructure> elStruct)
+        {
+            return elStruct.SelectMany(p => p.ElementTypeSingleParameters.Where(l => l.ParameterName == "SYMBOL_FAMILY_AND_TYPE_NAMES_PARAM").Select( m => m.ParameterValue)).Distinct().ToList();
+        }
+
+        /// <summary>
         /// Returns all elements given a specified Family type
         /// </summary>
         /// <returns></returns>

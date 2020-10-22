@@ -21,9 +21,7 @@ namespace RevitInventorExchange.CoreBusinessLayer
         private ForgeDMClient forgeDMClient = null;
         private ForgeDAClient forgeDAClient = null;
 
-        private string inventorTemplatesFolder = "";
-
-        private const string outputFolder = "Libraries";
+        private string inventorTemplatesFolder = "";        
 
         private DesignAutomationStructure daStructure = null;
         private DAEventHandlerUtilities daEventHandler;
@@ -68,6 +66,7 @@ namespace RevitInventorExchange.CoreBusinessLayer
                 daEventHandler.TriggerDACurrentStepHandler("BIM360 structure created");
 
                 daStructure = GetDataFromInputJson1();
+                //daStructure = GetDataFromInputJson1_for_zip_tests();
 
                 //  Create output storage object, submit workitem and create version
                 HandleDesignAutomationFlow(projId);
@@ -277,6 +276,9 @@ namespace RevitInventorExchange.CoreBusinessLayer
 
             //  Submit work items 
             string payload = CreateWorkItemPayload1(inFile, outFile);
+
+            //string payload = CreateWorkItemPayload1_ForZip_Test(inFile, outFile);
+
             var retSubmitWotkItem = forgeDAClient.PostWorkItem(payload);
             retSubmitWotkItem.Wait();
 
@@ -415,7 +417,80 @@ namespace RevitInventorExchange.CoreBusinessLayer
             NLogger.LogText("Exit CreateWorkItemPayload1");
 
             return ret;
-        }              
+        }
+
+
+
+        //  Create json for Work Item submit
+        private string CreateWorkItemPayload1_ForZip_Test(string inFileName, string outFileName)
+        {
+            NLogger.LogText("Entered CreateWorkItemPayload1");
+
+            var daStructureRow = daStructure.FilesStructure.First(p => p.InputFilename == inFileName);
+            string inputSignedUrl = daStructureRow.InputLink;
+            //string outputFileName = daStructureRow.OutputFileStructurelist.First(l => l.OutFileName == outFileName).OutFileName;
+            string outFileStorageObj = daStructureRow.OutputFileStructurelist.First(l => l.OutFileName == outFileName).OutFileStorageobject;
+            string outputSignedUrl = GetOutputLinks(outFileStorageObj);
+            string jsonParams = daStructureRow.ParamValues; // dataFromJson["paramsValues"];
+            string jsonParam1 = jsonParams.Replace("\r\n", "");
+
+
+            var outputSignedUrlExtension = System.IO.Path.GetExtension(outputSignedUrl);
+
+
+            var itemParamOutput = "";
+            var DAActivity = "";
+
+            //  Based on input file extension create json
+            if (outputSignedUrlExtension == ".ipt")
+            {
+                itemParamOutput = ConfigUtilities.GetDAWorkItemParamsOutputIpt();
+                DAActivity = ConfigUtilities.GetDAPartActivity();
+
+            }
+            if (outputSignedUrlExtension == ".iam" || outputSignedUrlExtension == ".zip")
+            {
+                itemParamOutput = ConfigUtilities.GetDAWorkItemParamsOutputIam();
+                outputSignedUrl = outputSignedUrl.Replace("zip", "iam");
+
+                DAActivity = ConfigUtilities.GetDAAssemblyActivity();
+            }
+
+            JObject payload = new JObject(
+                new JProperty("activityId", DAActivity),
+                new JProperty("arguments", new JObject(
+                    new JProperty(ConfigUtilities.GetDAWorkItemDocInputArgument(), new JObject(
+                        new JProperty("url", inputSignedUrl),
+                        new JProperty("zip", "true"),
+                        new JProperty("localName", "input"),
+                        new JProperty("Headers", new JObject(
+                            new JProperty("Authorization", forgeDAClient.Authorization)
+                            ))
+                    )),
+                    new JProperty(ConfigUtilities.GetDAWorkItemParamsInputArgument(), new JObject(
+                        new JProperty("localName", "params.json"),
+                        //new JProperty("url", "data:application/json,{\"assemblyPath\":\"input\\\\Workspace\\\\Libraries_DH_Assembly_wall\\\\Wall Panel.iam\", \"projectPath\":\"input\\\\Wall Panel.ipj\", \"values\": { \"Window_LeftRef\":\"750\"}}")
+                        new JProperty("url", "data:application/json,{\"assemblyPath\":\"input\\\\Workspace\\\\Libraries_DH_Assembly_unit_frame\\\\unit_frame_assy.iam\", \"projectPath\":\"input\\\\unit_frame_assy.ipj\", \"values\": { \"UF_height\":\"2000\"}}")
+                    )),
+                    new JProperty(itemParamOutput, new JObject(
+                        new JProperty("url", outputSignedUrl),
+                        new JProperty("verb", "put"),
+                        //new JProperty("localName", "ResultSmall.iam"),
+                        new JProperty("Headers", new JObject(
+                            new JProperty("Authorization", forgeDAClient.Authorization),
+                            new JProperty("Content-type", "application/octet-stream")
+                        ))
+                    ))
+                ))
+            );
+
+            var ret = payload.ToString();
+
+            NLogger.LogText("Exit CreateWorkItemPayload1");
+
+            return ret;
+        }
+
 
         //  Extract data from Parameters values json file and put them into an internal structure to keep togehter data regarding input files and output files for Forge API automation
         private DesignAutomationStructure GetDataFromInputJson1()
@@ -471,6 +546,63 @@ namespace RevitInventorExchange.CoreBusinessLayer
 
             return daStructure;
         }
+
+
+        private DesignAutomationStructure GetDataFromInputJson1_for_zip_tests()
+        {
+            NLogger.LogText("Entered GetDataFromInputJson1");
+
+            //  Initialize internal structure keepin Forge relevant informations for output files creation
+
+            NLogger.LogText("initialize internal structre for Design Automation files creation");
+            var daStructure = new DesignAutomationStructure();
+
+            JObject res = JObject.Parse(jsonStruct);
+            var items = res.SelectTokens("$.ILogicParams").Children();
+
+            foreach (var item in items)
+            {
+                var inventorFileName = ((string)item.SelectToken("$.InventorTemplate"));
+                var parametersInfo = item.SelectTokens("$.ParametersInfo");
+
+                foreach (var paramInfo in parametersInfo.Children())
+                {
+                    var paramValues = paramInfo.SelectToken("$.paramsValues").ToString();
+
+                    string inputLink = GetInputLink(inventorFileName);
+                    var outputFileNameParts = inventorFileName.Split(new char[] { '.' });
+                    var outputFileName = outputFileNameParts[0] + "_Out_001.iam";
+
+                    //  Get path from Config file where Inventor Templates are stored
+                    var relativePath = inventorTemplatesFolder;
+
+                    //  Split path in folders
+                    var outputFolders = relativePath.Split(new char[] { '\\' });
+
+                    var outputFileFolderId = bIM360DocsStructBuilder.GetFolderIdByName(outputFolders[outputFolders.Length - 1]);
+
+                    NLogger.LogText($"Currently processing {inventorFileName} Inventor file");
+                    NLogger.LogText($"Output file: {outputFileName}");
+                    NLogger.LogText($"Output folder: {outputFileFolderId}");
+
+
+                    //  TODO: Here only the last elemet is processed. See how to process all elements in parametersInfo
+                    daStructure.FilesStructure = new List<DesignAutomationFileStructure>() { new DesignAutomationFileStructure
+                    {
+                        InputFilename = inventorFileName,
+                        ParamValues = paramValues,
+                        InputLink = inputLink,
+                        OutputFileStructurelist = new List<DesignAutomationOutFileStructure>(){ new DesignAutomationOutFileStructure {  OutFileName = outputFileName, OutFileFolder = outputFileFolderId } }
+                    }};
+                }
+            }
+
+            NLogger.LogText("Exit GetDataFromInputJson1");
+
+            return daStructure;
+        }
+
+
 
         private string GetInputLink(string filename)
         {

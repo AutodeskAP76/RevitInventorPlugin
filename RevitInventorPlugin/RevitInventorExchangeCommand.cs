@@ -15,6 +15,7 @@ using System.Linq.Dynamic;
 using NLog.Targets;
 using NLog;
 using RevitInventorExchange;
+using System.Windows.Forms;
 
 namespace RevitInventorExchange
 {
@@ -60,10 +61,20 @@ namespace RevitInventorExchange
                 var elStructureList = revElementHandler.ProcessElements(selectedElements);
                 var filteredElStrList = revFilterHandler.FilterElements(elStructureList);
 
-                //  Pass elements info to the opened form
-                //var popupWindow = new PropertiesCollectorForm(elStructureList);
-                var elementWindow = new OffsiteForm(filteredElStrList);
-                elementWindow.Show();
+                //  Extract all Revit Families for selected Revit elements
+                var fileredElStrRevitFamilies = Utilities.GetFamilyTypes(filteredElStrList);
+
+                if (fileredElStrRevitFamilies.Count > 1)
+                {
+                    MessageBox.Show("Selected elements belong to more than one family. They have to be part of a unique family.");
+                }
+                else
+                {
+                    //  Pass elements info to the opened form
+                    //var popupWindow = new PropertiesCollectorForm(elStructureList);
+                    var elementWindow = new OffsiteForm(filteredElStrList);
+                    elementWindow.Show();
+                }
 
                 NLogger.LogText("Exit Execute method with Success");
             }

@@ -7,10 +7,10 @@ using System.Threading.Tasks;
 namespace RevitInventorPluginUnitTests
 {
     [TestClass]
-    public class UnitTest1
+    public class UnitTest2
     {
         [TestMethod]
-        public async Task TestMethod1()
+        public void TestMethod1()
         {
             NLogger.Initialize();
 
@@ -18,7 +18,7 @@ namespace RevitInventorPluginUnitTests
             ConfigUtilities.LoadConfig();
 
             string json = GetJson();
-            string InventorFilePath = @"C:\Users\parodiaadmin\BIM 360\ATDSK DEV\Sample Project\Project Files\Libraries_DH_Assembly_wall_zip";
+            string InventorFilePath = @"C:\Users\parodiaadmin\BIM 360\ATDSK DEV\Sample Project\Project Files\Libraries_DH_Assembly_unit_frame_zip";
             DesignAutomationHandler daHandler = new DesignAutomationHandler();
 
             daHandler.RunDesignAutomationForgeWorkflow(json, InventorFilePath);
@@ -31,37 +31,20 @@ namespace RevitInventorPluginUnitTests
                     "{" +
                       "'RevitFamily': 'Wall Panel_2.iam (Window_Ref).0001: Standard'," +
                       //"'InventorTemplate': 'Wall Panel.iam'," +
-                      "'InventorTemplate': 'Wall_Assembly_Package.zip'," +
+                      "'InventorTemplate': 'Unit_Frame_Package.zip'," +
 
                       "'ParametersInfo': [" +
                         "{" +
                           "'elementName': ''," +
                           "'paramsValues': { " +
-                                "'Window_LeftRef': '750'" +
+                                "'UF_height': '2000'," +
+                                "'UF_short_length': '2000'," +
+                                "'UF_long_length': '2000'" +
                             "}" +
                           "}" +
                         "]" +
                       "}" +
                     "]" +
-                "}";
-
-            return json;
-        }
-
-        private string GetJson_OLD()
-        {
-            string json = "{ " +
-                  "'ILogicParams': [" +
-                    "{" +
-                      "'RevitFamily': 'DH_開口貫通_4P: TYPE_一般壁_2P'," +
-                      "'InventorTemplate': 'box.ipt'," +
-                      "'paramsValues': { " +
-                            "'length': '150'," +
-                            "'width': '150'," +
-                            "'height': '100'" +
-                      "}" +
-                     "}" +
-                  "]" +
                 "}";
 
             return json;
