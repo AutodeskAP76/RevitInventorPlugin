@@ -26,7 +26,7 @@ namespace RevitInventorExchange.CoreBusinessLayer
         }
 
         //  Extract all relevant information from selected elements and create an internal structure for passing parameters around
-        public List<ElementStructure> ProcessElements(List<Element> RevitElements)
+        public List<ElementStructure> ProcessElements(IList<Element> RevitElements)
         {
             NLogger.LogText("Entered ProcessElements");
 
@@ -62,6 +62,17 @@ namespace RevitInventorExchange.CoreBusinessLayer
             NLogger.LogText("Exit ProcessElements");
 
             return elementStructureList;
+        }
+
+        public IList<Element> GetRevitFamiliesInActivedocument()
+        {
+            var genModelTypeCollector = new FilteredElementCollector(doc);
+            genModelTypeCollector.OfClass(typeof(FamilySymbol));
+            genModelTypeCollector.OfCategory(BuiltInCategory.OST_GenericModel);
+
+            var genModElements = genModelTypeCollector.ToElements();
+
+            return genModElements;
         }
 
         //  extract parameters from element
@@ -118,6 +129,8 @@ namespace RevitInventorExchange.CoreBusinessLayer
 
             return parVal;
         }
+
+
 
     }
 }

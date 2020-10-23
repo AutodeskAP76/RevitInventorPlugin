@@ -14,6 +14,8 @@ using System.Linq.Dynamic;
 using System.IO;
 using NLog;
 using Inventor;
+using ADSK = Autodesk.Revit.DB;
+using Autodesk.Revit.UI;
 
 namespace RevitInventorExchange.WindowsFormUI
 {
@@ -27,14 +29,17 @@ namespace RevitInventorExchange.WindowsFormUI
     {
         //  Scope of Work tab
         private bool sortAscendingElementList = false;
-        private List<ElementStructure> elStructureList = null;
+        private IList<ElementStructure> elStructureList = null;
         private List<ElementsDataGridSourceData> elementList = null;
         private OffsitePanelHandler offsitePanelHandler = null;
+        private IList<ADSK.Element> RevitFamTypes = null;
+        private UIApplication uiapp = null;
+        private ADSK.Document doc = null;
         private string rootPath = "";
         private string invTemplFolder = "";
 
         //  Initialize the form and its elements
-        public OffsiteForm(List<ElementStructure> elementStructureList)
+        public OffsiteForm(IList<ADSK.Element> elementStructureList, IList<ADSK.Element> genModElementTypes, UIApplication uiapplication)
         {
             NLogger.LogText("Entered Offsite Form constructor");
           
@@ -43,21 +48,35 @@ namespace RevitInventorExchange.WindowsFormUI
 
             InitializeComponent();
 
-            elStructureList = elementStructureList;
-
+            uiapp = uiapplication;
+            doc = uiapp.ActiveUIDocument.Document; ;
+           
             //  Initialize Offsite Panel BL handler.
             //  Here inventor process is started / attached to
-            offsitePanelHandler = new OffsitePanelHandler();
+            offsitePanelHandler = new OffsitePanelHandler(uiapplication);
             this.Size = new Size(1380, 800);
-                        
+
+            //  Check if selection mode is from Viewer or from Revit Families filter
+            if (elementStructureList != null)
+            {
+                var tempelStructureList = offsitePanelHandler.ProcessElements(elementStructureList);
+                elStructureList = offsitePanelHandler.FilterElements(tempelStructureList);
+                groupBox2.Visible = false;
+            }
+            else
+            {
+                RevitFamTypes = genModElementTypes;
+                groupBox2.Visible = true;
+            }
+
             //  Set local BIM 360 folder as root path            
             rootPath = Utilities.GetInventorTemplateFolder(); // Utilities.GetBIM360RootPath();     
             folderBrowserDialogInventorTemplates.SelectedPath = rootPath;
 
-            //  Iniotialize data grids
+            //  Initialize data grids & combobox
             InitializeSOWGrid(dgElements);
             InitializeMappingGrid(dgInvRevMapping);
-            InitializeParametersMappingGrid(dgParamsMapping);
+            InitializeParametersMappingGrid(dgParamsMapping);            
 
             NLogger.LogText("Exit Offsite Form constructor");
         }
@@ -84,17 +103,29 @@ namespace RevitInventorExchange.WindowsFormUI
         {
             NLogger.LogText("Entered ElementsForm_Load");
 
-            // Populate the Element datagrid
-            var dataSources = offsitePanelHandler.GetElementsDataGridSource(elStructureList);
+            if (elStructureList != null)
+            {
+                // Populate the Element datagrid
+                var dataSources = offsitePanelHandler.GetElementsDataGridSource(elStructureList);
 
-            elementList = dataSources["Elements"];
+                elementList = dataSources["Elements"];
 
-            offsitePanelHandler.FillPropertiesGrid(dgElements, elementList);
-
+                offsitePanelHandler.FillPropertiesGrid(dgElements, elementList);
+            }
+            if (RevitFamTypes != null)
+            {
+                var dataSource = RevitFamTypes.Select(p => p.Name).ToList();
+                offsitePanelHandler.FillComboRevitFamTypes(comboBoxRevitFamilies, dataSource);
+            }
+            
             NLogger.LogText("Exit ElementsForm_Load");
         }
 
         #region SOW
+
+       
+
+
         private void InitializeSOWGrid(DataGridView dataGrid)
         {
             dataGrid.AutoGenerateColumns = false;
@@ -539,6 +570,45 @@ namespace RevitInventorExchange.WindowsFormUI
             HandleRowSelectionParams(RevitFamilyHandling.ResetRevitFamily);
 
             NLogger.LogText("Exit btnClearSelectedParamMapping_Click");
+        }
+
+
+
+
+
+        //  find a list of element with given class, family type and 
+        //  category (optional).
+        public IList<ADSK.Element> FindInstancesOfType(Type targetType, ADSK.ElementId idType, Nullable<ADSK.BuiltInCategory> targetCategory = null)
+        {
+            // narrow down to the elements of the given type and category 
+
+            var collector = new ADSK.FilteredElementCollector(doc).OfClass(targetType);
+
+            if (targetCategory.HasValue)
+            {
+                collector.OfCategory(targetCategory.Value);
+            }
+
+            // parse the collection for the given family type id. 
+            // using LINQ query here. 
+
+            var elems =
+                from element in collector
+                where element.get_Parameter(ADSK.BuiltInParameter.SYMBOL_ID_PARAM).
+                      AsElementId().Equals(idType)
+                select element;
+
+            // put the result as a list of element fo accessibility. 
+
+            return elems.ToList();
+        }
+
+        private void comboBoxRevitFamilies_SelectedIndexChanged(object sender, EventArgs e)
+        {
+
+            //var gg = genModElementTypes[43];
+
+            //var selectedElements = FindInstancesOfType(typeof(ADSK.FamilyInstance), gg.Id, ADSK.BuiltInCategory.OST_GenericModel);
         }
     }
 }

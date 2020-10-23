@@ -11,6 +11,8 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Xml;
 using Newtonsoft.Json.Linq;
+using Autodesk.Revit.UI;
+using Autodesk.Revit.DB;
 
 namespace RevitInventorExchange.WindowsFormBusinesslayer
 {
@@ -18,13 +20,15 @@ namespace RevitInventorExchange.WindowsFormBusinesslayer
     {
         private ExportDataHandler expDataHandler = null;
         private InventorRevitMappingHandler invRevMappingHandler = null;
+        private RevitFiltersHandler revFilterHandler = null;
+        private RevitElementsHandler revElementHandler = null;
         private DAEventHandlerUtilities daEventHandler;
         private DesignAutomationHandler daHandler;
 
         public DAEventHandlerUtilities DaEventHandler { get => daEventHandler; set => daEventHandler = value; }
 
-        public OffsitePanelHandler() : base()
-        {            
+        public OffsitePanelHandler(UIApplication uiapp) : base()
+        {
             NLogger.LogText("Entered OffsitePanelHandler constructor");
 
             //  Initialize the Handler which allows writing json files on disk
@@ -32,6 +36,8 @@ namespace RevitInventorExchange.WindowsFormBusinesslayer
 
             //  Start an Inventor process or attach to an already existing one
             invRevMappingHandler = new InventorRevitMappingHandler();
+            revFilterHandler = new RevitFiltersHandler();
+            revElementHandler = new RevitElementsHandler(uiapp);
 
             daHandler = new DesignAutomationHandler();
             daEventHandler = daHandler.DaEventHandler;
@@ -40,8 +46,8 @@ namespace RevitInventorExchange.WindowsFormBusinesslayer
         }
 
         //  Create the datasource for datagrid, from elementStructurelist, based on fields shown in the UI
-        public Dictionary<string, List<ElementsDataGridSourceData>> GetElementsDataGridSource(List<ElementStructure> elementStructureList)
-        {            
+        public Dictionary<string, List<ElementsDataGridSourceData>> GetElementsDataGridSource(IList<ElementStructure> elementStructureList)
+        {
             NLogger.LogText("Entered GetElementsDataGridSource method");
 
             var ret = new Dictionary<string, List<ElementsDataGridSourceData>>();
@@ -52,7 +58,7 @@ namespace RevitInventorExchange.WindowsFormBusinesslayer
                 var elName = el.Element.Name;
                 var elFamilyType = Utilities.GetFamilyType(el); // el.ElementTypeSingleParameters.SingleOrDefault(p => p.ParameterName == "SYMBOL_FAMILY_AND_TYPE_NAMES_PARAM").ParameterValue;
 
-                sourceData.Add(new ElementsDataGridSourceData { ElementId = el.Element.Id.IntegerValue, ElementName = elName, ElementFamilyType = elFamilyType } );
+                sourceData.Add(new ElementsDataGridSourceData { ElementId = el.Element.Id.IntegerValue, ElementName = elName, ElementFamilyType = elFamilyType });
             }
 
             ret.Add("Elements", sourceData);
@@ -94,8 +100,8 @@ namespace RevitInventorExchange.WindowsFormBusinesslayer
 
             NLogger.LogText("Create datagrid datasource");
             foreach (var el in inventorTemplates)
-            {                
-                sourceData.Add(new InvRevMappingDataGridSourceData { InventorTemplate = el.InventorTemplate  });
+            {
+                sourceData.Add(new InvRevMappingDataGridSourceData { InventorTemplate = el.InventorTemplate });
             }
 
             ret.Add("InvRevMapping", sourceData);
@@ -123,7 +129,7 @@ namespace RevitInventorExchange.WindowsFormBusinesslayer
 
             NLogger.LogText("Exit RefreshInvRevitMappingDataGridSource");
 
-            return ret;            
+            return ret;
         }
 
         internal Dictionary<string, List<InvRevParamMappingDataGridSourceData>> GetInvRevitParamsMappingDataGridSource(string invTemplateFileName, string invTemplatePath)
@@ -153,7 +159,7 @@ namespace RevitInventorExchange.WindowsFormBusinesslayer
 
             var ret = new Dictionary<string, List<InvRevParamMappingDataGridSourceData>>();
             var sourceData = new List<InvRevParamMappingDataGridSourceData>();
-           
+
             var paramsMapping = invRevMappingHandler.UpdateParametersMappingStructure(revitFamily, inventorTemplate, selInvParam, selRevFamilyParam);
 
             foreach (var el in paramsMapping)
@@ -168,7 +174,7 @@ namespace RevitInventorExchange.WindowsFormBusinesslayer
             return ret;
         }
 
-        internal string GetRevitPropertiesValues(List<ElementStructure> elStructureList)
+        internal string GetRevitPropertiesValues(IList<ElementStructure> elStructureList)
         {
             NLogger.LogText("Entered GetRevitPropertiesValues");
 
@@ -201,6 +207,28 @@ namespace RevitInventorExchange.WindowsFormBusinesslayer
         {
             var InvElHandler = invRevMappingHandler.InvElHandler;
             InvElHandler.CloseInventorProcess();
+        }
+
+        public List<ElementStructure> ProcessElements(IList<Element> RevitElements)
+        {
+            NLogger.LogText("Entered ProcessElements");
+
+            var ret = revElementHandler.ProcessElements(RevitElements);
+                
+            NLogger.LogText("Exit ProcessElements");
+
+            return ret;
+        }
+
+        public IList<ElementStructure> FilterElements(IList<ElementStructure> RevitElements)
+        {
+            NLogger.LogText("Entered FilterElements");
+
+            var ret = revFilterHandler.FilterElements(RevitElements);
+
+            NLogger.LogText("Exit FilterElements");
+
+            return ret;
         }
     }
 }

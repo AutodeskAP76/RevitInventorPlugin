@@ -33,23 +33,28 @@
             this.btnExportPropVals = new System.Windows.Forms.Button();
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.tabSOW = new System.Windows.Forms.TabPage();
+            this.groupBox2 = new System.Windows.Forms.GroupBox();
+            this.comboBoxRevitFamilies = new System.Windows.Forms.ComboBox();
+            this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.dgElements = new System.Windows.Forms.DataGridView();
             this.tabMappings = new System.Windows.Forms.TabPage();
+            this.btnClearLogs = new System.Windows.Forms.Button();
             this.richTextBoxLogs = new System.Windows.Forms.RichTextBox();
             this.grpBoxRevitFamilies = new System.Windows.Forms.GroupBox();
+            this.btnClearSelectedParamMapping = new System.Windows.Forms.Button();
             this.btnRevitParametersSel = new System.Windows.Forms.Button();
             this.dgParamsMapping = new System.Windows.Forms.DataGridView();
             this.grpBoxInventorTemplates = new System.Windows.Forms.GroupBox();
+            this.btnClearSelectedMapping = new System.Windows.Forms.Button();
             this.btnSelectFromScope = new System.Windows.Forms.Button();
             this.btnBrowse = new System.Windows.Forms.Button();
             this.txtInventorTemplatesPath = new System.Windows.Forms.TextBox();
             this.dgInvRevMapping = new System.Windows.Forms.DataGridView();
             this.folderBrowserDialogInventorTemplates = new System.Windows.Forms.FolderBrowserDialog();
-            this.btnClearLogs = new System.Windows.Forms.Button();
-            this.btnClearSelectedMapping = new System.Windows.Forms.Button();
-            this.btnClearSelectedParamMapping = new System.Windows.Forms.Button();
             this.tabControl1.SuspendLayout();
             this.tabSOW.SuspendLayout();
+            this.groupBox2.SuspendLayout();
+            this.groupBox1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dgElements)).BeginInit();
             this.tabMappings.SuspendLayout();
             this.grpBoxRevitFamilies.SuspendLayout();
@@ -60,7 +65,7 @@
             // 
             // btnProperties
             // 
-            this.btnProperties.Location = new System.Drawing.Point(27, 1031);
+            this.btnProperties.Location = new System.Drawing.Point(18, 1230);
             this.btnProperties.Margin = new System.Windows.Forms.Padding(2);
             this.btnProperties.Name = "btnProperties";
             this.btnProperties.Size = new System.Drawing.Size(244, 48);
@@ -102,28 +107,58 @@
             // 
             // tabSOW
             // 
-            this.tabSOW.Controls.Add(this.dgElements);
+            this.tabSOW.Controls.Add(this.groupBox2);
+            this.tabSOW.Controls.Add(this.groupBox1);
             this.tabSOW.Controls.Add(this.btnProperties);
             this.tabSOW.Location = new System.Drawing.Point(8, 39);
             this.tabSOW.Name = "tabSOW";
             this.tabSOW.Padding = new System.Windows.Forms.Padding(3);
-            this.tabSOW.Size = new System.Drawing.Size(2677, 1218);
+            this.tabSOW.Size = new System.Drawing.Size(2677, 1300);
             this.tabSOW.TabIndex = 0;
             this.tabSOW.Text = "Scope of work";
             this.tabSOW.UseVisualStyleBackColor = true;
+            // 
+            // groupBox2
+            // 
+            this.groupBox2.Controls.Add(this.comboBoxRevitFamilies);
+            this.groupBox2.Location = new System.Drawing.Point(18, 31);
+            this.groupBox2.Name = "groupBox2";
+            this.groupBox2.Size = new System.Drawing.Size(1690, 114);
+            this.groupBox2.TabIndex = 3;
+            this.groupBox2.TabStop = false;
+            this.groupBox2.Text = "Revit Families";
+            // 
+            // comboBoxRevitFamilies
+            // 
+            this.comboBoxRevitFamilies.FormattingEnabled = true;
+            this.comboBoxRevitFamilies.Location = new System.Drawing.Point(21, 47);
+            this.comboBoxRevitFamilies.Name = "comboBoxRevitFamilies";
+            this.comboBoxRevitFamilies.Size = new System.Drawing.Size(1646, 33);
+            this.comboBoxRevitFamilies.TabIndex = 0;
+            this.comboBoxRevitFamilies.SelectedIndexChanged += new System.EventHandler(this.comboBoxRevitFamilies_SelectedIndexChanged);
+            // 
+            // groupBox1
+            // 
+            this.groupBox1.Controls.Add(this.dgElements);
+            this.groupBox1.Location = new System.Drawing.Point(18, 170);
+            this.groupBox1.Name = "groupBox1";
+            this.groupBox1.Size = new System.Drawing.Size(1690, 1040);
+            this.groupBox1.TabIndex = 2;
+            this.groupBox1.TabStop = false;
+            this.groupBox1.Text = "Revit elements";
             // 
             // dgElements
             // 
             this.dgElements.AllowUserToAddRows = false;
             this.dgElements.AllowUserToDeleteRows = false;
             this.dgElements.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.dgElements.Location = new System.Drawing.Point(27, 25);
+            this.dgElements.Location = new System.Drawing.Point(21, 43);
             this.dgElements.Margin = new System.Windows.Forms.Padding(2);
             this.dgElements.Name = "dgElements";
             this.dgElements.ReadOnly = true;
             this.dgElements.RowHeadersWidth = 102;
             this.dgElements.RowTemplate.Height = 40;
-            this.dgElements.Size = new System.Drawing.Size(1928, 961);
+            this.dgElements.Size = new System.Drawing.Size(1646, 971);
             this.dgElements.TabIndex = 0;
             this.dgElements.ColumnHeaderMouseClick += new System.Windows.Forms.DataGridViewCellMouseEventHandler(this.dgElements_ColumnHeaderMouseClick);
             // 
@@ -140,6 +175,16 @@
             this.tabMappings.TabIndex = 1;
             this.tabMappings.Text = "Mappings";
             this.tabMappings.UseVisualStyleBackColor = true;
+            // 
+            // btnClearLogs
+            // 
+            this.btnClearLogs.Location = new System.Drawing.Point(17, 1241);
+            this.btnClearLogs.Name = "btnClearLogs";
+            this.btnClearLogs.Size = new System.Drawing.Size(221, 41);
+            this.btnClearLogs.TabIndex = 5;
+            this.btnClearLogs.Text = "Clear Logs";
+            this.btnClearLogs.UseVisualStyleBackColor = true;
+            this.btnClearLogs.Click += new System.EventHandler(this.btnClearLogs_Click);
             // 
             // richTextBoxLogs
             // 
@@ -160,6 +205,16 @@
             this.grpBoxRevitFamilies.TabIndex = 3;
             this.grpBoxRevitFamilies.TabStop = false;
             this.grpBoxRevitFamilies.Text = "Parameters Mapping";
+            // 
+            // btnClearSelectedParamMapping
+            // 
+            this.btnClearSelectedParamMapping.Location = new System.Drawing.Point(1089, 833);
+            this.btnClearSelectedParamMapping.Name = "btnClearSelectedParamMapping";
+            this.btnClearSelectedParamMapping.Size = new System.Drawing.Size(221, 41);
+            this.btnClearSelectedParamMapping.TabIndex = 7;
+            this.btnClearSelectedParamMapping.Text = "Clear Selection";
+            this.btnClearSelectedParamMapping.UseVisualStyleBackColor = true;
+            this.btnClearSelectedParamMapping.Click += new System.EventHandler(this.btnClearSelectedParamMapping_Click);
             // 
             // btnRevitParametersSel
             // 
@@ -197,6 +252,16 @@
             this.grpBoxInventorTemplates.TabIndex = 2;
             this.grpBoxInventorTemplates.TabStop = false;
             this.grpBoxInventorTemplates.Text = "Inventor Templates - Revit Families mappings";
+            // 
+            // btnClearSelectedMapping
+            // 
+            this.btnClearSelectedMapping.Location = new System.Drawing.Point(1039, 833);
+            this.btnClearSelectedMapping.Name = "btnClearSelectedMapping";
+            this.btnClearSelectedMapping.Size = new System.Drawing.Size(221, 41);
+            this.btnClearSelectedMapping.TabIndex = 6;
+            this.btnClearSelectedMapping.Text = "Clear Selection";
+            this.btnClearSelectedMapping.UseVisualStyleBackColor = true;
+            this.btnClearSelectedMapping.Click += new System.EventHandler(this.btnClearSelectedMapping_Click);
             // 
             // btnSelectFromScope
             // 
@@ -239,36 +304,6 @@
             this.dgInvRevMapping.TabIndex = 0;
             this.dgInvRevMapping.SelectionChanged += new System.EventHandler(this.dgInvRevMapping_SelectionChanged);
             // 
-            // btnClearLogs
-            // 
-            this.btnClearLogs.Location = new System.Drawing.Point(17, 1241);
-            this.btnClearLogs.Name = "btnClearLogs";
-            this.btnClearLogs.Size = new System.Drawing.Size(221, 41);
-            this.btnClearLogs.TabIndex = 5;
-            this.btnClearLogs.Text = "Clear Logs";
-            this.btnClearLogs.UseVisualStyleBackColor = true;
-            this.btnClearLogs.Click += new System.EventHandler(this.btnClearLogs_Click);
-            // 
-            // btnClearSelectedMapping
-            // 
-            this.btnClearSelectedMapping.Location = new System.Drawing.Point(1039, 833);
-            this.btnClearSelectedMapping.Name = "btnClearSelectedMapping";
-            this.btnClearSelectedMapping.Size = new System.Drawing.Size(221, 41);
-            this.btnClearSelectedMapping.TabIndex = 6;
-            this.btnClearSelectedMapping.Text = "Clear Selection";
-            this.btnClearSelectedMapping.UseVisualStyleBackColor = true;
-            this.btnClearSelectedMapping.Click += new System.EventHandler(this.btnClearSelectedMapping_Click);
-            // 
-            // btnClearSelectedParamMapping
-            // 
-            this.btnClearSelectedParamMapping.Location = new System.Drawing.Point(1089, 833);
-            this.btnClearSelectedParamMapping.Name = "btnClearSelectedParamMapping";
-            this.btnClearSelectedParamMapping.Size = new System.Drawing.Size(221, 41);
-            this.btnClearSelectedParamMapping.TabIndex = 7;
-            this.btnClearSelectedParamMapping.Text = "Clear Selection";
-            this.btnClearSelectedParamMapping.UseVisualStyleBackColor = true;
-            this.btnClearSelectedParamMapping.Click += new System.EventHandler(this.btnClearSelectedParamMapping_Click);
-            // 
             // OffsiteForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(12F, 25F);
@@ -284,6 +319,8 @@
             this.Load += new System.EventHandler(this.ElementsForm_Load);
             this.tabControl1.ResumeLayout(false);
             this.tabSOW.ResumeLayout(false);
+            this.groupBox2.ResumeLayout(false);
+            this.groupBox1.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.dgElements)).EndInit();
             this.tabMappings.ResumeLayout(false);
             this.grpBoxRevitFamilies.ResumeLayout(false);
@@ -316,5 +353,8 @@
         private System.Windows.Forms.Button btnClearLogs;
         private System.Windows.Forms.Button btnClearSelectedParamMapping;
         private System.Windows.Forms.Button btnClearSelectedMapping;
+        private System.Windows.Forms.GroupBox groupBox1;
+        private System.Windows.Forms.GroupBox groupBox2;
+        private System.Windows.Forms.ComboBox comboBoxRevitFamilies;
     }
 }

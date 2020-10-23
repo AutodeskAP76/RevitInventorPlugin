@@ -14,13 +14,13 @@ namespace RevitInventorExchange.WindowsFormUI
 {
     public partial class RevitFamiliesSelectionPopup : Form
     {
-        private List<ElementStructure> elStructureList;
+        private IList<ElementStructure> elStructureList;
         private RevitFamiliesSelectionPopupHandler revitFamiliesSelectionHandler;
         List<RevitFamiliesDataGridSourceData> elementList = null;
 
         public string SelectedRevitFamily = "";
 
-        public RevitFamiliesSelectionPopup(List<ElementStructure> elementStructureList)
+        public RevitFamiliesSelectionPopup(IList<ElementStructure> elementStructureList)
         {
             InitializeComponent();
             elStructureList = elementStructureList;

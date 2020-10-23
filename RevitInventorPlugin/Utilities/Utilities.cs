@@ -113,7 +113,7 @@ namespace RevitInventorExchange
         /// </summary>
         /// <param name="el"></param>
         /// <returns></returns>
-        public static List<string> GetFamilyTypes(List<ElementStructure> elStruct)
+        public static IList<string> GetFamilyTypes(IList<ElementStructure> elStruct)
         {
             return elStruct.SelectMany(p => p.ElementTypeSingleParameters.Where(l => l.ParameterName == "SYMBOL_FAMILY_AND_TYPE_NAMES_PARAM").Select( m => m.ParameterValue)).Distinct().ToList();
         }
@@ -122,7 +122,7 @@ namespace RevitInventorExchange
         /// Returns all elements given a specified Family type
         /// </summary>
         /// <returns></returns>
-        public static List<ElementStructure> GetElementsOnFamilyType(List<ElementStructure> elStruct, string famType)
+        public static List<ElementStructure> GetElementsOnFamilyType(IList<ElementStructure> elStruct, string famType)
         {
             var filteredElements = elStruct.Where(o => o.ElementTypeSingleParameters.Any(l => l.ParameterName == "SYMBOL_FAMILY_AND_TYPE_NAMES_PARAM" && l.ParameterValue == famType)).ToList();
             return filteredElements;

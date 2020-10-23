@@ -10,7 +10,7 @@ namespace RevitInventorExchange.WindowsFormBusinesslayer
     public class RevitFamiliesSelectionPopupHandler : BaseFormHandler
     {
         //  create the datasource for datagrid
-        public Dictionary<string, List<RevitFamiliesDataGridSourceData>> GetRevitFamiliesDataGridSource(List<ElementStructure> elementStructureList)
+        public Dictionary<string, List<RevitFamiliesDataGridSourceData>> GetRevitFamiliesDataGridSource(IList<ElementStructure> elementStructureList)
         { 
             var ret = new Dictionary<string, List<RevitFamiliesDataGridSourceData>>();
             var sourceData = new List<RevitFamiliesDataGridSourceData>();

@@ -20,7 +20,7 @@ namespace RevitInventorExchange.CoreBusinessLayer
         public bool FilterEnabled { get => filterEnabled; set => filterEnabled = value; }
 
         //  For each element type in the passed structure, get the configuration file and filter against it
-        public List<ElementStructure> FilterElements(List<ElementStructure> elStruct)
+        public IList<ElementStructure> FilterElements(IList<ElementStructure> elStruct)
         {
             var elementParams = elStruct;
 

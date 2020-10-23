@@ -200,7 +200,7 @@ namespace RevitInventorExchange.CoreBusinessLayer
         /// Returns a json structure containing Revit properties values, based on Revit - Inventor mapping
         /// </summary>
         /// <param name="elStructureList"></param>
-        internal JObject ExtractRevitPropertiesValues(List<ElementStructure> elStructureList)
+        internal JObject ExtractRevitPropertiesValues(IList<ElementStructure> elStructureList)
         {
             NLogger.LogText("Entered ExtractRevitPropertiesValues method");
 

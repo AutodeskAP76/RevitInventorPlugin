@@ -17,13 +17,13 @@ namespace RevitInventorExchange.WindowsFormUI
     {
         private RevitFamiliesParamsSelectionPopupHandler revitFamiliesParamsSelectionHandler;
         List<RevitFamiliesParamsDataGridSourceData> elementList = null;
-        private List<ElementStructure> elStructureList;
+        private IList<ElementStructure> elStructureList;
 
         private string revitFamily = "";
 
         public string SelectedRevitFamilyParam = "";
 
-        public RevitFamiliesParametersSelectionPopup(string RevitFamily, List<ElementStructure> elementStructureList)
+        public RevitFamiliesParametersSelectionPopup(string RevitFamily, IList<ElementStructure> elementStructureList)
         {
             InitializeComponent();
 

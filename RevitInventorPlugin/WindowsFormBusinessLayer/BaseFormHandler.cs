@@ -20,12 +20,17 @@ namespace RevitInventorExchange.WindowsFormBusinesslayer
             revitFilterHandler = new RevitFiltersHandler();
         }
 
-        public void FillPropertiesGrid(DataGridView dgParam, dynamic paramList)
+        public void FillPropertiesGrid(DataGridView dgParam, dynamic dataSource)
         {
-            dgParam.DataSource = paramList;
+            dgParam.DataSource = dataSource;
         }
 
-        public List<ElementStructure> FilterElements(List<ElementStructure> elStructList)
+        public void FillComboRevitFamTypes(ComboBox comboBoxRevitFamilies, dynamic dataSource)
+        {
+            comboBoxRevitFamilies.DataSource = dataSource;
+        }
+
+        public IList<ElementStructure> FilterElements(IList<ElementStructure> elStructList)
         {
             var filteredElStruct = revitFilterHandler.FilterElements(elStructList);
             return filteredElStruct;
