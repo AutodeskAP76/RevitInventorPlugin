@@ -268,5 +268,13 @@ namespace RevitInventorExchange.CoreBusinessLayer
             return paramJson;
         }
 
+        internal void ResetRevitInventorMappingInternalStructure()
+        {
+            NLogger.LogText("Enter ResetRevitInventorMappingInternalStructure");
+
+            invRevMappingStructList = new List<InventorRevitMappingStructure>();
+
+            NLogger.LogText("Exit ResetRevitInventorMappingInternalStructure");
+        }
     }
 }

@@ -22,12 +22,14 @@ namespace RevitInventorExchange.WindowsFormBusinesslayer
 
         public void FillPropertiesGrid(DataGridView dgParam, dynamic dataSource)
         {
+            dgParam.DataSource = null;
             dgParam.DataSource = dataSource;
         }
 
-        public void FillComboRevitFamTypes(ComboBox comboBoxRevitFamilies, dynamic dataSource)
+        public void FillComboRevitFamTypes(ComboBox comboBoxRevitFamilies, dynamic dataSource, string displayMember)
         {
             comboBoxRevitFamilies.DataSource = dataSource;
+            comboBoxRevitFamilies.DisplayMember = displayMember;
         }
 
         public IList<ElementStructure> FilterElements(IList<ElementStructure> elStructList)

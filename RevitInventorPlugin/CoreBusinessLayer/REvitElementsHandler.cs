@@ -30,6 +30,8 @@ namespace RevitInventorExchange.CoreBusinessLayer
         {
             NLogger.LogText("Entered ProcessElements");
 
+            elementStructureList.Clear();
+
             //  Extract information from received Revit elements
             foreach (var elem in RevitElements)
             {
@@ -62,15 +64,41 @@ namespace RevitInventorExchange.CoreBusinessLayer
             NLogger.LogText("Exit ProcessElements");
 
             return elementStructureList;
-        }
+        }       
 
-        public IList<Element> GetRevitFamiliesInActivedocument()
+        //  Retrieve Revit family types in Active document
+        public IList<Element> GetRevitFamilyTypesInActiveDocument(RevitFamily famType)
         {
-            var genModelTypeCollector = new FilteredElementCollector(doc);
-            genModelTypeCollector.OfClass(typeof(FamilySymbol));
-            genModelTypeCollector.OfCategory(BuiltInCategory.OST_GenericModel);
+            NLogger.LogText("Entered GetRevitFamiliesInActiveDocument");
 
-            var genModElements = genModelTypeCollector.ToElements();
+            IList<Element> genModElements = null;
+
+            try
+            {
+                Type RevitFamType = Type.GetType(famType.Type);
+                                
+                var genModelTypeCollector = new FilteredElementCollector(doc);
+                genModelTypeCollector.OfClass(RevitFamType);
+
+                if (!string.IsNullOrEmpty(famType.Category))
+                {
+                    BuiltInCategory RevitFamilyCategory = (BuiltInCategory)Enum.Parse(typeof(BuiltInCategory), famType.Category, true);
+                    genModelTypeCollector.OfCategory(RevitFamilyCategory);
+                }
+                genModElements = genModelTypeCollector.ToElements();
+
+            }
+            catch (Exception ex)
+            {
+                NLogger.LogError(ex);
+                NLogger.LogText("Exit GetRevitFamiliesInActiveDocument with error");
+
+                throw (ex);
+            }
+
+            NLogger.LogText($"Extracted {genModElements.Count()} Families from Revit document");
+
+            NLogger.LogText("Exit GetRevitFamiliesInActiveDocument");
 
             return genModElements;
         }
@@ -130,7 +158,33 @@ namespace RevitInventorExchange.CoreBusinessLayer
             return parVal;
         }
 
+        //  Find a list of element with given class, family type and category (optional).
+        public IList<Element> FindInstancesOfType(Type targetType, ElementId idType, Nullable<BuiltInCategory> targetCategory = null)
+        {
+            NLogger.LogText("Entered FindInstancesOfType");
 
+            // narrow down to the elements of the given type and category 
+
+            var collector = new FilteredElementCollector(doc).OfClass(targetType);
+
+            if (targetCategory.HasValue)
+            {
+                collector.OfCategory(targetCategory.Value);
+            }
+
+            // parse the collection for the given family type id using LINQ query here. 
+            var elems =
+                from element in collector
+                where element.get_Parameter(BuiltInParameter.SYMBOL_ID_PARAM).
+                      AsElementId().Equals(idType)
+                select element;
+
+            NLogger.LogText($"Found {elems.Count()} elements");
+            NLogger.LogText("Exit FindInstancesOfType");
+
+            // put the result as a list of element fo accessibility. 
+            return elems.ToList();
+        }
 
     }
 }

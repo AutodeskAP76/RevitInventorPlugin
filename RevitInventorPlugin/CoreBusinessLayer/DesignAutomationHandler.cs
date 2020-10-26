@@ -501,6 +501,7 @@ namespace RevitInventorExchange.CoreBusinessLayer
 
             NLogger.LogText("initialize internal structre for Design Automation files creation");
             var daStructure = new DesignAutomationStructure();
+            
 
             JObject res = JObject.Parse(jsonStruct);
             var items = res.SelectTokens("$.ILogicParams").Children();

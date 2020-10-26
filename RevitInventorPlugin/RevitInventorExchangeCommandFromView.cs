@@ -63,7 +63,7 @@ namespace RevitInventorExchange
                 else
                 {
                     //  Pass elements info to the opened form
-                    var elementWindow = new OffsiteForm(selectedElements, null, uiapp);
+                    var elementWindow = new OffsiteForm(selectedElements, uiapp);
                     elementWindow.Show();
                 }
 

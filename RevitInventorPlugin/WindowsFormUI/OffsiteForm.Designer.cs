@@ -28,13 +28,16 @@
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(OffsiteForm));
             this.btnProperties = new System.Windows.Forms.Button();
             this.btnCancel = new System.Windows.Forms.Button();
             this.btnExportPropVals = new System.Windows.Forms.Button();
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.tabSOW = new System.Windows.Forms.TabPage();
-            this.groupBox2 = new System.Windows.Forms.GroupBox();
+            this.groupBox3 = new System.Windows.Forms.GroupBox();
             this.comboBoxRevitFamilies = new System.Windows.Forms.ComboBox();
+            this.groupBox2 = new System.Windows.Forms.GroupBox();
+            this.comboBoxRevitFamilyTypes = new System.Windows.Forms.ComboBox();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.dgElements = new System.Windows.Forms.DataGridView();
             this.tabMappings = new System.Windows.Forms.TabPage();
@@ -51,8 +54,10 @@
             this.txtInventorTemplatesPath = new System.Windows.Forms.TextBox();
             this.dgInvRevMapping = new System.Windows.Forms.DataGridView();
             this.folderBrowserDialogInventorTemplates = new System.Windows.Forms.FolderBrowserDialog();
+            this.btnProcessElements = new System.Windows.Forms.Button();
             this.tabControl1.SuspendLayout();
             this.tabSOW.SuspendLayout();
+            this.groupBox3.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.groupBox1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dgElements)).BeginInit();
@@ -87,7 +92,7 @@
             // 
             // btnExportPropVals
             // 
-            this.btnExportPropVals.Location = new System.Drawing.Point(2107, 1388);
+            this.btnExportPropVals.Location = new System.Drawing.Point(2340, 1238);
             this.btnExportPropVals.Name = "btnExportPropVals";
             this.btnExportPropVals.Size = new System.Drawing.Size(301, 47);
             this.btnExportPropVals.TabIndex = 3;
@@ -107,6 +112,8 @@
             // 
             // tabSOW
             // 
+            this.tabSOW.Controls.Add(this.btnProcessElements);
+            this.tabSOW.Controls.Add(this.groupBox3);
             this.tabSOW.Controls.Add(this.groupBox2);
             this.tabSOW.Controls.Add(this.groupBox1);
             this.tabSOW.Controls.Add(this.btnProperties);
@@ -118,31 +125,50 @@
             this.tabSOW.Text = "Scope of work";
             this.tabSOW.UseVisualStyleBackColor = true;
             // 
-            // groupBox2
+            // groupBox3
             // 
-            this.groupBox2.Controls.Add(this.comboBoxRevitFamilies);
-            this.groupBox2.Location = new System.Drawing.Point(18, 31);
-            this.groupBox2.Name = "groupBox2";
-            this.groupBox2.Size = new System.Drawing.Size(1690, 114);
-            this.groupBox2.TabIndex = 3;
-            this.groupBox2.TabStop = false;
-            this.groupBox2.Text = "Revit Families";
+            this.groupBox3.Controls.Add(this.comboBoxRevitFamilies);
+            this.groupBox3.Location = new System.Drawing.Point(17, 18);
+            this.groupBox3.Name = "groupBox3";
+            this.groupBox3.Size = new System.Drawing.Size(923, 114);
+            this.groupBox3.TabIndex = 4;
+            this.groupBox3.TabStop = false;
+            this.groupBox3.Text = "Revit families";
             // 
             // comboBoxRevitFamilies
             // 
             this.comboBoxRevitFamilies.FormattingEnabled = true;
-            this.comboBoxRevitFamilies.Location = new System.Drawing.Point(21, 47);
+            this.comboBoxRevitFamilies.Location = new System.Drawing.Point(11, 47);
             this.comboBoxRevitFamilies.Name = "comboBoxRevitFamilies";
-            this.comboBoxRevitFamilies.Size = new System.Drawing.Size(1646, 33);
+            this.comboBoxRevitFamilies.Size = new System.Drawing.Size(900, 33);
             this.comboBoxRevitFamilies.TabIndex = 0;
             this.comboBoxRevitFamilies.SelectedIndexChanged += new System.EventHandler(this.comboBoxRevitFamilies_SelectedIndexChanged);
+            // 
+            // groupBox2
+            // 
+            this.groupBox2.Controls.Add(this.comboBoxRevitFamilyTypes);
+            this.groupBox2.Location = new System.Drawing.Point(946, 18);
+            this.groupBox2.Name = "groupBox2";
+            this.groupBox2.Size = new System.Drawing.Size(1690, 114);
+            this.groupBox2.TabIndex = 3;
+            this.groupBox2.TabStop = false;
+            this.groupBox2.Text = "Revit Family Types";
+            // 
+            // comboBoxRevitFamilyTypes
+            // 
+            this.comboBoxRevitFamilyTypes.FormattingEnabled = true;
+            this.comboBoxRevitFamilyTypes.Location = new System.Drawing.Point(21, 47);
+            this.comboBoxRevitFamilyTypes.Name = "comboBoxRevitFamilyTypes";
+            this.comboBoxRevitFamilyTypes.Size = new System.Drawing.Size(1652, 33);
+            this.comboBoxRevitFamilyTypes.TabIndex = 0;
+            this.comboBoxRevitFamilyTypes.SelectedIndexChanged += new System.EventHandler(this.comboBoxRevitFamilyTypes_SelectedIndexChanged);
             // 
             // groupBox1
             // 
             this.groupBox1.Controls.Add(this.dgElements);
-            this.groupBox1.Location = new System.Drawing.Point(18, 170);
+            this.groupBox1.Location = new System.Drawing.Point(17, 151);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(1690, 1040);
+            this.groupBox1.Size = new System.Drawing.Size(2618, 1054);
             this.groupBox1.TabIndex = 2;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Revit elements";
@@ -158,13 +184,14 @@
             this.dgElements.ReadOnly = true;
             this.dgElements.RowHeadersWidth = 102;
             this.dgElements.RowTemplate.Height = 40;
-            this.dgElements.Size = new System.Drawing.Size(1646, 971);
+            this.dgElements.Size = new System.Drawing.Size(2570, 985);
             this.dgElements.TabIndex = 0;
             this.dgElements.ColumnHeaderMouseClick += new System.Windows.Forms.DataGridViewCellMouseEventHandler(this.dgElements_ColumnHeaderMouseClick);
             // 
             // tabMappings
             // 
             this.tabMappings.Controls.Add(this.btnClearLogs);
+            this.tabMappings.Controls.Add(this.btnExportPropVals);
             this.tabMappings.Controls.Add(this.richTextBoxLogs);
             this.tabMappings.Controls.Add(this.grpBoxRevitFamilies);
             this.tabMappings.Controls.Add(this.grpBoxInventorTemplates);
@@ -304,14 +331,24 @@
             this.dgInvRevMapping.TabIndex = 0;
             this.dgInvRevMapping.SelectionChanged += new System.EventHandler(this.dgInvRevMapping_SelectionChanged);
             // 
+            // btnProcessElements
+            // 
+            this.btnProcessElements.Location = new System.Drawing.Point(2302, 1230);
+            this.btnProcessElements.Name = "btnProcessElements";
+            this.btnProcessElements.Size = new System.Drawing.Size(334, 48);
+            this.btnProcessElements.TabIndex = 5;
+            this.btnProcessElements.Text = "Process Selected elements";
+            this.btnProcessElements.UseVisualStyleBackColor = true;
+            this.btnProcessElements.Click += new System.EventHandler(this.btnProcessElements_Click);
+            // 
             // OffsiteForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(12F, 25F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(2726, 1459);
             this.Controls.Add(this.tabControl1);
-            this.Controls.Add(this.btnExportPropVals);
             this.Controls.Add(this.btnCancel);
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Margin = new System.Windows.Forms.Padding(2);
             this.Name = "OffsiteForm";
             this.Text = "Offsite Panel";
@@ -319,6 +356,7 @@
             this.Load += new System.EventHandler(this.ElementsForm_Load);
             this.tabControl1.ResumeLayout(false);
             this.tabSOW.ResumeLayout(false);
+            this.groupBox3.ResumeLayout(false);
             this.groupBox2.ResumeLayout(false);
             this.groupBox1.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.dgElements)).EndInit();
@@ -355,6 +393,9 @@
         private System.Windows.Forms.Button btnClearSelectedMapping;
         private System.Windows.Forms.GroupBox groupBox1;
         private System.Windows.Forms.GroupBox groupBox2;
+        private System.Windows.Forms.ComboBox comboBoxRevitFamilyTypes;
+        private System.Windows.Forms.GroupBox groupBox3;
         private System.Windows.Forms.ComboBox comboBoxRevitFamilies;
+        private System.Windows.Forms.Button btnProcessElements;
     }
 }

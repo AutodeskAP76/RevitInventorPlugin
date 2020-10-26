@@ -16,6 +16,7 @@ using NLog;
 using Inventor;
 using ADSK = Autodesk.Revit.DB;
 using Autodesk.Revit.UI;
+using System.Windows.Controls;
 
 namespace RevitInventorExchange.WindowsFormUI
 {
@@ -25,21 +26,28 @@ namespace RevitInventorExchange.WindowsFormUI
         SetRevitFamily
     }
 
+    public enum SelectionMode
+    {
+        FromView,
+        FromFilters
+    }
+
     public partial class OffsiteForm : Form
     {
         //  Scope of Work tab
+        private const string tabName = "tabMappings";
         private bool sortAscendingElementList = false;
         private IList<ElementStructure> elStructureList = null;
+        private IList<ElementStructure> runtimeElStructureList = null;
         private List<ElementsDataGridSourceData> elementList = null;
         private OffsitePanelHandler offsitePanelHandler = null;
-        private IList<ADSK.Element> RevitFamTypes = null;
-        private UIApplication uiapp = null;
-        private ADSK.Document doc = null;
+        private IList<ADSK.Element> RevitFamTypes = null;       
         private string rootPath = "";
         private string invTemplFolder = "";
+        public readonly SelectionMode selMode;
 
         //  Initialize the form and its elements
-        public OffsiteForm(IList<ADSK.Element> elementStructureList, IList<ADSK.Element> genModElementTypes, UIApplication uiapplication)
+        public OffsiteForm(IList<ADSK.Element> elementStructureList, UIApplication uiapplication)
         {
             NLogger.LogText("Entered Offsite Form constructor");
           
@@ -47,9 +55,6 @@ namespace RevitInventorExchange.WindowsFormUI
             ConfigUtilities.LoadConfig();
 
             InitializeComponent();
-
-            uiapp = uiapplication;
-            doc = uiapp.ActiveUIDocument.Document; ;
            
             //  Initialize Offsite Panel BL handler.
             //  Here inventor process is started / attached to
@@ -61,13 +66,21 @@ namespace RevitInventorExchange.WindowsFormUI
             {
                 var tempelStructureList = offsitePanelHandler.ProcessElements(elementStructureList);
                 elStructureList = offsitePanelHandler.FilterElements(tempelStructureList);
+                runtimeElStructureList = elStructureList;
                 groupBox2.Visible = false;
+                groupBox3.Visible = false;
+
+                selMode = SelectionMode.FromView;
             }
             else
             {
-                RevitFamTypes = genModElementTypes;
                 groupBox2.Visible = true;
+                groupBox3.Visible = true;
+
+                selMode = SelectionMode.FromFilters;
             }
+
+            NLogger.LogText($"Selection mode: {selMode}");
 
             //  Set local BIM 360 folder as root path            
             rootPath = Utilities.GetInventorTemplateFolder(); // Utilities.GetBIM360RootPath();     
@@ -76,7 +89,11 @@ namespace RevitInventorExchange.WindowsFormUI
             //  Initialize data grids & combobox
             InitializeSOWGrid(dgElements);
             InitializeMappingGrid(dgInvRevMapping);
-            InitializeParametersMappingGrid(dgParamsMapping);            
+            InitializeParametersMappingGrid(dgParamsMapping);
+
+            ((System.Windows.Forms.Control)tabControl1.TabPages[tabName]).Enabled = false;
+            //InitializeCombobox(comboBoxRevitFamilies);
+            //InitializeCombobox(comboBoxRevitFamilyTypes);
 
             NLogger.LogText("Exit Offsite Form constructor");
         }
@@ -103,6 +120,7 @@ namespace RevitInventorExchange.WindowsFormUI
         {
             NLogger.LogText("Entered ElementsForm_Load");
 
+            //  Load either Revit Elements grid or Revit Families dropdownlist, depending on how the user wants to select elements in Revit file
             if (elStructureList != null)
             {
                 // Populate the Element datagrid
@@ -112,10 +130,21 @@ namespace RevitInventorExchange.WindowsFormUI
 
                 offsitePanelHandler.FillPropertiesGrid(dgElements, elementList);
             }
-            if (RevitFamTypes != null)
+            else
             {
-                var dataSource = RevitFamTypes.Select(p => p.Name).ToList();
-                offsitePanelHandler.FillComboRevitFamTypes(comboBoxRevitFamilies, dataSource);
+                var dataSource = offsitePanelHandler.GetRevitFamiliesList();
+
+                this.comboBoxRevitFamilies.SelectedIndexChanged -= new EventHandler(comboBoxRevitFamilies_SelectedIndexChanged);
+
+                offsitePanelHandler.FillComboRevitFamTypes(comboBoxRevitFamilies, dataSource, "Name");
+
+                this.comboBoxRevitFamilies.SelectedIndexChanged += new EventHandler(comboBoxRevitFamilies_SelectedIndexChanged);
+
+                comboBoxRevitFamilies.SelectedIndex = -1;
+
+                //  populate filtering drowdown lists
+                //var dataSource = offsitePanelHandler.GetListFamilyTypeSource(RevitFamTypes);  
+                //offsitePanelHandler.FillComboRevitFamTypes(comboBoxRevitFamilyTypes, dataSource, "FamilyTypeName");
             }
             
             NLogger.LogText("Exit ElementsForm_Load");
@@ -123,8 +152,10 @@ namespace RevitInventorExchange.WindowsFormUI
 
         #region SOW
 
-       
-
+        private void InitializeCombobox(System.Windows.Forms.ComboBox cmbBox)
+        {
+            cmbBox.SelectedIndex = -1;
+        }
 
         private void InitializeSOWGrid(DataGridView dataGrid)
         {
@@ -196,10 +227,9 @@ namespace RevitInventorExchange.WindowsFormUI
             var daEvHandler = offsitePanelHandler.DaEventHandler;
             daEvHandler.DACurrentStepHandler += DaEvHandler_DACurrentStepHandler;
 
-            var jsonParams = offsitePanelHandler.GetRevitPropertiesValues(elStructureList);
+            var jsonParams = offsitePanelHandler.GetRevitPropertiesValues(runtimeElStructureList);
 
-            //  Call Design Automation Forge APIs via HTTP calls to trigger Inventor Cloud execution engine
-            
+            //  Call Design Automation Forge APIs via HTTP calls to trigger Inventor Cloud execution engine            
             offsitePanelHandler.RunDesignAutomation(jsonParams, invTemplFolder);
 
             daEvHandler.DACurrentStepHandler -= DaEvHandler_DACurrentStepHandler;
@@ -324,8 +354,8 @@ namespace RevitInventorExchange.WindowsFormUI
                     break;
                 case RevitFamilyHandling.SetRevitFamily:
 
-                    //  Open Revit families popup
-                    var revitFamiliesSelectionPopup = new RevitFamiliesSelectionPopup(elStructureList);
+                    //  Open Revit families popup                    
+                    var revitFamiliesSelectionPopup = new RevitFamiliesSelectionPopup(runtimeElStructureList);
                     var result = revitFamiliesSelectionPopup.ShowDialog();
 
                     //  Update Mapping grids with data coming from popup
@@ -520,8 +550,8 @@ namespace RevitInventorExchange.WindowsFormUI
                     revitFamilyParam = "";
                     break;
                 case RevitFamilyHandling.SetRevitFamily:
-
-                    var revitFamiliesParamsSelectionPopup = new RevitFamiliesParametersSelectionPopup(revitFamily, elStructureList);
+                    
+                    var revitFamiliesParamsSelectionPopup = new RevitFamiliesParametersSelectionPopup(revitFamily, runtimeElStructureList);
                     var result = revitFamiliesParamsSelectionPopup.ShowDialog();
 
                     //  Update Mapping grids with data coming from popup
@@ -552,7 +582,7 @@ namespace RevitInventorExchange.WindowsFormUI
             richTextBoxLogs.Clear();
         }
 
-        //  Clear Inventor - Revit mapping
+        //  Clear Inventor - Revit mapping for a selected row
         private void btnClearSelectedMapping_Click(object sender, EventArgs e)
         {
             NLogger.LogText("Entered btnClearSelectedMapping_Click");
@@ -562,7 +592,7 @@ namespace RevitInventorExchange.WindowsFormUI
             NLogger.LogText("Exit btnClearSelectedMapping_Click");
         }
 
-        //  Clear Inventor - Revit parameters mapping
+        //  Clear Inventor - Revit parameters mapping for a selected row
         private void btnClearSelectedParamMapping_Click(object sender, EventArgs e)
         {
             NLogger.LogText("Enter btnClearSelectedParamMapping_Click");
@@ -572,43 +602,118 @@ namespace RevitInventorExchange.WindowsFormUI
             NLogger.LogText("Exit btnClearSelectedParamMapping_Click");
         }
 
-
-
-
-
-        //  find a list of element with given class, family type and 
-        //  category (optional).
-        public IList<ADSK.Element> FindInstancesOfType(Type targetType, ADSK.ElementId idType, Nullable<ADSK.BuiltInCategory> targetCategory = null)
-        {
-            // narrow down to the elements of the given type and category 
-
-            var collector = new ADSK.FilteredElementCollector(doc).OfClass(targetType);
-
-            if (targetCategory.HasValue)
-            {
-                collector.OfCategory(targetCategory.Value);
-            }
-
-            // parse the collection for the given family type id. 
-            // using LINQ query here. 
-
-            var elems =
-                from element in collector
-                where element.get_Parameter(ADSK.BuiltInParameter.SYMBOL_ID_PARAM).
-                      AsElementId().Equals(idType)
-                select element;
-
-            // put the result as a list of element fo accessibility. 
-
-            return elems.ToList();
-        }
-
         private void comboBoxRevitFamilies_SelectedIndexChanged(object sender, EventArgs e)
         {
+            NLogger.LogText("Enter comboBoxRevitFamilies_SelectedIndexChanged");
 
-            //var gg = genModElementTypes[43];
+            RevitFamily selectedFamily = (RevitFamily)comboBoxRevitFamilies.SelectedItem;
 
-            //var selectedElements = FindInstancesOfType(typeof(ADSK.FamilyInstance), gg.Id, ADSK.BuiltInCategory.OST_GenericModel);
+            if (selectedFamily != null)
+            {
+                //  Reset other elements depending from the selection
+                offsitePanelHandler.FillPropertiesGrid(dgElements, null);
+                offsitePanelHandler.FillPropertiesGrid(dgParamsMapping, null);
+                offsitePanelHandler.FillPropertiesGrid(dgInvRevMapping, null);
+                txtInventorTemplatesPath.Text = "";
+                offsitePanelHandler.ResetRevitInventorMappingInternalStructure();
+                ((System.Windows.Forms.Control)tabControl1.TabPages[tabName]).Enabled = false;
+
+                //  Extract Revit family from revit document, based on selected xml configured element
+                NLogger.LogText($"Revit family selected: {selectedFamily.Name}");
+
+                RevitFamTypes = offsitePanelHandler.GetRevitFamilyTypesInActiveDocument(selectedFamily);
+
+                NLogger.LogText($"Retrieved: {RevitFamTypes.Count()} family types");
+
+                //  populate filtering drowdown lists
+                var dataSource = offsitePanelHandler.GetListFamilyTypeSource(RevitFamTypes, selectedFamily);
+
+                this.comboBoxRevitFamilyTypes.SelectedIndexChanged -= new EventHandler(comboBoxRevitFamilyTypes_SelectedIndexChanged);
+                offsitePanelHandler.FillComboRevitFamTypes(comboBoxRevitFamilyTypes, dataSource, "FamilyTypeName");                
+                this.comboBoxRevitFamilyTypes.SelectedIndexChanged += new EventHandler(comboBoxRevitFamilyTypes_SelectedIndexChanged);
+            }
+
+            NLogger.LogText("Exit comboBoxRevitFamilies_SelectedIndexChanged");
+        }
+
+        private void comboBoxRevitFamilyTypes_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            NLogger.LogText("Enter comboBoxRevitFamilies_SelectedIndexChanged");
+
+            ComboBoxRevitFamilyTypesSourceData selectedFamilyType = (ComboBoxRevitFamilyTypesSourceData)comboBoxRevitFamilyTypes.SelectedItem;
+
+            if (selectedFamilyType != null)
+            {
+                offsitePanelHandler.FillPropertiesGrid(dgElements, null);
+                offsitePanelHandler.FillPropertiesGrid(dgParamsMapping, null);
+                offsitePanelHandler.FillPropertiesGrid(dgInvRevMapping, null);
+                txtInventorTemplatesPath.Text = "";
+                offsitePanelHandler.ResetRevitInventorMappingInternalStructure();
+                ((System.Windows.Forms.Control)tabControl1.TabPages[tabName]).Enabled = false;
+
+                //  Extract Revit family from revit document, based on selected xml configured element
+                NLogger.LogText($"Revit family type selected: {selectedFamilyType.FamilyTypeName}");
+
+                Type famType = Type.GetType(selectedFamilyType.FamilyTypeInstance); //Type.GetType("Autodesk.Revit.DB.FamilyInstance,RevitAPI");
+
+                var filteredElements = offsitePanelHandler.FindInstancesOfType(famType, selectedFamilyType.IdType, selectedFamilyType.TargetCategory);
+
+                var tempelStructureList = offsitePanelHandler.ProcessElements(filteredElements);
+                elStructureList = offsitePanelHandler.FilterElements(tempelStructureList);
+
+                NLogger.LogText($"Retrieved: {elStructureList.Count()} Revit elements");
+
+                // Populate the Element datagrid
+                var dataSources = offsitePanelHandler.GetElementsDataGridSource(elStructureList);
+
+                elementList = dataSources["Elements"];
+
+                offsitePanelHandler.FillPropertiesGrid(dgElements, elementList);
+            }
+
+            NLogger.LogText("Exit comboBoxRevitFamilies_SelectedIndexChanged");
+        }
+
+        private void btnProcessElements_Click(object sender, EventArgs e)
+        {
+            NLogger.LogText("Enter btnProcessElements_Click");
+
+            var rowsCount = dgElements.Rows.GetRowCount(DataGridViewElementStates.Selected);
+            
+            //  depending on Selection mode and if there are Revit selected elements in the grid, enable / disable tab
+            ((System.Windows.Forms.Control)tabControl1.TabPages[tabName]).Enabled = false;
+
+            if (selMode == SelectionMode.FromFilters)
+            {               
+                if (rowsCount > 0)
+                {
+                    //  Retrieve from internal structure list only selected elements
+                    ((System.Windows.Forms.Control)tabControl1.TabPages[tabName]).Enabled = true;
+                    tabControl1.SelectedTab = tabControl1.TabPages[tabName];
+
+                    IList<string> selectedElementsIds = new List<string>();
+                  
+                    foreach (DataGridViewRow row in dgElements.SelectedRows)
+                    {
+                        selectedElementsIds.Add(row.Cells[0].Value.ToString());
+                    }
+
+                    runtimeElStructureList = elStructureList.Where(l => selectedElementsIds.Contains(l.Element.Id.ToString())).ToList();
+                }
+                else
+                {
+                    MessageBoxButtons buttons = MessageBoxButtons.OK;
+                    MessageBox.Show("At least one Revit Element must be selected", "", buttons);
+                }
+            }
+            
+            if (selMode == SelectionMode.FromView)
+            {
+                ((System.Windows.Forms.Control)tabControl1.TabPages[tabName]).Enabled = true;
+                tabControl1.SelectedTab = tabControl1.TabPages[tabName];
+            }
+
+            NLogger.LogText("Exit btnProcessElements_Click");
         }
     }
 }

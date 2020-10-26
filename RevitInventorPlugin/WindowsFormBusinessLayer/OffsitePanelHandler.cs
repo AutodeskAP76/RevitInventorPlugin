@@ -24,6 +24,7 @@ namespace RevitInventorExchange.WindowsFormBusinesslayer
         private RevitElementsHandler revElementHandler = null;
         private DAEventHandlerUtilities daEventHandler;
         private DesignAutomationHandler daHandler;
+        private RevitFamiliesStructure revitFamilyStructure = null;
 
         public DAEventHandlerUtilities DaEventHandler { get => daEventHandler; set => daEventHandler = value; }
 
@@ -36,10 +37,16 @@ namespace RevitInventorExchange.WindowsFormBusinesslayer
 
             //  Start an Inventor process or attach to an already existing one
             invRevMappingHandler = new InventorRevitMappingHandler();
+
+            //  Initialize a set of internal classes needed to handle Revit elements
             revFilterHandler = new RevitFiltersHandler();
             revElementHandler = new RevitElementsHandler(uiapp);
-
+            revitFamilyStructure = new RevitFamiliesStructure();
+            
+            //  Initialize hte class handling the interaction with Forge
             daHandler = new DesignAutomationHandler();
+
+            //  Get the event handler used to log on the UI
             daEventHandler = daHandler.DaEventHandler;
 
             NLogger.LogText("Exit OffsitePanelHandler constructor");
@@ -67,6 +74,12 @@ namespace RevitInventorExchange.WindowsFormBusinesslayer
 
             return ret;
         }
+
+        internal IList<Element> GetRevitFamilyTypesInActiveDocument(RevitFamily selectedFamily)
+        {
+            var ret = revElementHandler.GetRevitFamilyTypesInActiveDocument(selectedFamily);
+            return ret;
+        }       
 
         /// <summary>
         /// Create json file with exported properties values
@@ -107,6 +120,45 @@ namespace RevitInventorExchange.WindowsFormBusinesslayer
             ret.Add("InvRevMapping", sourceData);
 
             NLogger.LogText("Exit GetInvRevitMappingDataGridSource method");
+
+            return ret;
+        }
+
+        internal IList<RevitFamily> GetRevitFamiliesList()
+        {
+            NLogger.LogText("Entered GetRevitFamiliesList");
+
+            //  Load Revit families from configuration file "RevitFamiliesConfig.xml"
+            revitFamilyStructure.LoadStructure();
+
+            NLogger.LogText("Entered GetRevitFamiliesList");
+            return revitFamilyStructure.RevitFamilies;            
+        }
+
+        //  Build the datasource for Revit family types drop down list
+        internal IList<ComboBoxRevitFamilyTypesSourceData> GetListFamilyTypeSource(IList<Element> RevitFamTypes, RevitFamily selectedFamily)
+        {
+            NLogger.LogText("Entered GetListFamilyTypeSource");
+
+            IList<ComboBoxRevitFamilyTypesSourceData> ret = new List<ComboBoxRevitFamilyTypesSourceData>();
+
+            foreach(var el in RevitFamTypes.Distinct())
+            {
+                string name = "";
+
+                Parameter param = el.get_Parameter(BuiltInParameter.SYMBOL_FAMILY_AND_TYPE_NAMES_PARAM);
+                if (param != null)
+                {
+                    name = param.AsString();
+                }
+
+                //  See https://docs.microsoft.com/en-us/dotnet/api/system.enum.parse?view=netcore-3.1
+                BuiltInCategory targetCategory = (BuiltInCategory)Enum.Parse(typeof(BuiltInCategory), el.Category.Id.ToString(), true);
+
+                ret.Add(new ComboBoxRevitFamilyTypesSourceData { FamilyTypeName = name, IdType = el.Id, TargetCategory = targetCategory, TargetType = el.GetType(), FamilyTypeInstance = selectedFamily.Instance } );
+            }
+
+            NLogger.LogText("Exit GetListFamilyTypeSource");
 
             return ret;
         }
@@ -153,6 +205,7 @@ namespace RevitInventorExchange.WindowsFormBusinesslayer
             return ret;
         }
 
+
         internal Dictionary<string, List<InvRevParamMappingDataGridSourceData>> RefreshInvRevitParamsMappingDataGridSource(string revitFamily, string inventorTemplate, string selInvParam, string selRevFamilyParam)
         {
             NLogger.LogText("Entered RefreshInvRevitParamsMappingDataGridSource");
@@ -174,6 +227,7 @@ namespace RevitInventorExchange.WindowsFormBusinesslayer
             return ret;
         }
 
+        //  Extract Revit properties values from selected elements
         internal string GetRevitPropertiesValues(IList<ElementStructure> elStructureList)
         {
             NLogger.LogText("Entered GetRevitPropertiesValues");
@@ -220,15 +274,22 @@ namespace RevitInventorExchange.WindowsFormBusinesslayer
             return ret;
         }
 
-        public IList<ElementStructure> FilterElements(IList<ElementStructure> RevitElements)
+        //  this method is a bridge for corresponding method which extracts Revit elements from active document, based on Revit family types seleced by the user
+        public IList<Element> FindInstancesOfType(Type targetType, ElementId idType, Nullable<BuiltInCategory> targetCategory = null)
         {
-            NLogger.LogText("Entered FilterElements");
+            NLogger.LogText("Entered FindInstancesOfType");
 
-            var ret = revFilterHandler.FilterElements(RevitElements);
+            var ret = revElementHandler.FindInstancesOfType(targetType, idType, targetCategory);
 
-            NLogger.LogText("Exit FilterElements");
+            NLogger.LogText("Exit FindInstancesOfType");
 
-            return ret;
+            // put the result as a list of element fo accessibility. 
+            return ret.ToList();
+        }
+
+        internal void ResetRevitInventorMappingInternalStructure()
+        {
+            invRevMappingHandler.ResetRevitInventorMappingInternalStructure();
         }
     }
 }

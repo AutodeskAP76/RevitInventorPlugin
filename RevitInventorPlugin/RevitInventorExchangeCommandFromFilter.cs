@@ -33,10 +33,8 @@ namespace RevitInventorExchange
             IList<Element> selectedElements = new List<Element>();
 
             try
-            {
-                var genModElementTypes = revElementHandler.GetRevitFamiliesInActivedocument();
-
-                var elementWindow = new OffsiteForm(null, genModElementTypes, uiapp);
+            {                
+                var elementWindow = new OffsiteForm(null, uiapp);
                 elementWindow.Show();
 
                 NLogger.LogText("Exit Execute method with Success");
