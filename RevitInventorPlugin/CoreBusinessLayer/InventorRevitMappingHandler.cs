@@ -237,6 +237,7 @@ namespace RevitInventorExchange.CoreBusinessLayer
                 {                    
                     dynamic parameterInfo = new JObject();
                     parameterInfo.elementName = "";
+                    parameterInfo.elementId = elStructFamType.Element.Id.ToString();
                     parameterInfo.paramsValues = new JObject();
 
                     foreach (var paramMap in map.ParametersMapping)

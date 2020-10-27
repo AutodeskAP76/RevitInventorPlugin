@@ -177,8 +177,8 @@
   <ItemGroup>
     <Content Include="Configuration\Config.xml" />
     <Content Include="Configuration\RevitFamiliesConfig.xml" />
-    <None Include="Resources\Offsite_DH.png" />
-    <None Include="Resources\Offsite_DH.bmp" />
+    <Resource Include="Resources\Offsite_DH_Filter.png" />
+    <Resource Include="Resources\Offsite_DH.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

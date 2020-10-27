@@ -347,7 +347,7 @@ namespace RevitInventorExchange.CoreBusinessLayer
 
             if (status == "pending" || status == "inprogress")
             {
-                await Task.Delay(TimeSpan.FromSeconds(2));
+                await Task.Delay(TimeSpan.FromSeconds(Convert.ToInt32(ConfigUtilities.GetWorkItemCreationPollingTime())));
                 ret = await CheckWorkItemStatus(workItemId);
             }
 
@@ -359,7 +359,7 @@ namespace RevitInventorExchange.CoreBusinessLayer
         {
             NLogger.LogText("Entered CreateWorkItemPayload1");
 
-            var daStructureRow = daStructure.FilesStructure.First(p => p.InputFilename == inFileName);
+            var daStructureRow = daStructure.FilesStructure.First(p => p.InputFilename == inFileName && p.OutputFileStructurelist.Any(k => k.OutFileName == outFileName));
             string inputSignedUrl = daStructureRow.InputLink;
             //string outputFileName = daStructureRow.OutputFileStructurelist.First(l => l.OutFileName == outFileName).OutFileName;
             string outFileStorageObj = daStructureRow.OutputFileStructurelist.First(l => l.OutFileName == outFileName).OutFileStorageobject;
@@ -367,9 +367,7 @@ namespace RevitInventorExchange.CoreBusinessLayer
             string jsonParams = daStructureRow.ParamValues; // dataFromJson["paramsValues"];
             string jsonParam1 = jsonParams.Replace("\r\n", "");
 
-
-            var outputSignedUrlExtension = System.IO.Path.GetExtension(outputSignedUrl);
-           
+            var outputSignedUrlExtension = System.IO.Path.GetExtension(outputSignedUrl);           
 
             var itemParamOutput = "";
             var DAActivity = "";
@@ -498,10 +496,9 @@ namespace RevitInventorExchange.CoreBusinessLayer
             NLogger.LogText("Entered GetDataFromInputJson1");
 
             //  Initialize internal structure keepin Forge relevant informations for output files creation
-
             NLogger.LogText("initialize internal structre for Design Automation files creation");
             var daStructure = new DesignAutomationStructure();
-            
+            daStructure.FilesStructure = new List<DesignAutomationFileStructure>();
 
             JObject res = JObject.Parse(jsonStruct);
             var items = res.SelectTokens("$.ILogicParams").Children();
@@ -514,10 +511,10 @@ namespace RevitInventorExchange.CoreBusinessLayer
                 foreach (var paramInfo in parametersInfo.Children())
                 {
                     var paramValues = paramInfo.SelectToken("$.paramsValues").ToString();
-
+                    var elementId = paramInfo.SelectToken("$.elementId").ToString();
                     string inputLink = GetInputLink(inventorFileName);
                     var outputFileNameParts = inventorFileName.Split(new char[] { '.' });
-                    var outputFileName = outputFileNameParts[0] + "_Out_001." + outputFileNameParts[1];
+                    var outputFileName = outputFileNameParts[0] + $"_Out_{elementId}." + outputFileNameParts[1];
 
                     //  Get path from Config file where Inventor Templates are stored
                     var relativePath = inventorTemplatesFolder;
@@ -532,14 +529,14 @@ namespace RevitInventorExchange.CoreBusinessLayer
                     NLogger.LogText($"Output folder: {outputFileFolderId}");
 
 
-                    //  TODO: Here only the last elemet is processed. See how to process all elements in parametersInfo
-                    daStructure.FilesStructure = new List<DesignAutomationFileStructure>() { new DesignAutomationFileStructure
+                    //daStructure.FilesStructure = new List<DesignAutomationFileStructure>() { new DesignAutomationFileStructure
+                    daStructure.FilesStructure.Add(new DesignAutomationFileStructure
                     {
                         InputFilename = inventorFileName,
                         ParamValues = paramValues,
                         InputLink = inputLink,
                         OutputFileStructurelist = new List<DesignAutomationOutFileStructure>(){ new DesignAutomationOutFileStructure {  OutFileName = outputFileName, OutFileFolder = outputFileFolderId } }
-                    }};
+                    });
                 }
             }
 
@@ -680,6 +677,8 @@ namespace RevitInventorExchange.CoreBusinessLayer
                     string inputFile = item.InputFilename;
                     string outputFile = el.OutFileName;
 
+                    NLogger.LogText($"Started Design automation Flow for input file: {inputFile} with corresponding output file {outputFile}");
+
                     //  Create Storage Object, Submit workItem and Create File version
                     el.OutFileStorageobject = CreateStorageObject(projId, inputFile, outputFile);                    
                     SubmitWokItem(inputFile, outputFile);
@@ -696,7 +695,7 @@ namespace RevitInventorExchange.CoreBusinessLayer
         {
             NLogger.LogText("Entered CreateStorageObjectPayload1");
 
-            var daStructureRow = daStructure.FilesStructure.First(p => p.InputFilename == inFileName);
+            var daStructureRow = daStructure.FilesStructure.First(p => p.InputFilename == inFileName && p.OutputFileStructurelist.Any(k => k.OutFileName == outFileName));
             string inputFileName = daStructureRow.InputFilename;
             string outputFileName = daStructureRow.OutputFileStructurelist.First(l => l.OutFileName == outFileName).OutFileName;
             string outputFileFolderId = daStructureRow.OutputFileStructurelist.First(l => l.OutFileName == outFileName).OutFileFolder;
@@ -742,7 +741,8 @@ namespace RevitInventorExchange.CoreBusinessLayer
 
             if (resCreateFileVer.IsSuccessStatusCode())
             {
-
+                daEventHandler.TriggerDACurrentStepHandler("CreateFileVersion processing completed sucessfully");
+                NLogger.LogText("Exit CreateFileVersion sucessfully");
             }
             else
             {
@@ -754,7 +754,7 @@ namespace RevitInventorExchange.CoreBusinessLayer
         {
             NLogger.LogText("Entered CreateFileVersionPayload");
 
-            var daStructureRow = daStructure.FilesStructure.First(p => p.InputFilename == inFileName);
+            var daStructureRow = daStructure.FilesStructure.First(p => p.InputFilename == inFileName && p.OutputFileStructurelist.Any(k => k.OutFileName == outFileName));
 
             string inputFileName = daStructureRow.InputFilename;
             string outputFileName = daStructureRow.OutputFileStructurelist.First(l => l.OutFileName == outFileName).OutFileName;

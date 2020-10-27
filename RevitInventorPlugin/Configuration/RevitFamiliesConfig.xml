@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
-<!--  This file contains the list of Revit families which are used to filter Revit element from the Revit Inventor Plugin-->
+<!--  This file contains the list of Revit families which are used to filter Revit element from the Revit Inventor Plugin -->
 <Configuration>
   <RevitFamilies>
     <item id="GenericModels" name="Generic Models" type="Autodesk.Revit.DB.FamilySymbol,RevitAPI" instance="Autodesk.Revit.DB.FamilyInstance,RevitAPI" category="OST_GenericModel" />

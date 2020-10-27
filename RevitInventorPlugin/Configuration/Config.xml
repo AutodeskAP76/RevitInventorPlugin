@@ -11,6 +11,8 @@
   <key name="Forge">
     <key name="ClientID" value="txSv5RooCcXxTpkMM2AvwMzQR13iHRdW"/>
     <key name="ClientSecret" value="57EQiy8kSi63HeLV"/>
+    <key name="WorkItemCreationPollingTime" value="2"/>
+    <!--  PLEASE DO NOT MODIFY BELOW VALUES -->
     <key name="DABaseURL" value="https://developer.api.autodesk.com/da/us-east/v3/"/>
     <key name="DABaseLinkURL" value="https://developer.api.autodesk.com/oss/v2/" />
     <key name="DMBaseProjectURL" value="https://developer.api.autodesk.com/project/v1/"/>

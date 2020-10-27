@@ -73,6 +73,11 @@ namespace RevitInventorExchange
             return doc.SelectSingleNode("/Configuration/key[@name='Forge']/key[@name='ClientSecret']/@value").Value;
         }
 
+        public static string GetWorkItemCreationPollingTime()
+        {
+            return doc.SelectSingleNode("/Configuration/key[@name='Forge']/key[@name='WorkItemCreationPollingTime']/@value").Value;
+        }
+
         public static string GetDABaseURL()
         {
             return doc.SelectSingleNode("/Configuration/key[@name='Forge']/key[@name='DABaseURL']/@value").Value;

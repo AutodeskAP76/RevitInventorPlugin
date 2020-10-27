@@ -91,6 +91,12 @@ namespace RevitInventorExchange.WindowsFormUI
             InitializeMappingGrid(dgInvRevMapping);
             InitializeParametersMappingGrid(dgParamsMapping);
 
+            if (selMode == SelectionMode.FromView)
+            {
+                btnSelectAllElements.Visible = false;
+                btnUnselectAll.Visible = false;
+            }
+
             ((System.Windows.Forms.Control)tabControl1.TabPages[tabName]).Enabled = false;
             //InitializeCombobox(comboBoxRevitFamilies);
             //InitializeCombobox(comboBoxRevitFamilyTypes);
@@ -714,6 +720,16 @@ namespace RevitInventorExchange.WindowsFormUI
             }
 
             NLogger.LogText("Exit btnProcessElements_Click");
+        }
+
+        private void btnSelectAllElements_Click(object sender, EventArgs e)
+        {
+            dgElements.SelectAll();
+        }
+
+        private void btnUnselectAll_Click(object sender, EventArgs e)
+        {
+            dgElements.ClearSelection();
         }
     }
 }

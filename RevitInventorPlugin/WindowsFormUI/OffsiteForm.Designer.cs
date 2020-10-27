@@ -34,6 +34,8 @@
             this.btnExportPropVals = new System.Windows.Forms.Button();
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.tabSOW = new System.Windows.Forms.TabPage();
+            this.btnSelectAllElements = new System.Windows.Forms.Button();
+            this.btnProcessElements = new System.Windows.Forms.Button();
             this.groupBox3 = new System.Windows.Forms.GroupBox();
             this.comboBoxRevitFamilies = new System.Windows.Forms.ComboBox();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
@@ -54,7 +56,7 @@
             this.txtInventorTemplatesPath = new System.Windows.Forms.TextBox();
             this.dgInvRevMapping = new System.Windows.Forms.DataGridView();
             this.folderBrowserDialogInventorTemplates = new System.Windows.Forms.FolderBrowserDialog();
-            this.btnProcessElements = new System.Windows.Forms.Button();
+            this.btnUnselectAll = new System.Windows.Forms.Button();
             this.tabControl1.SuspendLayout();
             this.tabSOW.SuspendLayout();
             this.groupBox3.SuspendLayout();
@@ -112,6 +114,8 @@
             // 
             // tabSOW
             // 
+            this.tabSOW.Controls.Add(this.btnUnselectAll);
+            this.tabSOW.Controls.Add(this.btnSelectAllElements);
             this.tabSOW.Controls.Add(this.btnProcessElements);
             this.tabSOW.Controls.Add(this.groupBox3);
             this.tabSOW.Controls.Add(this.groupBox2);
@@ -124,6 +128,26 @@
             this.tabSOW.TabIndex = 0;
             this.tabSOW.Text = "Scope of work";
             this.tabSOW.UseVisualStyleBackColor = true;
+            // 
+            // btnSelectAllElements
+            // 
+            this.btnSelectAllElements.Location = new System.Drawing.Point(1877, 1230);
+            this.btnSelectAllElements.Name = "btnSelectAllElements";
+            this.btnSelectAllElements.Size = new System.Drawing.Size(185, 48);
+            this.btnSelectAllElements.TabIndex = 6;
+            this.btnSelectAllElements.Text = "Select All";
+            this.btnSelectAllElements.UseVisualStyleBackColor = true;
+            this.btnSelectAllElements.Click += new System.EventHandler(this.btnSelectAllElements_Click);
+            // 
+            // btnProcessElements
+            // 
+            this.btnProcessElements.Location = new System.Drawing.Point(2302, 1230);
+            this.btnProcessElements.Name = "btnProcessElements";
+            this.btnProcessElements.Size = new System.Drawing.Size(334, 48);
+            this.btnProcessElements.TabIndex = 5;
+            this.btnProcessElements.Text = "Process Selected elements";
+            this.btnProcessElements.UseVisualStyleBackColor = true;
+            this.btnProcessElements.Click += new System.EventHandler(this.btnProcessElements_Click);
             // 
             // groupBox3
             // 
@@ -331,15 +355,15 @@
             this.dgInvRevMapping.TabIndex = 0;
             this.dgInvRevMapping.SelectionChanged += new System.EventHandler(this.dgInvRevMapping_SelectionChanged);
             // 
-            // btnProcessElements
+            // btnUnselectAll
             // 
-            this.btnProcessElements.Location = new System.Drawing.Point(2302, 1230);
-            this.btnProcessElements.Name = "btnProcessElements";
-            this.btnProcessElements.Size = new System.Drawing.Size(334, 48);
-            this.btnProcessElements.TabIndex = 5;
-            this.btnProcessElements.Text = "Process Selected elements";
-            this.btnProcessElements.UseVisualStyleBackColor = true;
-            this.btnProcessElements.Click += new System.EventHandler(this.btnProcessElements_Click);
+            this.btnUnselectAll.Location = new System.Drawing.Point(2091, 1230);
+            this.btnUnselectAll.Name = "btnUnselectAll";
+            this.btnUnselectAll.Size = new System.Drawing.Size(185, 48);
+            this.btnUnselectAll.TabIndex = 7;
+            this.btnUnselectAll.Text = "Unselect All";
+            this.btnUnselectAll.UseVisualStyleBackColor = true;
+            this.btnUnselectAll.Click += new System.EventHandler(this.btnUnselectAll_Click);
             // 
             // OffsiteForm
             // 
@@ -397,5 +421,7 @@
         private System.Windows.Forms.GroupBox groupBox3;
         private System.Windows.Forms.ComboBox comboBoxRevitFamilies;
         private System.Windows.Forms.Button btnProcessElements;
+        private System.Windows.Forms.Button btnSelectAllElements;
+        private System.Windows.Forms.Button btnUnselectAll;
     }
 }
