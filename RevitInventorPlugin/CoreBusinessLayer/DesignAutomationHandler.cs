@@ -58,6 +58,8 @@ namespace RevitInventorExchange.CoreBusinessLayer
 
             try
             {
+                CheckConfigurationConsistency();
+
                 //  build the BIM360 folders structure
                 var hubId = BuildHubStructure();
                 var projId = BuildProjectStructure(hubId);
@@ -81,6 +83,42 @@ namespace RevitInventorExchange.CoreBusinessLayer
             }
 
             NLogger.LogText("Exit RunDesignAutomationForgeWorkflow");
+        }
+
+        private void CheckConfigurationConsistency()
+        {
+            NLogger.LogText("Entered CheckConfigurationConsistency");
+
+            var clientId = ConfigUtilities.GetClientID();
+            var clientSecret = ConfigUtilities.GetClientSecret();
+            var HUB = ConfigUtilities.GetHub();
+            var project = ConfigUtilities.GetProject();
+            var InventorTemplateFolder = ConfigUtilities.GetInventorTemplateFolder();
+
+            if (string.IsNullOrEmpty(clientId))
+            {
+                throw new Exception("'ClientId' key must be configured");
+            }
+
+            if (string.IsNullOrEmpty(clientSecret))
+            {
+                throw new Exception("'ClientSecret' key must be configured");
+            }
+
+            if (string.IsNullOrEmpty(HUB))
+            {
+                throw new Exception("'HUB' key must be configured");
+            }
+            if (string.IsNullOrEmpty(project))
+            {
+                throw new Exception("'project' key must be configured");
+            }
+            if (string.IsNullOrEmpty(InventorTemplateFolder))
+            {
+                throw new Exception("'InventorTemplateFolder' key must be configured");
+            }
+
+            NLogger.LogText("Exit CheckConfigurationConsistency");
         }
 
         private string BuildHubStructure()

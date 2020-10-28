@@ -6,7 +6,7 @@
   <key name="BIM360">
     <key name="HUB" value="ATDSK DEV" />
     <key name="Project" value="Sample Project"/>
-    <key name="InventorTemplateFolder" value="Project Files\Libraries_DH_Assembly_B1012"/>
+    <key name="InventorTemplateFolder" value="Project Files\Libraries_DH_Assembly_wall"/>
   </key>
   <key name="Forge">
     <key name="ClientID" value="txSv5RooCcXxTpkMM2AvwMzQR13iHRdW"/>

@@ -229,10 +229,19 @@ namespace RevitInventorExchange.WindowsFormUI
         private void btnExportPropVals_Click(object sender, EventArgs e)
         {
             NLogger.LogText("Entered btnExportPropVals_Click");
+            
+            //  Check if at least one parameters mapping has been done
+            var checkConsistency = offsitePanelHandler.CheckMappingConsistency();
 
+            if (!checkConsistency)
+            {
+                MessageBox.Show("There are some missing mappings");
+                return;
+            }
+
+            //  Handle event and build json from Revit elements + Revit - Inventor mapping
             var daEvHandler = offsitePanelHandler.DaEventHandler;
             daEvHandler.DACurrentStepHandler += DaEvHandler_DACurrentStepHandler;
-
             var jsonParams = offsitePanelHandler.GetRevitPropertiesValues(runtimeElStructureList);
 
             //  Call Design Automation Forge APIs via HTTP calls to trigger Inventor Cloud execution engine            

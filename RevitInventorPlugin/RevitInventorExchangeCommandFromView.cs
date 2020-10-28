@@ -17,7 +17,8 @@ namespace RevitInventorExchange
         RevitElementsHandler revElementHandler;
         RevitFiltersHandler revFilterHandler;
         UIApplication uiapp = null;
-        Document doc = null;       
+        Document doc = null;
+        System.Windows.Forms.Form elementWindow = null;
 
         public Result Execute(ExternalCommandData commandData, ref string message, ElementSet elements)
         {
@@ -62,9 +63,20 @@ namespace RevitInventorExchange
                 }
                 else
                 {
-                    //  Pass elements info to the opened form
-                    var elementWindow = new OffsiteForm(selectedElements, uiapp);
-                    elementWindow.Show();
+                    var win = CheckOpened("Offsite Panel");
+
+                    if (win != null)
+                    {
+                        elementWindow = win;
+                        elementWindow.Show();
+                        elementWindow.Focus();
+                    }
+                    else
+                    {
+                        //  Pass elements info to the opened form
+                        elementWindow = new OffsiteForm(selectedElements, uiapp);
+                        elementWindow.Show();
+                    }                    
                 }
 
                 NLogger.LogText("Exit Execute method with Success");
@@ -76,6 +88,21 @@ namespace RevitInventorExchange
             }
 
             return Result.Succeeded;
+        }
+
+
+        private System.Windows.Forms.Form CheckOpened(string name)
+        {
+            FormCollection fc = Application.OpenForms;
+
+            foreach (System.Windows.Forms.Form frm in fc)
+            {
+                if (frm.Text == name)
+                {
+                    return frm;
+                }
+            }
+            return null;
         }
     }
 }

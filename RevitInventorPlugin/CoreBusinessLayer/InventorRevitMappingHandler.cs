@@ -1,6 +1,7 @@
 ﻿
 using Newtonsoft.Json.Linq;
 using RevitInventorExchange.CoreDataStructures;
+using RevitInventorExchange.Data;
 using RevitInventorExchange.WindowsFormBusinesslayer;
 using System;
 using System.Collections.Generic;
@@ -264,6 +265,35 @@ namespace RevitInventorExchange.CoreBusinessLayer
             NLogger.LogText("Exit ExtractRevitPropertiesValues method");
 
             return paramJson;
+        }
+
+        internal bool CheckMappingConsistency()
+        {
+            var consistency = false;
+            
+            var mappingCount = invRevMappingStructList.Count();
+
+            //  No Revit - Inventor mappings
+            if (!(mappingCount > 0))
+            {
+                return consistency;
+            }
+
+            //  Check if at least one Inventor param - Revit prop mapping has been done
+
+            var maps = new List<InventorRevitMappingStructure>();
+
+            foreach(var map in invRevMappingStructList)
+            {
+                if (map.ParametersMapping != null)
+                {
+                    maps.Add(map);
+                }
+            }    
+            var paramsMapping = maps.SelectMany(m => m.ParametersMapping).ToList();
+            consistency = paramsMapping.Any(j => !string.IsNullOrEmpty(j.RevitParamName));
+
+            return consistency;
         }
 
         /// <summary>

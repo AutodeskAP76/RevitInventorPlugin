@@ -18,7 +18,7 @@ namespace RevitInventorExchange
             
             RibbonPanel panel = application.CreateRibbonPanel(starterTab, "Offsite panel");
 
-            PushButton buttonSelFromView = panel.AddItem(new PushButtonData("CP_Offsite_SelectFromView", "View \r\n selection", assemblyPath, "RevitInventorExchange.RevitInventorExchangeCommandFromView")) as PushButton;
+            PushButton buttonSelFromView = panel.AddItem(new PushButtonData("CP_Offsite_SelectFromView", "Selection \r\n from View", assemblyPath, "RevitInventorExchange.RevitInventorExchangeCommandFromView")) as PushButton;
 
             Uri uriImage = new Uri($"pack://application:,,,/RevitInventorPlugin;component/Resources/Offsite_DH.png", UriKind.Absolute);
             BitmapImage image = new BitmapImage(uriImage);
@@ -26,7 +26,7 @@ namespace RevitInventorExchange
             buttonSelFromView.ToolTip = "Select from view";
 
 
-            PushButton buttonSelFromFilter = panel.AddItem(new PushButtonData("CP_Offsite_SelectFromFilter", "Filter \r\n selection", assemblyPath, "RevitInventorExchange.RevitInventorExchangeCommandFromFilter")) as PushButton;
+            PushButton buttonSelFromFilter = panel.AddItem(new PushButtonData("CP_Offsite_SelectFromFilter", "Selection \r\n from Filter", assemblyPath, "RevitInventorExchange.RevitInventorExchangeCommandFromFilter")) as PushButton;
 
             Uri uriImage1 = new Uri($"pack://application:,,,/RevitInventorPlugin;component/Resources/Offsite_DH_Filter.png", UriKind.Absolute);
             BitmapImage image1 = new BitmapImage(uriImage1);

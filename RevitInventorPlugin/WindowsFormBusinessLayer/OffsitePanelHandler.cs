@@ -205,6 +205,19 @@ namespace RevitInventorExchange.WindowsFormBusinesslayer
             return ret;
         }
 
+        internal bool CheckMappingConsistency()
+        {
+            NLogger.LogText("Entered CheckMappingConsistency");
+
+            var consistency = invRevMappingHandler.CheckMappingConsistency();
+
+            NLogger.LogText($"Revit - Inventor mapping consistency: {consistency.ToString()}");
+
+            NLogger.LogText("Entered CheckMappingConsistency");
+
+            return consistency;
+        }
+
         /// <summary>
         /// Updates Inventor Revit Parameters mapping grid
         /// </summary>
