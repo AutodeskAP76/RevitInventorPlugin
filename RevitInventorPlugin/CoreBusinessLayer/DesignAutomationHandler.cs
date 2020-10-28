@@ -65,6 +65,7 @@ namespace RevitInventorExchange.CoreBusinessLayer
 
                 daEventHandler.TriggerDACurrentStepHandler("BIM360 structure created");
 
+                //  build the input - output files internal structure
                 daStructure = GetDataFromInputJson1();
                 //daStructure = GetDataFromInputJson1_for_zip_tests();
 
@@ -88,7 +89,7 @@ namespace RevitInventorExchange.CoreBusinessLayer
 
             forgeDMClient.SetBaseURL(ConfigUtilities.GetDMBaseProjectURL());
             var ret = forgeDMClient.GetHub();
-            ret.Wait();
+            ret.Wait(ConfigUtilities.GetAsyncHTTPCallWaitTime());
 
             var res = ret.Result;
 
@@ -113,7 +114,7 @@ namespace RevitInventorExchange.CoreBusinessLayer
 
             forgeDMClient.SetBaseURL(ConfigUtilities.GetDMBaseProjectURL());
             var ret = forgeDMClient.GetProject(hubId);
-            ret.Wait();
+            ret.Wait(ConfigUtilities.GetAsyncHTTPCallWaitTime());
 
             var res = ret.Result;
 
@@ -147,7 +148,7 @@ namespace RevitInventorExchange.CoreBusinessLayer
 
             if (relativePath.Length < 2)
             {
-                throw new Exception($"The comfigured project {ConfigUtilities.GetProject()} is not part of the selected path");
+                throw new Exception($"The configured project {ConfigUtilities.GetProject()} is not part of the selected path");
             }
 
             //  Split path in folders
@@ -193,7 +194,7 @@ namespace RevitInventorExchange.CoreBusinessLayer
 
             forgeDMClient.SetBaseURL(ConfigUtilities.GetDMBaseProjectURL());
             var ret = forgeDMClient.GetTopFolder(hubId, projectId);
-            ret.Wait();
+            ret.Wait(ConfigUtilities.GetAsyncHTTPCallWaitTime());
 
             var res = ret.Result;
 
@@ -232,7 +233,7 @@ namespace RevitInventorExchange.CoreBusinessLayer
 
             //  Extract parentFolder content (both subfolders and files)
             var ret = forgeDMDataClient.GetFolderContent(projectId, parentFolderId);
-            ret.Wait();
+            ret.Wait(ConfigUtilities.GetAsyncHTTPCallWaitTime());
 
             var res = ret.Result;
 
@@ -280,7 +281,7 @@ namespace RevitInventorExchange.CoreBusinessLayer
             //string payload = CreateWorkItemPayload1_ForZip_Test(inFile, outFile);
 
             var retSubmitWotkItem = forgeDAClient.PostWorkItem(payload);
-            retSubmitWotkItem.Wait();
+            retSubmitWotkItem.Wait(ConfigUtilities.GetAsyncHTTPCallWaitTime());
 
             var resSubmitWorkItem = retSubmitWotkItem.Result;
 
@@ -298,7 +299,7 @@ namespace RevitInventorExchange.CoreBusinessLayer
 
                 //  Check work Item status
                 var ret1 = CheckWorkItemStatus(id);
-                ret1.Wait();
+                ret1.Wait(ConfigUtilities.GetAsyncHTTPCallWaitTime());
 
                 var res2 = ret1.Result;
 
@@ -338,17 +339,26 @@ namespace RevitInventorExchange.CoreBusinessLayer
             var ret = await forgeDAClient.CheckWorkItemStatus(workItemId);
             var res = ret.ResponseContent;
 
-            JObject res1 = JObject.Parse(res);
+            try
+            {                               
+                JObject res1 = JObject.Parse(res);
 
-            var status = res1.SelectToken("$.status").ToString();
-            var id = res1.SelectToken("$.id").ToString();
+                var status = res1.SelectToken("$.status").ToString();
+                var id = res1.SelectToken("$.id").ToString();
 
-            NLogger.LogText($"Work Item {id} in status {status}");
+                NLogger.LogText($"Work Item {id} in status {status}");
 
-            if (status == "pending" || status == "inprogress")
+                if (status == "pending" || status == "inprogress")
+                {
+                    //  Wait for some seconds (configured), then perform the check on status again
+                    await Task.Delay(TimeSpan.FromSeconds(Convert.ToInt32(ConfigUtilities.GetWorkItemCreationPollingTime())));
+                    ret = await CheckWorkItemStatus(workItemId);
+                }
+            }
+            catch (Exception ex)
             {
-                await Task.Delay(TimeSpan.FromSeconds(Convert.ToInt32(ConfigUtilities.GetWorkItemCreationPollingTime())));
-                ret = await CheckWorkItemStatus(workItemId);
+                NLogger.LogText($"There has been a problem. Returned value from call: {res}");
+                throw (ex);
             }
 
             return ret;
@@ -514,20 +524,18 @@ namespace RevitInventorExchange.CoreBusinessLayer
                     var elementId = paramInfo.SelectToken("$.elementId").ToString();
                     string inputLink = GetInputLink(inventorFileName);
                     var outputFileNameParts = inventorFileName.Split(new char[] { '.' });
-                    var outputFileName = outputFileNameParts[0] + $"_Out_{elementId}." + outputFileNameParts[1];
+                    var outputFileName = outputFileNameParts[0] + $"_Out_{elementId}_{DateTime.Now.ToString("yyyyMMddHHmmssffff")}." + outputFileNameParts[1];
 
-                    //  Get path from Config file where Inventor Templates are stored
+                    //  Get path selected from the user where Inventor Templates are stored
                     var relativePath = inventorTemplatesFolder;
 
                     //  Split path in folders
                     var outputFolders = relativePath.Split(new char[] { '\\' });
-
                     var outputFileFolderId = bIM360DocsStructBuilder.GetFolderIdByName(outputFolders[outputFolders.Length - 1]);
 
                     NLogger.LogText($"Currently processing {inventorFileName} Inventor file");
                     NLogger.LogText($"Output file: {outputFileName}");
                     NLogger.LogText($"Output folder: {outputFileFolderId}");
-
 
                     //daStructure.FilesStructure = new List<DesignAutomationFileStructure>() { new DesignAutomationFileStructure
                     daStructure.FilesStructure.Add(new DesignAutomationFileStructure
@@ -600,8 +608,6 @@ namespace RevitInventorExchange.CoreBusinessLayer
             return daStructure;
         }
 
-
-
         private string GetInputLink(string filename)
         {
             NLogger.LogText("Entered GetInputLink");
@@ -639,7 +645,7 @@ namespace RevitInventorExchange.CoreBusinessLayer
             forgeDMClient.SetBaseURL(ConfigUtilities.GetDMBaseDataURL());
 
             var ret = forgeDMClient.CreateStorageObject(projId, CreateStorageObjectPayload1(inputFile, outputFile));
-            ret.Wait();
+            ret.Wait(ConfigUtilities.GetAsyncHTTPCallWaitTime());
 
             var res = ret.Result;
 
@@ -647,9 +653,10 @@ namespace RevitInventorExchange.CoreBusinessLayer
             {
                 JObject root = JObject.Parse(res.ResponseContent);
 
-                var id = root["data"]["id"].ToString();
+                //  Extract the created strorage object identisfier. It is needed to create item versions
+                OutFileStorageobjectId = root["data"]["id"].ToString();
 
-                OutFileStorageobjectId = id;
+                NLogger.LogText($"Storage object {OutFileStorageobjectId} created");
 
                 daEventHandler.TriggerDACurrentStepHandler("Storage object created");             
             }
@@ -669,7 +676,7 @@ namespace RevitInventorExchange.CoreBusinessLayer
             NLogger.LogText("Entered HandleDesignAutomationFlow");
 
             forgeDMClient.SetBaseURL(ConfigUtilities.GetDMBaseDataURL());
-
+            
             foreach (var item in daStructure.FilesStructure)
             {
                 foreach (var el in item.OutputFileStructurelist)
@@ -682,7 +689,7 @@ namespace RevitInventorExchange.CoreBusinessLayer
                     //  Create Storage Object, Submit workItem and Create File version
                     el.OutFileStorageobject = CreateStorageObject(projId, inputFile, outputFile);                    
                     SubmitWokItem(inputFile, outputFile);
-                    CreateFileVersion(projId, inputFile, outputFile);
+                    CreateFileVersion(projId, inputFile, outputFile, el.OutFileFolder);
                 }
             }
 
@@ -726,40 +733,121 @@ namespace RevitInventorExchange.CoreBusinessLayer
         }
 
         //  Create first version of generated files
-        private void CreateFileVersion(string projectId, string inFileName, string outFileName)
+        private void CreateFileVersion(string projectId, string inFileName, string outFileName, string outFilefolder)
         {
             NLogger.LogText("Entered CreateFileVersion");
 
-            string payload = CreateFileVersionPayload(inFileName, outFileName);
+            //  Check if BIM 360 already contains at least one version of intended output file
+            var alreadyExistingOutFiles = bIM360DocsStructBuilder.bIM360DocsStructure1.BIM360DataRows1.FirstOrDefault(l => l.Name == outFileName && l.ParentId == outFilefolder && l.Type == BIM360Type.File);
+            //var alreadyExistingOutFileVersion = bIM360DocsStructBuilder.bIM360DocsStructure1.BIM360DataRows1.FirstOrDefault(l => l.ParentId == alreadyExistingOutFiles.Id && l.Type == BIM360Type.FileVersion);
 
-            forgeDMClient.SetBaseURL(ConfigUtilities.GetDMBaseDataURL());
-
-            var retCreateFileVer = forgeDMClient.CreateFileVersion(projectId, payload);
-            retCreateFileVer.Wait();
-
-            var resCreateFileVer = retCreateFileVer.Result;
-
-            if (resCreateFileVer.IsSuccessStatusCode())
+            if (alreadyExistingOutFiles == null)
             {
-                daEventHandler.TriggerDACurrentStepHandler("CreateFileVersion processing completed sucessfully");
-                NLogger.LogText("Exit CreateFileVersion sucessfully");
+                NLogger.LogText($"Create first version of file {outFileName}");
+
+                string payload = CreateFileFirstVersionPayload(inFileName, outFileName);
+
+                forgeDMClient.SetBaseURL(ConfigUtilities.GetDMBaseDataURL());
+
+                var retCreateFileVer = forgeDMClient.CreateFileFirstVersion(projectId, payload);
+                retCreateFileVer.Wait(ConfigUtilities.GetAsyncHTTPCallWaitTime());
+
+                var resCreateFileVer = retCreateFileVer.Result;
+
+                if (resCreateFileVer.IsSuccessStatusCode())
+                {
+                    daEventHandler.TriggerDACurrentStepHandler("CreateFileVersion processing completed sucessfully");
+                    NLogger.LogText("Exit CreateFileVersion sucessfully");
+                }
+                else
+                {
+                    Utilities.HandleErrorInForgeResponse("CreateFileVersion", resCreateFileVer);
+                }
             }
             else
             {
-                Utilities.HandleErrorInForgeResponse("CreateFileVersion", resCreateFileVer);
+                NLogger.LogText($"Create additional version of file {outFileName}");
+
+                string payload = CreateFileAdditionalVersionPayload(inFileName, outFileName, alreadyExistingOutFiles.Id);
+
+                forgeDMClient.SetBaseURL(ConfigUtilities.GetDMBaseDataURL());
+
+                var retCreateFileVer = forgeDMClient.CreateFileAdditionalVersion(projectId, payload);
+                retCreateFileVer.Wait(ConfigUtilities.GetAsyncHTTPCallWaitTime());
+
+                var resCreateFileVer = retCreateFileVer.Result;
+
+                if (resCreateFileVer.IsSuccessStatusCode())
+                {
+                    daEventHandler.TriggerDACurrentStepHandler("CreateFileVersion processing completed sucessfully");
+                    NLogger.LogText("Exit CreateFileVersion sucessfully");
+                }
+                else
+                {
+                    Utilities.HandleErrorInForgeResponse("CreateFileVersion", resCreateFileVer);
+                }
             }
         }
 
-        private string CreateFileVersionPayload(string inFileName, string outFileName)
+        private string CreateFileAdditionalVersionPayload(string inFileName, string outFileName, string itemId)
         {
-            NLogger.LogText("Entered CreateFileVersionPayload");
+            NLogger.LogText("Entered CreateFileAdditionalVersionPayload");
 
             var daStructureRow = daStructure.FilesStructure.First(p => p.InputFilename == inFileName && p.OutputFileStructurelist.Any(k => k.OutFileName == outFileName));
 
             string inputFileName = daStructureRow.InputFilename;
-            string outputFileName = daStructureRow.OutputFileStructurelist.First(l => l.OutFileName == outFileName).OutFileName;
-            string outputFileFolderId = daStructureRow.OutputFileStructurelist.First(l => l.OutFileName == outFileName).OutFileFolder;
-            string URN = daStructureRow.OutputFileStructurelist.First(l => l.OutFileName == outFileName).OutFileStorageobject;
+            var daStructureRowOutputFileStruct = daStructureRow.OutputFileStructurelist.First(l => l.OutFileName == outFileName);
+            string outputFileName = daStructureRowOutputFileStruct.OutFileName;
+            string outputFileFolderId = daStructureRowOutputFileStruct.OutFileFolder;
+            string storageObjectId = daStructureRowOutputFileStruct.OutFileStorageobject;
+
+            JObject payload = new JObject(
+               new JProperty("jsonapi", new JObject(
+                   new JProperty("version", "1.0")
+               )),
+               new JProperty("data", new JObject(
+                   new JProperty("type", "versions"),
+                   new JProperty("attributes", new JObject(
+                        new JProperty("name", outputFileName),
+                        new JProperty("extension", new JObject(
+                            new JProperty("type", "versions:autodesk.bim360:File"),
+                            new JProperty("version", "1.0")
+                        ))
+                    )),
+                    new JProperty("relationships", new JObject(
+                        new JProperty("item", new JObject(
+                            new JProperty("data", new JObject(
+                                new JProperty("type", "items"),
+                                new JProperty("id", itemId)
+                            ))
+                        )),
+                        new JProperty("storage", new JObject(
+                            new JProperty("data", new JObject(
+                                new JProperty("type", "objects"),
+                                new JProperty("id", storageObjectId)
+                            ))
+                       ))
+                    ))                   
+               ))
+            );
+
+
+            NLogger.LogText("Exit CreateFileAdditionalVersionPayload");
+
+            return payload.ToString();
+        }
+
+        private string CreateFileFirstVersionPayload(string inFileName, string outFileName)
+        {
+            NLogger.LogText("Entered CreateFileFirstVersionPayload");
+
+            var daStructureRow = daStructure.FilesStructure.First(p => p.InputFilename == inFileName && p.OutputFileStructurelist.Any(k => k.OutFileName == outFileName));
+
+            string inputFileName = daStructureRow.InputFilename;
+            var daStructureRowOutputFileStruct = daStructureRow.OutputFileStructurelist.First(l => l.OutFileName == outFileName);
+            string outputFileName = daStructureRowOutputFileStruct.OutFileName;
+            string outputFileFolderId = daStructureRowOutputFileStruct.OutFileFolder;
+            string storageObjectId = daStructureRowOutputFileStruct.OutFileStorageobject;
 
             JObject payload = new JObject(
                new JProperty("jsonapi", new JObject(
@@ -803,14 +891,14 @@ namespace RevitInventorExchange.CoreBusinessLayer
                        new JProperty("storage", new JObject(
                             new JProperty("data", new JObject(
                                 new JProperty("type", "objects"),
-                                new JProperty("id", URN)
+                                new JProperty("id", storageObjectId)
                             ))
                        ))
                    ))
                 )))
             );
 
-            NLogger.LogText("Exit CreateFileVersionPayload");
+            NLogger.LogText("Exit CreateFileFirstVersionPayload");
 
             return payload.ToString();
         }

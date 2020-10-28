@@ -193,9 +193,6 @@ namespace RevitInventorExchange.CoreBusinessLayer
             return paramJson;
         }
 
-
-
-
         /// <summary>
         /// Returns a json structure containing Revit properties values, based on Revit - Inventor mapping
         /// </summary>
@@ -269,6 +266,9 @@ namespace RevitInventorExchange.CoreBusinessLayer
             return paramJson;
         }
 
+        /// <summary>
+        /// Reset the InventorRevitMappingStructure
+        /// </summary>
         internal void ResetRevitInventorMappingInternalStructure()
         {
             NLogger.LogText("Enter ResetRevitInventorMappingInternalStructure");
@@ -276,6 +276,11 @@ namespace RevitInventorExchange.CoreBusinessLayer
             invRevMappingStructList = new List<InventorRevitMappingStructure>();
 
             NLogger.LogText("Exit ResetRevitInventorMappingInternalStructure");
+        }
+
+        internal InventorRevitMappingStructure GetRevitInventorInternalStructureByRevitFamily(string RevitFamily)
+        {
+            return invRevMappingStructList.FirstOrDefault(k => k.RevitFamily == RevitFamily);
         }
     }
 }

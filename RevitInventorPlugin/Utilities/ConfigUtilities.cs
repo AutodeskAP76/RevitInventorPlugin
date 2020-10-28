@@ -73,6 +73,12 @@ namespace RevitInventorExchange
             return doc.SelectSingleNode("/Configuration/key[@name='Forge']/key[@name='ClientSecret']/@value").Value;
         }
 
+
+        public static int GetAsyncHTTPCallWaitTime()
+        {
+            return Convert.ToInt32(doc.SelectSingleNode("/Configuration/key[@name='Forge']/key[@name='HTTPAsyncCallsWaitingTime']/@value").Value);
+        }
+
         public static string GetWorkItemCreationPollingTime()
         {
             return doc.SelectSingleNode("/Configuration/key[@name='Forge']/key[@name='WorkItemCreationPollingTime']/@value").Value;

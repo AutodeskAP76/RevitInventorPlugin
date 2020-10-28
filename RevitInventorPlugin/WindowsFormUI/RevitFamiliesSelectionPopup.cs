@@ -37,7 +37,7 @@ namespace RevitInventorExchange.WindowsFormUI
 
             elementList = dataSources["RevitFamilies"];
 
-            revitFamiliesSelectionHandler.FillPropertiesGrid(dgRevitFamilies, elementList);
+            revitFamiliesSelectionHandler.FillGrid(dgRevitFamilies, elementList);
         }
 
         private void InitializeRevitFamiliesGrid(DataGridView dataGrid)

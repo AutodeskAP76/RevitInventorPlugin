@@ -205,7 +205,14 @@ namespace RevitInventorExchange.WindowsFormBusinesslayer
             return ret;
         }
 
-
+        /// <summary>
+        /// Updates Inventor Revit Parameters mapping grid
+        /// </summary>
+        /// <param name="revitFamily"></param>
+        /// <param name="inventorTemplate"></param>
+        /// <param name="selInvParam"></param>
+        /// <param name="selRevFamilyParam"></param>
+        /// <returns></returns>
         internal Dictionary<string, List<InvRevParamMappingDataGridSourceData>> RefreshInvRevitParamsMappingDataGridSource(string revitFamily, string inventorTemplate, string selInvParam, string selRevFamilyParam)
         {
             NLogger.LogText("Entered RefreshInvRevitParamsMappingDataGridSource");
@@ -227,7 +234,11 @@ namespace RevitInventorExchange.WindowsFormBusinesslayer
             return ret;
         }
 
-        //  Extract Revit properties values from selected elements
+        /// <summary>
+        /// Extract Revit properties values from selected elements
+        /// </summary>
+        /// <param name="elStructureList"></param>
+        /// <returns></returns>
         internal string GetRevitPropertiesValues(IList<ElementStructure> elStructureList)
         {
             NLogger.LogText("Entered GetRevitPropertiesValues");
@@ -274,7 +285,13 @@ namespace RevitInventorExchange.WindowsFormBusinesslayer
             return ret;
         }
 
-        //  this method is a bridge for corresponding method which extracts Revit elements from active document, based on Revit family types seleced by the user
+        /// <summary>
+        /// this method is a bridge for corresponding method which extracts Revit elements from active document, based on Revit family types seleced by the user
+        /// </summary>
+        /// <param name="targetType"></param>
+        /// <param name="idType"></param>
+        /// <param name="targetCategory"></param>
+        /// <returns></returns>
         public IList<Element> FindInstancesOfType(Type targetType, ElementId idType, Nullable<BuiltInCategory> targetCategory = null)
         {
             NLogger.LogText("Entered FindInstancesOfType");
@@ -287,9 +304,24 @@ namespace RevitInventorExchange.WindowsFormBusinesslayer
             return ret.ToList();
         }
 
+        /// <summary>
+        /// Bridge method for Reset the InventorRevitMappingStructure
+        /// </summary>
         internal void ResetRevitInventorMappingInternalStructure()
         {
             invRevMappingHandler.ResetRevitInventorMappingInternalStructure();
+        }
+
+        /// <summary>
+        /// Given a Revit Family, it return the properties already mapped to corresponding inventor parameters
+        /// </summary>
+        /// <param name="RevitFamily"></param>
+        internal IList<string> GetRevitFamilyParamsAlreadyUsed(string RevitFamily)
+        {
+            var internalStructRow = invRevMappingHandler.GetRevitInventorInternalStructureByRevitFamily(RevitFamily);
+
+            IList<string> RevitUsedProperties = internalStructRow.ParametersMapping.Select(m => m.RevitParamName).ToList();
+            return RevitUsedProperties;
         }
     }
 }

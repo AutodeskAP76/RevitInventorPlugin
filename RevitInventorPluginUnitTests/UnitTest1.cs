@@ -18,7 +18,7 @@ namespace RevitInventorPluginUnitTests
             ConfigUtilities.LoadConfig();
 
             string json = GetJson();
-            string InventorFilePath = @"C:\Users\parodiaadmin\BIM 360\ATDSK DEV\Sample Project\Project Files\Libraries_DH_Assembly_wall_zip";
+            string InventorFilePath = @"C:\Users\parodiaadmin\BIM 360\ATDSK DEV\Sample Project\Project Files\Libraries_DH_Assembly_wall";
             DesignAutomationHandler daHandler = new DesignAutomationHandler();
 
             daHandler.RunDesignAutomationForgeWorkflow(json, InventorFilePath);
@@ -30,12 +30,14 @@ namespace RevitInventorPluginUnitTests
                   "'ILogicParams': [" +
                     "{" +
                       "'RevitFamily': 'Wall Panel_2.iam (Window_Ref).0001: Standard'," +
+                      "'InventorTemplate': 'P Board.ipt'," +
                       //"'InventorTemplate': 'Wall Panel.iam'," +
-                      "'InventorTemplate': 'Wall_Assembly_Package.zip'," +
+                      //"'InventorTemplate': 'Wall_Assembly_Package.zip'," +
 
                       "'ParametersInfo': [" +
                         "{" +
                           "'elementName': ''," +
+                          "'elementId': '345678'," +
                           "'paramsValues': { " +
                                 "'Window_LeftRef': '750'" +
                             "}" +

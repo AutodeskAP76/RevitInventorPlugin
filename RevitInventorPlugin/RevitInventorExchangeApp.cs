@@ -29,7 +29,6 @@ namespace RevitInventorExchange
             PushButton buttonSelFromFilter = panel.AddItem(new PushButtonData("CP_Offsite_SelectFromFilter", "Filter \r\n selection", assemblyPath, "RevitInventorExchange.RevitInventorExchangeCommandFromFilter")) as PushButton;
 
             Uri uriImage1 = new Uri($"pack://application:,,,/RevitInventorPlugin;component/Resources/Offsite_DH_Filter.png", UriKind.Absolute);
-            //uriImage = new Uri("/Resources/Offsite_DH.png", UriKind.Relative);
             BitmapImage image1 = new BitmapImage(uriImage1);
             buttonSelFromFilter.LargeImage = image1;
             buttonSelFromFilter.ToolTip = "Select from Filter";

@@ -168,9 +168,15 @@ namespace RevitInventorExchange.CoreBusinessLayer
             return ret;
         }
 
-        internal async Task<ForgeRestResponse> CreateFileVersion(string projectId, string payload)
+        internal async Task<ForgeRestResponse> CreateFileFirstVersion(string projectId, string payload)
         {
             var ret = await RequestAsync($"projects/{projectId}/items", payload, "application/vnd.api+json", Method.POST);
+            return ret;
+        }
+
+        internal async Task<ForgeRestResponse> CreateFileAdditionalVersion(string projectId, string payload)
+        {
+            var ret = await RequestAsync($"projects/{projectId}/versions", payload, "application/vnd.api+json", Method.POST);
             return ret;
         }
     }

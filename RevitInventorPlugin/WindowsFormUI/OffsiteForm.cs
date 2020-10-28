@@ -134,7 +134,7 @@ namespace RevitInventorExchange.WindowsFormUI
 
                 elementList = dataSources["Elements"];
 
-                offsitePanelHandler.FillPropertiesGrid(dgElements, elementList);
+                offsitePanelHandler.FillGrid(dgElements, elementList);
             }
             else
             {
@@ -276,7 +276,7 @@ namespace RevitInventorExchange.WindowsFormUI
                 var elementList = dataSource["InvRevMapping"];
 
                 NLogger.LogText("Fill InventorRevitMapping grid");
-                offsitePanelHandler.FillPropertiesGrid(dgInvRevMapping, elementList);
+                offsitePanelHandler.FillGrid(dgInvRevMapping, elementList);
 
                 //  Select first row of inventor - Revit mapping grid by default
                 if (dgInvRevMapping.Rows.Count > 0)
@@ -335,7 +335,7 @@ namespace RevitInventorExchange.WindowsFormUI
             var elementList = dataSource["InvRevMapping"];
 
             NLogger.LogText("Fill InventorRevitMapping grid");
-            offsitePanelHandler.FillPropertiesGrid(dgInvRevMapping, elementList);
+            offsitePanelHandler.FillGrid(dgInvRevMapping, elementList);
 
             NLogger.LogText("Set selected rows on  InventorRevitMapping and ParametersMapping grids");
             dgInvRevMapping.ClearSelection();
@@ -449,7 +449,7 @@ namespace RevitInventorExchange.WindowsFormUI
 
                 var elementList = dataSources["ParamsMapping"];
 
-                offsitePanelHandler.FillPropertiesGrid(dgParamsMapping, elementList);
+                offsitePanelHandler.FillGrid(dgParamsMapping, elementList);
 
                 //  Select the first row of the Param mapping grid by Default
                 dgParamsMapping.ClearSelection();
@@ -515,14 +515,16 @@ namespace RevitInventorExchange.WindowsFormUI
                 return;
             }
 
-            //  Read Revit Family Param from popup or reset it
-            var selRevFamilyParam = GetRevitFamilyParameter(mode, revitFamily, currentRevitParam);
+            //  Read Revit Family Param from popup or reset it, checking if the Revit parameter is already assigned
+            var RevitUsedParams = offsitePanelHandler.GetRevitFamilyParamsAlreadyUsed(revitFamily);
+
+            var selRevFamilyParam = GetRevitFamilyParameter(mode, revitFamily, currentRevitParam, RevitUsedParams);
 
             var dataSource = offsitePanelHandler.RefreshInvRevitParamsMappingDataGridSource(revitFamily, inventorTemplate, selInvParam, selRevFamilyParam);
 
             var elementList = dataSource["ParamsMapping"];
 
-            offsitePanelHandler.FillPropertiesGrid(dgParamsMapping, elementList);
+            offsitePanelHandler.FillGrid(dgParamsMapping, elementList);
 
             if (selectedRow < (dgParamsMapping.Rows.Count - 1))
             {
@@ -544,7 +546,15 @@ namespace RevitInventorExchange.WindowsFormUI
             NLogger.LogText("Exit HandleRowSelectionParams");
         }
 
-        private string GetRevitFamilyParameter(RevitFamilyHandling mode, string revitFamily, string currentRefParam)
+        /// <summary>
+        /// Based on mode, it reset the Revit property, or return the selected one from shown popup
+        /// </summary>
+        /// <param name="mode"></param>
+        /// <param name="revitFamily"></param>
+        /// <param name="currentRefParam"></param>
+        /// <param name="RevitUsedParams"></param>
+        /// <returns></returns>
+        private string GetRevitFamilyParameter(RevitFamilyHandling mode, string revitFamily, string currentRefParam, IList<string> RevitUsedParams)
         {
             NLogger.LogText("Entered GetRevitFamilyParameter");
 
@@ -557,10 +567,10 @@ namespace RevitInventorExchange.WindowsFormUI
                     break;
                 case RevitFamilyHandling.SetRevitFamily:
                     
-                    var revitFamiliesParamsSelectionPopup = new RevitFamiliesParametersSelectionPopup(revitFamily, runtimeElStructureList);
+                    var revitFamiliesParamsSelectionPopup = new RevitFamiliesParametersSelectionPopup(revitFamily, runtimeElStructureList, RevitUsedParams);
                     var result = revitFamiliesParamsSelectionPopup.ShowDialog();
 
-                    //  Update Mapping grids with data coming from popup
+                    //  Update Mapping grids with data coming from popup or leave the original value if click on Cancel button
                     if (result == DialogResult.OK)
                     {
                         //  Update RevitInventorParameters mapping datagrid with Revit family Parameter selected in the popup
@@ -617,9 +627,9 @@ namespace RevitInventorExchange.WindowsFormUI
             if (selectedFamily != null)
             {
                 //  Reset other elements depending from the selection
-                offsitePanelHandler.FillPropertiesGrid(dgElements, null);
-                offsitePanelHandler.FillPropertiesGrid(dgParamsMapping, null);
-                offsitePanelHandler.FillPropertiesGrid(dgInvRevMapping, null);
+                offsitePanelHandler.FillGrid(dgElements, null);
+                offsitePanelHandler.FillGrid(dgParamsMapping, null);
+                offsitePanelHandler.FillGrid(dgInvRevMapping, null);
                 txtInventorTemplatesPath.Text = "";
                 offsitePanelHandler.ResetRevitInventorMappingInternalStructure();
                 ((System.Windows.Forms.Control)tabControl1.TabPages[tabName]).Enabled = false;
@@ -650,9 +660,9 @@ namespace RevitInventorExchange.WindowsFormUI
 
             if (selectedFamilyType != null)
             {
-                offsitePanelHandler.FillPropertiesGrid(dgElements, null);
-                offsitePanelHandler.FillPropertiesGrid(dgParamsMapping, null);
-                offsitePanelHandler.FillPropertiesGrid(dgInvRevMapping, null);
+                offsitePanelHandler.FillGrid(dgElements, null);
+                offsitePanelHandler.FillGrid(dgParamsMapping, null);
+                offsitePanelHandler.FillGrid(dgInvRevMapping, null);
                 txtInventorTemplatesPath.Text = "";
                 offsitePanelHandler.ResetRevitInventorMappingInternalStructure();
                 ((System.Windows.Forms.Control)tabControl1.TabPages[tabName]).Enabled = false;
@@ -674,7 +684,7 @@ namespace RevitInventorExchange.WindowsFormUI
 
                 elementList = dataSources["Elements"];
 
-                offsitePanelHandler.FillPropertiesGrid(dgElements, elementList);
+                offsitePanelHandler.FillGrid(dgElements, elementList);
             }
 
             NLogger.LogText("Exit comboBoxRevitFamilies_SelectedIndexChanged");

@@ -48,8 +48,8 @@ namespace RevitInventorExchange.WindowsFormUI
             elementParamList = dataSources["ElementParameters"];
             elementTypeParamList = dataSources["ElementTypeParameters"];
 
-            winFormHandler.FillPropertiesGrid(dgElementParams, elementParamList);
-            winFormHandler.FillPropertiesGrid(dgElementTypeParams, elementTypeParamList);
+            winFormHandler.FillGrid(dgElementParams, elementParamList);
+            winFormHandler.FillGrid(dgElementTypeParams, elementTypeParamList);
 
             txtFamily.Text = elStructureList.ElementType.FamilyName;
             txtFamType.Text = elStructureList.ElementTypeSingleParameters.Single(p => p.ParameterName == "SYMBOL_FAMILY_AND_TYPE_NAMES_PARAM").ParameterValue.ToString();
@@ -177,8 +177,8 @@ namespace RevitInventorExchange.WindowsFormUI
             elementParamList = dataSources["ElementParameters"];
             elementTypeParamList = dataSources["ElementTypeParameters"];
 
-            winFormHandler.FillPropertiesGrid(dgElementParams, elementParamList);
-            winFormHandler.FillPropertiesGrid(dgElementTypeParams, elementTypeParamList);
+            winFormHandler.FillGrid(dgElementParams, elementParamList);
+            winFormHandler.FillGrid(dgElementTypeParams, elementTypeParamList);
         }
 
         private void InitBehaviour()

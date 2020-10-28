@@ -18,18 +18,20 @@ namespace RevitInventorExchange.WindowsFormUI
         private RevitFamiliesParamsSelectionPopupHandler revitFamiliesParamsSelectionHandler;
         List<RevitFamiliesParamsDataGridSourceData> elementList = null;
         private IList<ElementStructure> elStructureList;
+        private IList<string> revitUsedParams;
 
         private string revitFamily = "";
 
         public string SelectedRevitFamilyParam = "";
 
-        public RevitFamiliesParametersSelectionPopup(string RevitFamily, IList<ElementStructure> elementStructureList)
+        public RevitFamiliesParametersSelectionPopup(string RevitFamily, IList<ElementStructure> elementStructureList, IList<string> RevitUsedParams)
         {
             InitializeComponent();
 
             elStructureList = elementStructureList;
             revitFamily = RevitFamily;
             revitFamiliesParamsSelectionHandler = new RevitFamiliesParamsSelectionPopupHandler();
+            revitUsedParams = RevitUsedParams;
         }
 
         private void RevitFamiliesParametersSelectionPopup_Load(object sender, EventArgs e)
@@ -41,7 +43,7 @@ namespace RevitInventorExchange.WindowsFormUI
 
             elementList = dataSources["RevitFamilyParams"];
 
-            revitFamiliesParamsSelectionHandler.FillPropertiesGrid(dgRevitFamParams, elementList);
+            revitFamiliesParamsSelectionHandler.FillGrid(dgRevitFamParams, elementList);
         }
 
         private void InitializeRevitFamiliesParamsGrid(DataGridView dataGrid)
@@ -77,6 +79,15 @@ namespace RevitInventorExchange.WindowsFormUI
             {
                 var selRevFamParam = dgRevitFamParams.SelectedRows[0].Cells["Revit Family Parameters"].Value.ToString();
                 SelectedRevitFamilyParam = selRevFamParam;
+
+                var alreadyAssigned = revitUsedParams.Any(l => l == selRevFamParam);
+
+                if (alreadyAssigned)
+                {
+                    MessageBox.Show("The selected Revit property has already been assigned. Please select another one.");
+
+                    return;
+                }
             }
             else
             {
