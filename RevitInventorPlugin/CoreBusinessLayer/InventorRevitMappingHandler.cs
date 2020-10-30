@@ -1,4 +1,5 @@
 ﻿
+using Inventor;
 using Newtonsoft.Json.Linq;
 using RevitInventorExchange.CoreDataStructures;
 using RevitInventorExchange.Data;
@@ -7,7 +8,9 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.IO;
 using System.Threading.Tasks;
+using RevitInventorExchange.Utilities;
 
 namespace RevitInventorExchange.CoreBusinessLayer
 {
@@ -76,11 +79,19 @@ namespace RevitInventorExchange.CoreBusinessLayer
             }
             else  //  Retrieve values from Inventor file
             {
-                var invElements = InvElHandler.LoadInventorTemplateParameters(invTemplateFileName, invTemplatePath);
+                var fullPath = invTemplatePath + "\\" + invTemplateFileName;
 
-                var mapping = invElements.Select(o => new InventorRevitParameterMappingStructure { InventorParamName = o.Name, RevitParamName = "" }).ToList();
-                selInventor.ParametersMapping = mapping;
-                ret = mapping;
+                //  Check if extension is .iam or .ipt. In this case files are processed straight away
+                var extension = System.IO.Path.GetExtension(fullPath);
+
+                if (extension == ".iam" || extension == ".ipt")
+                {
+                    var invElements = InvElHandler.LoadInventorTemplateParameters(fullPath);
+
+                    var mapping = invElements.Select(o => new InventorRevitParameterMappingStructure { InventorParamName = o.Name, RevitParamName = "" }).ToList();
+                    selInventor.ParametersMapping = mapping;
+                    ret = mapping;
+                }
             }
 
             NLogger.LogText("Exit GetParamsMapping method");
@@ -164,7 +175,7 @@ namespace RevitInventorExchange.CoreBusinessLayer
                 familyJson.InventorTemplate = invTemplate;
                 familyJson.paramsValues = new JObject();
 
-                var elStructFamTypeList = Utilities.GetElementsOnFamilyType(revitElementList, revFamily);
+                var elStructFamTypeList = Utility.GetElementsOnFamilyType(revitElementList, revFamily);
                 
                 //  Loop on Revit - Inventor params mapping
                 foreach (var paramMap in map.ParametersMapping)
@@ -228,7 +239,7 @@ namespace RevitInventorExchange.CoreBusinessLayer
                 familyJson.ParametersInfo = new JArray();
               
                 //  get all selected Revit elements with current Revit Family type
-                var elStructFamTypeList = Utilities.GetElementsOnFamilyType(revitElementList, revFamily);
+                var elStructFamTypeList = Utility.GetElementsOnFamilyType(revitElementList, revFamily);
 
                 //  Loop on Revit - Inventor params mapping                
                 foreach (var elStructFamType in elStructFamTypeList)

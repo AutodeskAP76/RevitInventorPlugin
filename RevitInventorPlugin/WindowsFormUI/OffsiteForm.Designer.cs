@@ -34,6 +34,7 @@
             this.btnExportPropVals = new System.Windows.Forms.Button();
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.tabSOW = new System.Windows.Forms.TabPage();
+            this.btnUnselectAll = new System.Windows.Forms.Button();
             this.btnSelectAllElements = new System.Windows.Forms.Button();
             this.btnProcessElements = new System.Windows.Forms.Button();
             this.groupBox3 = new System.Windows.Forms.GroupBox();
@@ -56,7 +57,6 @@
             this.txtInventorTemplatesPath = new System.Windows.Forms.TextBox();
             this.dgInvRevMapping = new System.Windows.Forms.DataGridView();
             this.folderBrowserDialogInventorTemplates = new System.Windows.Forms.FolderBrowserDialog();
-            this.btnUnselectAll = new System.Windows.Forms.Button();
             this.tabControl1.SuspendLayout();
             this.tabSOW.SuspendLayout();
             this.groupBox3.SuspendLayout();
@@ -128,6 +128,16 @@
             this.tabSOW.TabIndex = 0;
             this.tabSOW.Text = "Scope of work";
             this.tabSOW.UseVisualStyleBackColor = true;
+            // 
+            // btnUnselectAll
+            // 
+            this.btnUnselectAll.Location = new System.Drawing.Point(2091, 1230);
+            this.btnUnselectAll.Name = "btnUnselectAll";
+            this.btnUnselectAll.Size = new System.Drawing.Size(185, 48);
+            this.btnUnselectAll.TabIndex = 7;
+            this.btnUnselectAll.Text = "Unselect All";
+            this.btnUnselectAll.UseVisualStyleBackColor = true;
+            this.btnUnselectAll.Click += new System.EventHandler(this.btnUnselectAll_Click);
             // 
             // btnSelectAllElements
             // 
@@ -354,16 +364,6 @@
             this.dgInvRevMapping.Size = new System.Drawing.Size(1244, 702);
             this.dgInvRevMapping.TabIndex = 0;
             this.dgInvRevMapping.SelectionChanged += new System.EventHandler(this.dgInvRevMapping_SelectionChanged);
-            // 
-            // btnUnselectAll
-            // 
-            this.btnUnselectAll.Location = new System.Drawing.Point(2091, 1230);
-            this.btnUnselectAll.Name = "btnUnselectAll";
-            this.btnUnselectAll.Size = new System.Drawing.Size(185, 48);
-            this.btnUnselectAll.TabIndex = 7;
-            this.btnUnselectAll.Text = "Unselect All";
-            this.btnUnselectAll.UseVisualStyleBackColor = true;
-            this.btnUnselectAll.Click += new System.EventHandler(this.btnUnselectAll_Click);
             // 
             // OffsiteForm
             // 

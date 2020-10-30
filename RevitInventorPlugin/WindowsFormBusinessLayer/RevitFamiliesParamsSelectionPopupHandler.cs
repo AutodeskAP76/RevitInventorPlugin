@@ -6,6 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml;
+using RevitInventorExchange.Utilities;
 
 namespace RevitInventorExchange.WindowsFormBusinesslayer
 {
@@ -17,7 +18,7 @@ namespace RevitInventorExchange.WindowsFormBusinesslayer
             var ret = new Dictionary<string, List<RevitFamiliesParamsDataGridSourceData>>();
             var sourceData = new List<RevitFamiliesParamsDataGridSourceData>();
 
-            var selRevFamilyFileName = Utilities.GetStringForFolderName(selRevFamily);
+            var selRevFamilyFileName = Utility.GetStringForFolderName(selRevFamily);
 
             //  Load corresponding Revit family parameter file and set datasource for dropdown list
             var revitFamilySource = GetRevitParameters(selRevFamilyFileName);

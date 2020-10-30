@@ -1,4 +1,5 @@
-﻿using System;
+﻿using RevitInventorExchange.Utilities;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -17,7 +18,7 @@ namespace RevitInventorExchange
 
             try
             {
-                var folderBaseLine = Utilities.GetFolderBaseline();
+                var folderBaseLine = Utility.GetFolderBaseline();
                 var configPath = System.IO.Path.Combine(folderBaseLine, "Configuration\\Config.xml");
 
                 doc.Load(configPath);
@@ -78,6 +79,18 @@ namespace RevitInventorExchange
         {
             return Convert.ToInt32(doc.SelectSingleNode("/Configuration/key[@name='Forge']/key[@name='HTTPAsyncCallsWaitingTime']/@value").Value);
         }
+
+
+        public static int GetAsyncHTTPCallRetryWaitTime()
+        {
+            return Convert.ToInt32(doc.SelectSingleNode("/Configuration/key[@name='Forge']/key[@name='HTTPRetryAsyncCallsWaitingTime']/@value").Value);
+        }
+
+        public static int GetAsyncHTTPCallNumberOfRetries()
+        {
+            return Convert.ToInt32(doc.SelectSingleNode("/Configuration/key[@name='Forge']/key[@name='HTTPRetryAsyncCallsNumberOfRetries']/@value").Value);
+        }
+
 
         public static string GetWorkItemCreationPollingTime()
         {

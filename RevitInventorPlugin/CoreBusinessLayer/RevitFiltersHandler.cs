@@ -1,5 +1,6 @@
 ﻿using Autodesk.Revit.DB.Structure;
 using RevitInventorExchange.CoreDataStructures;
+using RevitInventorExchange.Utilities;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -28,14 +29,14 @@ namespace RevitInventorExchange.CoreBusinessLayer
             //var filterFiles = elStruct.Select(o => Utilities.GetStringForFolderName(o.ElementTypeSingleParameters.SingleOrDefault(p => p.ParameterName == "SYMBOL_FAMILY_AND_TYPE_NAMES_PARAM").ParameterValue))
             //    .Distinct().ToList();
 
-            var filterFiles = elStruct.Select(o => Utilities.GetFilterOnPropFile(o)).Distinct().ToList();
+            var filterFiles = elStruct.Select(o => Utility.GetFilterOnPropFile(o)).Distinct().ToList();
 
             LoadFilters(filterFiles);
 
             //  loop on all elements in the passed structure to filter each element properties againt the corresponding filter file
             foreach (var el in elStruct)
             {
-                var fileName = Utilities.GetFilterOnPropFile(el);// el.ElementType.FamilyName;
+                var fileName = Utility.GetFilterOnPropFile(el);// el.ElementType.FamilyName;
 
                 loopOnProperties(fileName, el.ElementOrderedParameters);
                 loopOnProperties(fileName, el.ElementTypeOrderedParameters);               

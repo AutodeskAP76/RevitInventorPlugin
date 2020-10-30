@@ -17,6 +17,8 @@ using Inventor;
 using ADSK = Autodesk.Revit.DB;
 using Autodesk.Revit.UI;
 using System.Windows.Controls;
+using System.Diagnostics;
+using RevitInventorExchange.Utilities;
 
 namespace RevitInventorExchange.WindowsFormUI
 {
@@ -83,7 +85,7 @@ namespace RevitInventorExchange.WindowsFormUI
             NLogger.LogText($"Selection mode: {selMode}");
 
             //  Set local BIM 360 folder as root path            
-            rootPath = Utilities.GetInventorTemplateFolder(); // Utilities.GetBIM360RootPath();     
+            rootPath = Utility.GetInventorTemplateFolder(); // Utilities.GetBIM360RootPath();     
             folderBrowserDialogInventorTemplates.SelectedPath = rootPath;
 
             //  Initialize data grids & combobox
@@ -462,7 +464,11 @@ namespace RevitInventorExchange.WindowsFormUI
 
                 //  Select the first row of the Param mapping grid by Default
                 dgParamsMapping.ClearSelection();
-                dgParamsMapping.Rows[0].Selected = true;
+
+                if (dgParamsMapping.Rows.Count > 0)
+                {
+                    dgParamsMapping.Rows[0].Selected = true;
+                }
             }
 
             NLogger.LogText("Exit dgInvRevMapping_SelectionChanged");
@@ -487,7 +493,7 @@ namespace RevitInventorExchange.WindowsFormUI
 
                 if (!string.IsNullOrEmpty(revitFamily) && !(revitFamily == "null"))
                 {
-                    revitFileName = Utilities.GetStringForFolderName(revitFamily);
+                    revitFileName = Utility.GetStringForFolderName(revitFamily);
                 }
                 else
                 {
@@ -749,6 +755,11 @@ namespace RevitInventorExchange.WindowsFormUI
         private void btnUnselectAll_Click(object sender, EventArgs e)
         {
             dgElements.ClearSelection();
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            Process.Start(txtInventorTemplatesPath.Text);
         }
     }
 }

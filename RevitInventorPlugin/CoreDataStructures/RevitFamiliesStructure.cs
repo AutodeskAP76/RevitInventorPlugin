@@ -1,4 +1,5 @@
-﻿using System;
+﻿using RevitInventorExchange.Utilities;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -27,7 +28,7 @@ namespace RevitInventorExchange.CoreDataStructures
 
             try
             {
-                var folderBaseLine = Utilities.GetFolderBaseline();
+                var folderBaseLine = Utility.GetFolderBaseline();
                 var configPath = System.IO.Path.Combine(folderBaseLine, "Configuration\\RevitFamiliesConfig.xml");
 
                 doc.Load(configPath);

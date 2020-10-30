@@ -12,9 +12,13 @@
     <key name="ClientID" value="txSv5RooCcXxTpkMM2AvwMzQR13iHRdW"/>
     <key name="ClientSecret" value="57EQiy8kSi63HeLV"/>
     <!-- HTTPAsyncCallsWaitingTime: number of milliseconds waited when executing async call to Forge APIs -->
-    <key name="HTTPAsyncCallsWaitingTime" value="10000"/>
-    <!-- WorkItemCreationPollingTime: number of seconds waited when polling on WorkItem execution status -->
-    <key name="WorkItemCreationPollingTime" value="2"/>
+    <key name="HTTPAsyncCallsWaitingTime" value="2000"/>
+    <!-- HTTPRetryAsyncCallsWaitingTime: number of milliseconds waited when retry async call due to previous error to Forge APIs -->
+    <key name="HTTPRetryAsyncCallsWaitingTime" value="2000"/>
+    <!-- HTTPRetryAsyncCallsNumberOfRetries: number of retries when retry async call due to previous error to Forge APIs -->
+    <key name="HTTPRetryAsyncCallsNumberOfRetries" value="3"/>
+    <!-- WorkItemCreationPollingTime: number of milliseconds waited when polling on WorkItem execution status -->
+    <key name="WorkItemCreationPollingTime" value="2000"/>
     <!--  PLEASE DO NOT MODIFY BELOW VALUES -->
     <key name="DABaseURL" value="https://developer.api.autodesk.com/da/us-east/v3/"/>
     <key name="DABaseLinkURL" value="https://developer.api.autodesk.com/oss/v2/" />

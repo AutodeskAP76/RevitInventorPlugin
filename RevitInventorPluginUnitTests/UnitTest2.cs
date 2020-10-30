@@ -29,17 +29,19 @@ namespace RevitInventorPluginUnitTests
             string json = "{ " +
                   "'ILogicParams': [" +
                     "{" +
-                      "'RevitFamily': 'Wall Panel_2.iam (Window_Ref).0001: Standard'," +
+                      //"'RevitFamily': 'Wall Panel_2.iam (Window_Ref).0001: Standard'," +
+                      "'RevitFamily': 'Frame_Assy1: Standard'," +
                       //"'InventorTemplate': 'Wall Panel.iam'," +
-                      "'InventorTemplate': 'Unit_Frame_Package.zip'," +
+                      "'InventorTemplate': 'Unit_Frame_Package_01.zip'," +
 
                       "'ParametersInfo': [" +
                         "{" +
                           "'elementName': ''," +
+                          "'elementId': '345678'," +
                           "'paramsValues': { " +
-                                "'UF_height': '2000'," +
-                                "'UF_short_length': '2000'," +
-                                "'UF_long_length': '2000'" +
+                                "'Height': '2000'," +
+                                "'Length': '2000'," +
+                                "'Width': '2000'" +
                             "}" +
                           "}" +
                         "]" +

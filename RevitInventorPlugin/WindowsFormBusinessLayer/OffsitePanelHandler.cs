@@ -13,6 +13,7 @@ using System.Xml;
 using Newtonsoft.Json.Linq;
 using Autodesk.Revit.UI;
 using Autodesk.Revit.DB;
+using RevitInventorExchange.Utilities;
 
 namespace RevitInventorExchange.WindowsFormBusinesslayer
 {
@@ -63,7 +64,7 @@ namespace RevitInventorExchange.WindowsFormBusinesslayer
             foreach (var el in elementStructureList)
             {
                 var elName = el.Element.Name;
-                var elFamilyType = Utilities.GetFamilyType(el); // el.ElementTypeSingleParameters.SingleOrDefault(p => p.ParameterName == "SYMBOL_FAMILY_AND_TYPE_NAMES_PARAM").ParameterValue;
+                var elFamilyType = Utility.GetFamilyType(el); // el.ElementTypeSingleParameters.SingleOrDefault(p => p.ParameterName == "SYMBOL_FAMILY_AND_TYPE_NAMES_PARAM").ParameterValue;
 
                 sourceData.Add(new ElementsDataGridSourceData { ElementId = el.Element.Id.IntegerValue, ElementName = elName, ElementFamilyType = elFamilyType });
             }

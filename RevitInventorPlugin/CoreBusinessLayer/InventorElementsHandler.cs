@@ -79,7 +79,7 @@ namespace RevitInventorExchange.CoreBusinessLayer
             NLogger.LogText("Entered GetInventorTemplates method with path {path}", path);
 
             List<FileInfo> inventorTemplates;
-            List<string> fileExtensions = new List<string> { ".iam", ".ipt" };
+            List<string> fileExtensions = new List<string> { ".iam", ".ipt", ".zip" };
 
             var g = Directory.EnumerateFiles(path).Select(p => new FileInfo(p));
 
@@ -95,7 +95,7 @@ namespace RevitInventorExchange.CoreBusinessLayer
         }
 
         //  Load template file and extract related parameters
-        public List<InventorParameterStructure> LoadInventorTemplateParameters(string templateName, string invTemplatePath)
+        public List<InventorParameterStructure> LoadInventorTemplateParameters(string fullPath)
         {
             NLogger.LogText("Entered LoadInventorTemplateParameters method");
 
@@ -105,9 +105,7 @@ namespace RevitInventorExchange.CoreBusinessLayer
             //  TODO: HANDLE THE HARDCODED PATH
             //var rootPath = Utilities.GetBIM360RootPath();
             //var fullPath = rootPath + @"ATDSK ​DEV​\Sample Project\Project Files\Libraries\" + templateName;
-
-            var fullPath = invTemplatePath + "\\" + templateName;
-
+           
             try
             {
                 NLogger.LogText($"Try opening assembly document {fullPath}");

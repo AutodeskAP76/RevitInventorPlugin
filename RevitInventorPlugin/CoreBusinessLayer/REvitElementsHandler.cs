@@ -7,6 +7,7 @@ using System.Xml;
 using Autodesk.Revit.DB;
 using Autodesk.Revit.UI;
 using RevitInventorExchange.CoreDataStructures;
+using RevitInventorExchange.Utilities;
 
 namespace RevitInventorExchange.CoreBusinessLayer
 {
@@ -130,7 +131,7 @@ namespace RevitInventorExchange.CoreBusinessLayer
                     //    transferParam = true;
                     //}
 
-                    var val = Utilities.ParameterToString(doc, param);
+                    var val = Utility.ParameterToString(doc, param);
 
                     elementParams.Add(new ElementOrderedParameter { ParameterId = param.Id.IntegerValue, ParameterName = name, ParameterValue = val, TransferParam = transferParam });
                 }
@@ -151,7 +152,7 @@ namespace RevitInventorExchange.CoreBusinessLayer
             NLogger.LogText("Entered GetSingleParameter");
 
             var par = el.get_Parameter(parameter);
-            var parVal = Utilities.ParameterToString(doc, par);
+            var parVal = Utility.ParameterToString(doc, par);
 
             NLogger.LogText("Exit GetSingleParameter");
 

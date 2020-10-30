@@ -11,11 +11,15 @@ using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using RevitInventorExchange;
+using RevitInventorExchange.Utilities;
 
 namespace RevitInventorExchange.CoreBusinessLayer
 {
     public class DesignAutomationHandler
     {
+        private readonly int HTTPNumberOfRetries = ConfigUtilities.GetAsyncHTTPCallNumberOfRetries(); 
+        private readonly int HTTPCallRetryWaitTime = ConfigUtilities.GetAsyncHTTPCallRetryWaitTime();
         private string jsonStruct = "";
         private BIM360StructureBuilder bIM360DocsStructBuilder = null;
         private ForgeDMClient forgeDMClient = null;
@@ -126,10 +130,14 @@ namespace RevitInventorExchange.CoreBusinessLayer
             NLogger.LogText("Entered BuildHubStructure");
 
             forgeDMClient.SetBaseURL(ConfigUtilities.GetDMBaseProjectURL());
-            var ret = forgeDMClient.GetHub();
-            ret.Wait(ConfigUtilities.GetAsyncHTTPCallWaitTime());
 
-            var res = ret.Result;
+
+            var res = RetryHelper.Retry(HTTPNumberOfRetries, HTTPCallRetryWaitTime, forgeDMClient.GetHub, new Dictionary<string, string>());
+
+            //var ret = forgeDMClient.GetHub();
+            //ret.Wait(ConfigUtilities.GetAsyncHTTPCallWaitTime());
+
+            //var res = ret.Result;
 
             if (res.IsSuccessStatusCode())
             {
@@ -141,7 +149,7 @@ namespace RevitInventorExchange.CoreBusinessLayer
             }
             else
             {
-                Utilities.HandleErrorInForgeResponse("BuildHubStructure", res);
+                Utility.HandleErrorInForgeResponse("BuildHubStructure", res);
                 return null;
             }
         }
@@ -151,10 +159,16 @@ namespace RevitInventorExchange.CoreBusinessLayer
             NLogger.LogText("Entered BuildProjectStructure");
 
             forgeDMClient.SetBaseURL(ConfigUtilities.GetDMBaseProjectURL());
-            var ret = forgeDMClient.GetProject(hubId);
-            ret.Wait(ConfigUtilities.GetAsyncHTTPCallWaitTime());
 
-            var res = ret.Result;
+            var parameters = new Dictionary<string, string>() { { "hubId", hubId } };
+
+            var res = RetryHelper.Retry(HTTPNumberOfRetries, HTTPCallRetryWaitTime, forgeDMClient.GetProject, parameters);
+
+
+            //var ret = forgeDMClient.GetProject(hubId);
+            //ret.Wait(ConfigUtilities.GetAsyncHTTPCallWaitTime());
+
+            //var res = ret.Result;
 
             if (res.IsSuccessStatusCode())
             {
@@ -166,7 +180,7 @@ namespace RevitInventorExchange.CoreBusinessLayer
             }
             else
             {
-                Utilities.HandleErrorInForgeResponse("BuildProjectStructure", res);
+                Utility.HandleErrorInForgeResponse("BuildProjectStructure", res);
                 return null;
             }
         }
@@ -231,10 +245,14 @@ namespace RevitInventorExchange.CoreBusinessLayer
             NLogger.LogText("Entered BuildTopFolderStructure");
 
             forgeDMClient.SetBaseURL(ConfigUtilities.GetDMBaseProjectURL());
-            var ret = forgeDMClient.GetTopFolder(hubId, projectId);
-            ret.Wait(ConfigUtilities.GetAsyncHTTPCallWaitTime());
 
-            var res = ret.Result;
+            var parameters = new Dictionary<string, string>() { { "hubId", hubId }, { "projectId", projectId } };
+
+            var res = RetryHelper.Retry(HTTPNumberOfRetries, HTTPCallRetryWaitTime, forgeDMClient.GetTopFolder, parameters);
+            //var ret = forgeDMClient.GetTopFolder(hubId, projectId);
+            //ret.Wait(ConfigUtilities.GetAsyncHTTPCallWaitTime());
+
+            //var res = ret.Result;
 
             if (res.IsSuccessStatusCode())
             {
@@ -258,7 +276,7 @@ namespace RevitInventorExchange.CoreBusinessLayer
             }
             else
             {
-                Utilities.HandleErrorInForgeResponse("BuildTopFolderStructure", res);
+                Utility.HandleErrorInForgeResponse("BuildTopFolderStructure", res);
                 return null;
             }
         }
@@ -270,10 +288,16 @@ namespace RevitInventorExchange.CoreBusinessLayer
             var forgeDMDataClient = new ForgeDMClient(ConfigUtilities.GetDMBaseDataURL(), ConfigUtilities.GetClientID(), ConfigUtilities.GetClientSecret(), "data:read");
 
             //  Extract parentFolder content (both subfolders and files)
-            var ret = forgeDMDataClient.GetFolderContent(projectId, parentFolderId);
-            ret.Wait(ConfigUtilities.GetAsyncHTTPCallWaitTime());
 
-            var res = ret.Result;
+            var parameters = new Dictionary<string, string>() { { "projectId", projectId }, { "parentFolderId", parentFolderId } };
+
+            var res = RetryHelper.Retry(HTTPNumberOfRetries, HTTPCallRetryWaitTime, forgeDMDataClient.GetFolderContent, parameters);
+
+
+            //var ret = forgeDMDataClient.GetFolderContent(projectId, parentFolderId);
+            //ret.Wait(ConfigUtilities.GetAsyncHTTPCallWaitTime());
+
+            ////var res = ret.Result;
 
             if (res.IsSuccessStatusCode())
             {
@@ -303,10 +327,77 @@ namespace RevitInventorExchange.CoreBusinessLayer
             }
             else
             {
-                Utilities.HandleErrorInForgeResponse("BuildFolderStructure", res);
+                Utility.HandleErrorInForgeResponse("BuildFolderStructure", res);
                 return null;
             }
         }
+
+
+        private void SubmitWokItem_original(string inFile, string outFile)
+        {
+            NLogger.LogText("Entered SubmitWokItem");
+
+            //  Submit work items 
+
+            string payload = CreateWorkItemPayload1(inFile, outFile);
+            //string payload = CreateWorkItemPayload1_ForZip_Test(inFile, outFile);
+
+
+
+
+            var retSubmitWotkItem = forgeDAClient.PostWorkItem(payload);
+            retSubmitWotkItem.Wait(ConfigUtilities.GetAsyncHTTPCallWaitTime());
+
+            var resSubmitWorkItem = retSubmitWotkItem.Result;
+
+            //  Get Response. Check response status
+            if (resSubmitWorkItem.IsSuccessStatusCode())
+            {
+                daEventHandler.TriggerDACurrentStepHandler("WorkItem submitted");
+
+                JObject resSWIContent = JObject.Parse(resSubmitWorkItem.ResponseContent);
+
+                var status = resSWIContent.SelectToken("$.status").ToString();
+                var id = resSWIContent.SelectToken("$.id").ToString();
+
+                NLogger.LogText($"Work Item {id} in status {status}");
+
+                //  Check work Item status
+                var ret1 = CheckWorkItemStatus(id);
+                ret1.Wait(ConfigUtilities.GetAsyncHTTPCallWaitTime());
+
+                var res2 = ret1.Result;
+
+                if (res2.IsSuccessStatusCode())
+                {
+                    JObject res3 = JObject.Parse(res2.ResponseContent);
+
+                    status = res3.SelectToken("$.status").ToString();
+                    id = resSWIContent.SelectToken("$.id").ToString();
+
+                    NLogger.LogText($"Work Item {id} in status {status}");
+
+                    if (status == "failedInstructions")
+                    {
+                        daEventHandler.TriggerDACurrentStepHandler("WorkItem processing completed with error. Please check logs");
+
+                        string errString = res2.ResponseContent;
+                        throw new Exception(errString);
+                    }
+
+                    daEventHandler.TriggerDACurrentStepHandler("WorkItem processing completed sucessfully");
+
+                    NLogger.LogText("Exit SubmitWokItem sucessfully");
+                }
+            }
+            else
+            {
+                Utility.HandleErrorInForgeResponse("SubmitWokItem", resSubmitWorkItem);
+            }
+        }
+
+
+
 
         //  Submit work item passing json with data extracted from Revit
         private void SubmitWokItem(string inFile, string outFile)
@@ -314,9 +405,12 @@ namespace RevitInventorExchange.CoreBusinessLayer
             NLogger.LogText("Entered SubmitWokItem");
 
             //  Submit work items 
+            
             string payload = CreateWorkItemPayload1(inFile, outFile);
-
             //string payload = CreateWorkItemPayload1_ForZip_Test(inFile, outFile);
+
+
+
 
             var retSubmitWotkItem = forgeDAClient.PostWorkItem(payload);
             retSubmitWotkItem.Wait(ConfigUtilities.GetAsyncHTTPCallWaitTime());
@@ -365,7 +459,7 @@ namespace RevitInventorExchange.CoreBusinessLayer
             }
             else
             {
-                Utilities.HandleErrorInForgeResponse("SubmitWokItem", resSubmitWorkItem);
+                Utility.HandleErrorInForgeResponse("SubmitWokItem", resSubmitWorkItem);
             }
         }
 
@@ -389,7 +483,7 @@ namespace RevitInventorExchange.CoreBusinessLayer
                 if (status == "pending" || status == "inprogress")
                 {
                     //  Wait for some seconds (configured), then perform the check on status again
-                    await Task.Delay(TimeSpan.FromSeconds(Convert.ToInt32(ConfigUtilities.GetWorkItemCreationPollingTime())));
+                    await Task.Delay(Convert.ToInt32(ConfigUtilities.GetWorkItemCreationPollingTime()));
                     ret = await CheckWorkItemStatus(workItemId);
                 }
             }
@@ -516,7 +610,8 @@ namespace RevitInventorExchange.CoreBusinessLayer
                     new JProperty(ConfigUtilities.GetDAWorkItemParamsInputArgument(), new JObject(
                         new JProperty("localName", "params.json"),
                         //new JProperty("url", "data:application/json,{\"assemblyPath\":\"input\\\\Workspace\\\\Libraries_DH_Assembly_wall\\\\Wall Panel.iam\", \"projectPath\":\"input\\\\Wall Panel.ipj\", \"values\": { \"Window_LeftRef\":\"750\"}}")
-                        new JProperty("url", "data:application/json,{\"assemblyPath\":\"input\\\\Workspace\\\\Libraries_DH_Assembly_unit_frame\\\\unit_frame_assy.iam\", \"projectPath\":\"input\\\\unit_frame_assy.ipj\", \"values\": { \"UF_height\":\"2000\"}}")
+                        //new JProperty("url", "data:application/json,{\"assemblyPath\":\"input\\\\Workspace\\\\Libraries_DH_Assembly_unit_frame\\\\unit_frame_assy.iam\", \"projectPath\":\"input\\\\unit_frame_assy.ipj\", \"values\": { \"UF_height\":\"2000\"}}")
+                        new JProperty("url", "data:application/json,{\"assemblyPath\":\"input\\\\Workspace\\\\Libraries_DH_Assembly_unit_frame_01\\\\Frame_Assy1.iam\", \"projectPath\":\"input\\\\Frame_Assy1.ipj\", \"values\": { \"Height\":\"1000\" , \"Width\":\"1000\" , \"Length\":\"1000\", \"Stiffener_Spacing\":\"455\", \"Stiffener_Count\":\"( Length / Stiffener_Spacing )\"}}")
                     )),
                     new JProperty(itemParamOutput, new JObject(
                         new JProperty("url", outputSignedUrl),
@@ -673,7 +768,6 @@ namespace RevitInventorExchange.CoreBusinessLayer
             return outLink;
         }
 
-
         private string CreateStorageObject(string projId, string inputFile, string outputFile)
         {
             NLogger.LogText("Entered CreateStorageObject");
@@ -682,10 +776,15 @@ namespace RevitInventorExchange.CoreBusinessLayer
 
             forgeDMClient.SetBaseURL(ConfigUtilities.GetDMBaseDataURL());
 
-            var ret = forgeDMClient.CreateStorageObject(projId, CreateStorageObjectPayload1(inputFile, outputFile));
-            ret.Wait(ConfigUtilities.GetAsyncHTTPCallWaitTime());
+            var parameters = new Dictionary<string, string>() { { "projectId", projId }, { "payload", CreateStorageObjectPayload1(inputFile, outputFile) } };
+            var res = RetryHelper.Retry(HTTPNumberOfRetries, HTTPCallRetryWaitTime, forgeDMClient.CreateStorageObject, parameters);
 
-            var res = ret.Result;
+
+            //var ret = forgeDMClient.CreateStorageObject(projId, CreateStorageObjectPayload1(inputFile, outputFile));
+            //ret.Wait(ConfigUtilities.GetAsyncHTTPCallWaitTime());
+
+            //var res = ret.Result;
+
 
             if (res.IsSuccessStatusCode())
             {
@@ -700,7 +799,7 @@ namespace RevitInventorExchange.CoreBusinessLayer
             }
             else
             {
-                Utilities.HandleErrorInForgeResponse("CreateStorageObject", res);
+                Utility.HandleErrorInForgeResponse("CreateStorageObject", res);
             }
             
             NLogger.LogText("Exit CreateStorageObject");
@@ -714,7 +813,8 @@ namespace RevitInventorExchange.CoreBusinessLayer
             NLogger.LogText("Entered HandleDesignAutomationFlow");
 
             forgeDMClient.SetBaseURL(ConfigUtilities.GetDMBaseDataURL());
-            
+
+            //  Below BL processes every input - output files. If some errors occur on a specific input-output file, the system goes on with the rest of files
             foreach (var item in daStructure.FilesStructure)
             {
                 foreach (var el in item.OutputFileStructurelist)
@@ -722,15 +822,29 @@ namespace RevitInventorExchange.CoreBusinessLayer
                     string inputFile = item.InputFilename;
                     string outputFile = el.OutFileName;
 
-                    NLogger.LogText($"Started Design automation Flow for input file: {inputFile} with corresponding output file {outputFile}");
+                    try
+                    {
+                        NLogger.LogText($"Started Design automation Flow for input file: {inputFile} with corresponding output file {outputFile}");
+                        daEventHandler.TriggerDACurrentStepHandler($"Started Design automation Flow for input file: {inputFile} with corresponding output file {outputFile}");
 
-                    //  Create Storage Object, Submit workItem and Create File version
-                    el.OutFileStorageobject = CreateStorageObject(projId, inputFile, outputFile);                    
-                    SubmitWokItem(inputFile, outputFile);
-                    CreateFileVersion(projId, inputFile, outputFile, el.OutFileFolder);
+                        //  Create Storage Object, Submit workItem and Create File version
+                        el.OutFileStorageobject = CreateStorageObject(projId, inputFile, outputFile);
+                        SubmitWokItem(inputFile, outputFile);
+                        CreateFileVersion(projId, inputFile, outputFile, el.OutFileFolder);
+
+                        NLogger.LogText($"Design automation Flow for input file: {inputFile} with corresponding output file {outputFile} completed sucessfully");
+                        daEventHandler.TriggerDACurrentStepHandler($"Design automation Flow for input file: {inputFile} with corresponding output file {outputFile} completed sucessfully");
+                    }
+                    catch (Exception ex)
+                    {
+                        NLogger.LogText($"Design automation Flow for input file: {inputFile} with corresponding output file {outputFile} completed with error");
+                        daEventHandler.TriggerDACurrentStepHandler($"Design automation Flow for input file: {inputFile} with corresponding output file {outputFile} completed with error, please check logs");
+
+                        NLogger.LogError(ex);
+                    }
                 }
             }
-
+        
             NLogger.LogText("Exit HandleDesignAutomationFlow");
         }       
 
@@ -787,10 +901,17 @@ namespace RevitInventorExchange.CoreBusinessLayer
 
                 forgeDMClient.SetBaseURL(ConfigUtilities.GetDMBaseDataURL());
 
-                var retCreateFileVer = forgeDMClient.CreateFileFirstVersion(projectId, payload);
-                retCreateFileVer.Wait(ConfigUtilities.GetAsyncHTTPCallWaitTime());
 
-                var resCreateFileVer = retCreateFileVer.Result;
+                var parameters = new Dictionary<string, string>() { { "projectId", projectId }, { "payload", payload } };
+                var resCreateFileVer = RetryHelper.Retry(HTTPNumberOfRetries, HTTPCallRetryWaitTime, forgeDMClient.CreateFileFirstVersion, parameters);
+
+
+                //var retCreateFileVer = forgeDMClient.CreateFileFirstVersion(projectId, payload);
+                //retCreateFileVer.Wait(ConfigUtilities.GetAsyncHTTPCallWaitTime());
+
+                //var resCreateFileVer = retCreateFileVer.Result;
+
+
 
                 if (resCreateFileVer.IsSuccessStatusCode())
                 {
@@ -799,7 +920,7 @@ namespace RevitInventorExchange.CoreBusinessLayer
                 }
                 else
                 {
-                    Utilities.HandleErrorInForgeResponse("CreateFileVersion", resCreateFileVer);
+                    Utility.HandleErrorInForgeResponse("CreateFileVersion", resCreateFileVer);
                 }
             }
             else
@@ -810,10 +931,15 @@ namespace RevitInventorExchange.CoreBusinessLayer
 
                 forgeDMClient.SetBaseURL(ConfigUtilities.GetDMBaseDataURL());
 
-                var retCreateFileVer = forgeDMClient.CreateFileAdditionalVersion(projectId, payload);
-                retCreateFileVer.Wait(ConfigUtilities.GetAsyncHTTPCallWaitTime());
+                var parameters = new Dictionary<string, string>() { { "projectId", projectId }, { "payload", payload } };
+                var resCreateFileVer = RetryHelper.Retry(HTTPNumberOfRetries, HTTPCallRetryWaitTime, forgeDMClient.CreateFileAdditionalVersion, parameters);
 
-                var resCreateFileVer = retCreateFileVer.Result;
+                //var retCreateFileVer = forgeDMClient.CreateFileAdditionalVersion(projectId, payload);
+                //retCreateFileVer.Wait(ConfigUtilities.GetAsyncHTTPCallWaitTime());
+
+                //var resCreateFileVer = retCreateFileVer.Result;
+
+
 
                 if (resCreateFileVer.IsSuccessStatusCode())
                 {
@@ -822,7 +948,7 @@ namespace RevitInventorExchange.CoreBusinessLayer
                 }
                 else
                 {
-                    Utilities.HandleErrorInForgeResponse("CreateFileVersion", resCreateFileVer);
+                    Utility.HandleErrorInForgeResponse("CreateFileVersion", resCreateFileVer);
                 }
             }
         }

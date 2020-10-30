@@ -13,6 +13,7 @@ using System.Xml;
 using System.Reflection;
 using System.Drawing;
 using Inventor;
+using RevitInventorExchange.Utilities;
 
 namespace RevitInventorExchange.WindowsFormUI
 {
@@ -96,12 +97,12 @@ namespace RevitInventorExchange.WindowsFormUI
             var fileName = elStructureList.ElementType.FamilyName;
 
             var fileName1 = elStructureList.ElementTypeSingleParameters.SingleOrDefault(p => p.ParameterName == "SYMBOL_FAMILY_AND_TYPE_NAMES_PARAM").ParameterValue;
-            fileName1 = Utilities.GetStringForFolderName(fileName1);
+            fileName1 = Utility.GetStringForFolderName(fileName1);
 
             //var assemblyFolder = System.IO.Path.GetDirectoryName(Assembly.GetExecutingAssembly().CodeBase);
             //var TwoUp = System.IO.Path.GetDirectoryName(System.IO.Path.GetDirectoryName(assemblyFolder));
 
-            var folderBaseline = Utilities.GetFolderBaseline();
+            var folderBaseline = Utility.GetFolderBaseline();
             var xmlPath = System.IO.Path.Combine(folderBaseline, "FilteringFiles\\" + fileName1 + ".xml");
 
             string localXmlPath = new Uri(xmlPath).LocalPath;
@@ -184,7 +185,7 @@ namespace RevitInventorExchange.WindowsFormUI
         private void InitBehaviour()
         {            
             var controls = new List<Control> { lblApplyFilters, chckBoxApplyFilters, btnCreateFilterFile };
-            Utilities.SetRuntimeBehaviour(controls);
+            Utility.SetRuntimeBehaviour(controls);
         }
     }
 }

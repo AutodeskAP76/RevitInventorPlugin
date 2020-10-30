@@ -9,9 +9,9 @@ using Autodesk.Revit.DB;
 using RevitInventorExchange.CoreBusinessLayer;
 using RevitInventorExchange.CoreDataStructures;
 
-namespace RevitInventorExchange
+namespace RevitInventorExchange.Utilities
 {
-    public static class Utilities
+    public static class Utility
     {
         /// <summary>
         /// Helper function: return a string form of a given parameter.
@@ -95,7 +95,7 @@ namespace RevitInventorExchange
 
         public static string GetFilterOnPropFile(ElementStructure el) 
         {
-            return Utilities.GetStringForFolderName(GetFamilyType(el));
+            return Utility.GetStringForFolderName(GetFamilyType(el));
         }
 
         /// <summary>
@@ -146,7 +146,7 @@ namespace RevitInventorExchange
         /// <returns></returns>
         public static string GetProjectFolder()
         {
-            return Utilities.GetBIM360RootPath() + ConfigUtilities.GetHub() + "\\" + ConfigUtilities.GetProject() + "\\";
+            return Utility.GetBIM360RootPath() + ConfigUtilities.GetHub() + "\\" + ConfigUtilities.GetProject() + "\\";
         }
 
         /// <summary>
@@ -155,7 +155,7 @@ namespace RevitInventorExchange
         /// <returns></returns>
         public static string GetInventorTemplateFolder()
         {
-            return Utilities.GetProjectFolder() + ConfigUtilities.GetInventorTemplateFolder() + "\\";
+            return Utility.GetProjectFolder() + ConfigUtilities.GetInventorTemplateFolder() + "\\";
         }
 
         /// <summary>

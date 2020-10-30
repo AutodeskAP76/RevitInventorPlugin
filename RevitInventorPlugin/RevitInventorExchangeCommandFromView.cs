@@ -3,6 +3,7 @@ using Autodesk.Revit.DB;
 using Autodesk.Revit.UI;
 using Autodesk.Revit.UI.Selection;
 using RevitInventorExchange.CoreBusinessLayer;
+using RevitInventorExchange.Utilities;
 using RevitInventorExchange.WindowsFormUI;
 using System;
 using System.Collections.Generic;
@@ -55,7 +56,7 @@ namespace RevitInventorExchange
                 var filteredElStrList = revFilterHandler.FilterElements(elStructureList);
 
                 //  Extract all Revit Families for selected Revit elements
-                var fileredElStrRevitFamilies = Utilities.GetFamilyTypes(filteredElStrList);
+                var fileredElStrRevitFamilies = Utility.GetFamilyTypes(filteredElStrList);
 
                 if (fileredElStrRevitFamilies.Count > 1)
                 {

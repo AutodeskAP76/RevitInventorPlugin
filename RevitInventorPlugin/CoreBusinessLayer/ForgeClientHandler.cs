@@ -138,27 +138,34 @@ namespace RevitInventorExchange.CoreBusinessLayer
         {
         }
 
-        public async Task<ForgeRestResponse> GetHub()
+        public async Task<ForgeRestResponse> GetHub(Dictionary<string, string> parameters)
         {
             var ret = await RequestAsync($"hubs", string.Empty, Method.GET);
             return ret;
         }
 
-        internal async Task<ForgeRestResponse> GetProject(string hubId)
+        internal async Task<ForgeRestResponse> GetProject(Dictionary<string, string> parameters)
+        //internal async Task<ForgeRestResponse> GetProject(string hubId)
         {
-            var ret = await RequestAsync($"hubs/{hubId}/projects", string.Empty, Method.GET);
+            var ret = await RequestAsync($"hubs/{parameters["hubId"]}/projects", string.Empty, Method.GET);
             return ret;
         }
 
-        internal async Task<ForgeRestResponse> GetTopFolder(string hubId, string topFolderId)
+        //internal async Task<ForgeRestResponse> GetTopFolder(string hubId, string topFolderId)
+        internal async Task<ForgeRestResponse> GetTopFolder(Dictionary<string, string> parameters)
         {
-            var ret = await RequestAsync($"hubs/{hubId}/projects/{topFolderId}/topFolders", string.Empty, Method.GET);
+            var ret = await RequestAsync($"hubs/{parameters["hubId"]}/projects/{parameters["projectId"]}/topFolders", string.Empty, Method.GET);
             return ret;
         }
 
-        internal async Task<ForgeRestResponse> GetFolderContent(string projectId, string folderId)
+        //internal async Task<ForgeRestResponse> GetFolderContent(string projectId, string folderId)
+        //{
+        //    var ret = await RequestAsync($"projects/{projectId}/folders/{folderId}/contents", string.Empty, Method.GET);
+        //    return ret;
+        //}
+        internal async Task<ForgeRestResponse> GetFolderContent(Dictionary<string, string> parameters)
         {
-            var ret = await RequestAsync($"projects/{projectId}/folders/{folderId}/contents", string.Empty, Method.GET);
+            var ret = await RequestAsync($"projects/{parameters["projectId"]}/folders/{parameters["parentFolderId"]}/contents", string.Empty, Method.GET);
             return ret;
         }
 
@@ -168,15 +175,33 @@ namespace RevitInventorExchange.CoreBusinessLayer
             return ret;
         }
 
+        internal async Task<ForgeRestResponse> CreateStorageObject(Dictionary<string, string> parameters)
+        {
+            var ret = await RequestAsync($"projects/{parameters["projectId"]}/storage", parameters["payload"], "application/vnd.api+json", Method.POST);
+            return ret;
+        }
+
         internal async Task<ForgeRestResponse> CreateFileFirstVersion(string projectId, string payload)
         {
             var ret = await RequestAsync($"projects/{projectId}/items", payload, "application/vnd.api+json", Method.POST);
             return ret;
         }
 
+        internal async Task<ForgeRestResponse> CreateFileFirstVersion(Dictionary<string, string> parameters)
+        {
+            var ret = await RequestAsync($"projects/{parameters["projectId"]}/items", parameters["payload"], "application/vnd.api+json", Method.POST);
+            return ret;
+        }
+
         internal async Task<ForgeRestResponse> CreateFileAdditionalVersion(string projectId, string payload)
         {
             var ret = await RequestAsync($"projects/{projectId}/versions", payload, "application/vnd.api+json", Method.POST);
+            return ret;
+        }
+
+        internal async Task<ForgeRestResponse> CreateFileAdditionalVersion(Dictionary<string, string> parameters)
+        {
+            var ret = await RequestAsync($"projects/{parameters["projectId"]}/versions", parameters["payload"], "application/vnd.api+json", Method.POST);
             return ret;
         }
     }
