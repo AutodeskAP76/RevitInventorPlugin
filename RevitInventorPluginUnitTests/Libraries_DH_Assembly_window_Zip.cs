@@ -7,7 +7,8 @@ using System.Threading.Tasks;
 namespace RevitInventorPluginUnitTests
 {
     [TestClass]
-    public class UnitTest2
+    public class Libraries_DH_Assembly_window_Zip
+
     {
         [TestMethod]
         public void TestMethod1()
@@ -18,7 +19,8 @@ namespace RevitInventorPluginUnitTests
             ConfigUtilities.LoadConfig();
 
             string json = GetJson();
-            string InventorFilePath = @"C:\Users\parodiaadmin\BIM 360\ATDSK DEV\Sample Project\Project Files\Libraries_DH_Assembly_unit_frame_zip";
+            string InventorFilePath = @"C:\Users\parodiaadmin\BIM 360\ATDSK DEV\Sample Project\Project Files\Libraries_DH_Assembly_window_Zip";
+            //string InventorFilePath = @"C:\Users\parodiaadmin\BIM 360\ATDSK DEV\Sample Project\Project Files\Libraries_DH_Assembly_unit_frame_zip";
             DesignAutomationHandler daHandler = new DesignAutomationHandler();
 
             daHandler.RunDesignAutomationForgeWorkflow(json, InventorFilePath);
@@ -32,15 +34,16 @@ namespace RevitInventorPluginUnitTests
                       //"'RevitFamily': 'Wall Panel_2.iam (Window_Ref).0001: Standard'," +
                       "'RevitFamily': 'Frame_Assy1: Standard'," +
                       //"'InventorTemplate': 'Wall Panel.iam'," +
-                      "'InventorTemplate': 'Unit_Frame_Package_01.zip'," +
+                      //"'InventorTemplate': 'Unit_Frame_Package_01.zip'," +
+                      "'InventorTemplate': 'Window_package.zip'," +
 
                       "'ParametersInfo': [" +
                         "{" +
                           "'elementName': ''," +
                           "'elementId': '345678'," +
                           "'paramsValues': { " +
-                                "'Height': '2000'," +
-                                "'Length': '2000'," +
+                                "'Height': '3000'," +
+                                //"'Length': '3000'," +
                                 "'Width': '2000'" +
                             "}" +
                           "}" +

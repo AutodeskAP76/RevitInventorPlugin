@@ -24,8 +24,10 @@
     <key name="DABaseLinkURL" value="https://developer.api.autodesk.com/oss/v2/" />
     <key name="DMBaseProjectURL" value="https://developer.api.autodesk.com/project/v1/"/>
     <key name="DMBaseDataURL" value="https://developer.api.autodesk.com/data/v1/"/>
-    <key name="PartActivityId" value="DH_POC_App.DHIlogicPartActivity+version1" />
-    <key name="AssemblyActivityId" value="DH_POC_App.DHIlogicAssemblyActivity+version1" />
+    <!--<key name="PartActivityId" value="DH_POC_App.DHIlogicPartActivity+version1" />
+    <key name="AssemblyActivityId" value="DH_POC_App.DHIlogicAssemblyActivity+version1" />-->
+    <key name="PartActivityId" value="DH_POC_App.DHIlogicPart_TEMP_Activity+version1" />
+    <key name="AssemblyActivityId" value="DH_POC_App.DHIlogicAssembly_TEMP_Activity+version1" />
     <key name="RequestDocInputArgName" value="InventorDoc" />
     <key name="RequestParamInputArgName" value="InventorParams" />
     <key name="RequestParamOutputIpt" value="OutputIpt" />

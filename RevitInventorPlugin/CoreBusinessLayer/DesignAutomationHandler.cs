@@ -13,6 +13,7 @@ using System.Text;
 using System.Threading.Tasks;
 using RevitInventorExchange;
 using RevitInventorExchange.Utilities;
+using System.Threading;
 
 namespace RevitInventorExchange.CoreBusinessLayer
 {
@@ -132,12 +133,17 @@ namespace RevitInventorExchange.CoreBusinessLayer
             forgeDMClient.SetBaseURL(ConfigUtilities.GetDMBaseProjectURL());
 
 
-            var res = RetryHelper.Retry(HTTPNumberOfRetries, HTTPCallRetryWaitTime, forgeDMClient.GetHub, new Dictionary<string, string>());
+            var res = RetryHelper.Retry(HTTPNumberOfRetries, HTTPCallRetryWaitTime, forgeDMClient.GetHub, new Dictionary<string, string>());            
 
-            //var ret = forgeDMClient.GetHub();
+
+
+            //var ret = forgeDMClient.GetHub(new Dictionary<string, string>());
             //ret.Wait(ConfigUtilities.GetAsyncHTTPCallWaitTime());
 
             //var res = ret.Result;
+
+
+
 
             if (res.IsSuccessStatusCode())
             {
@@ -333,68 +339,68 @@ namespace RevitInventorExchange.CoreBusinessLayer
         }
 
 
-        private void SubmitWokItem_original(string inFile, string outFile)
-        {
-            NLogger.LogText("Entered SubmitWokItem");
+        //private void SubmitWokItem_original(string inFile, string outFile)
+        //{
+        //    NLogger.LogText("Entered SubmitWokItem");
 
-            //  Submit work items 
+        //    //  Submit work items 
 
-            string payload = CreateWorkItemPayload1(inFile, outFile);
-            //string payload = CreateWorkItemPayload1_ForZip_Test(inFile, outFile);
-
-
+        //    //string payload = CreateWorkItemPayload1(inFile, outFile);
+        //    string payload = CreateWorkItemPayload1_ForZip_Test(inFile, outFile);
 
 
-            var retSubmitWotkItem = forgeDAClient.PostWorkItem(payload);
-            retSubmitWotkItem.Wait(ConfigUtilities.GetAsyncHTTPCallWaitTime());
 
-            var resSubmitWorkItem = retSubmitWotkItem.Result;
 
-            //  Get Response. Check response status
-            if (resSubmitWorkItem.IsSuccessStatusCode())
-            {
-                daEventHandler.TriggerDACurrentStepHandler("WorkItem submitted");
+        //    var retSubmitWotkItem = forgeDAClient.PostWorkItem(payload);
+        //    retSubmitWotkItem.Wait(ConfigUtilities.GetAsyncHTTPCallWaitTime());
 
-                JObject resSWIContent = JObject.Parse(resSubmitWorkItem.ResponseContent);
+        //    var resSubmitWorkItem = retSubmitWotkItem.Result;
 
-                var status = resSWIContent.SelectToken("$.status").ToString();
-                var id = resSWIContent.SelectToken("$.id").ToString();
+        //    //  Get Response. Check response status
+        //    if (resSubmitWorkItem.IsSuccessStatusCode())
+        //    {
+        //        daEventHandler.TriggerDACurrentStepHandler("WorkItem submitted");
 
-                NLogger.LogText($"Work Item {id} in status {status}");
+        //        JObject resSWIContent = JObject.Parse(resSubmitWorkItem.ResponseContent);
 
-                //  Check work Item status
-                var ret1 = CheckWorkItemStatus(id);
-                ret1.Wait(ConfigUtilities.GetAsyncHTTPCallWaitTime());
+        //        var status = resSWIContent.SelectToken("$.status").ToString();
+        //        var id = resSWIContent.SelectToken("$.id").ToString();
 
-                var res2 = ret1.Result;
+        //        NLogger.LogText($"Work Item {id} in status {status}");
 
-                if (res2.IsSuccessStatusCode())
-                {
-                    JObject res3 = JObject.Parse(res2.ResponseContent);
+        //        //  Check work Item status
+        //        var ret1 = CheckWorkItemStatus(id);
+        //        ret1.Wait(ConfigUtilities.GetAsyncHTTPCallWaitTime());
 
-                    status = res3.SelectToken("$.status").ToString();
-                    id = resSWIContent.SelectToken("$.id").ToString();
+        //        var res2 = ret1.Result;
 
-                    NLogger.LogText($"Work Item {id} in status {status}");
+        //        if (res2.IsSuccessStatusCode())
+        //        {
+        //            JObject res3 = JObject.Parse(res2.ResponseContent);
 
-                    if (status == "failedInstructions")
-                    {
-                        daEventHandler.TriggerDACurrentStepHandler("WorkItem processing completed with error. Please check logs");
+        //            status = res3.SelectToken("$.status").ToString();
+        //            id = resSWIContent.SelectToken("$.id").ToString();
 
-                        string errString = res2.ResponseContent;
-                        throw new Exception(errString);
-                    }
+        //            NLogger.LogText($"Work Item {id} in status {status}");
 
-                    daEventHandler.TriggerDACurrentStepHandler("WorkItem processing completed sucessfully");
+        //            if (status == "failedInstructions")
+        //            {
+        //                daEventHandler.TriggerDACurrentStepHandler("WorkItem processing completed with error. Please check logs");
 
-                    NLogger.LogText("Exit SubmitWokItem sucessfully");
-                }
-            }
-            else
-            {
-                Utility.HandleErrorInForgeResponse("SubmitWokItem", resSubmitWorkItem);
-            }
-        }
+        //                string errString = res2.ResponseContent;
+        //                throw new Exception(errString);
+        //            }
+
+        //            daEventHandler.TriggerDACurrentStepHandler("WorkItem processing completed sucessfully");
+
+        //            NLogger.LogText("Exit SubmitWokItem sucessfully");
+        //        }
+        //    }
+        //    else
+        //    {
+        //        Utility.HandleErrorInForgeResponse("SubmitWokItem", resSubmitWorkItem);
+        //    }
+        //}
 
 
 
@@ -611,7 +617,8 @@ namespace RevitInventorExchange.CoreBusinessLayer
                         new JProperty("localName", "params.json"),
                         //new JProperty("url", "data:application/json,{\"assemblyPath\":\"input\\\\Workspace\\\\Libraries_DH_Assembly_wall\\\\Wall Panel.iam\", \"projectPath\":\"input\\\\Wall Panel.ipj\", \"values\": { \"Window_LeftRef\":\"750\"}}")
                         //new JProperty("url", "data:application/json,{\"assemblyPath\":\"input\\\\Workspace\\\\Libraries_DH_Assembly_unit_frame\\\\unit_frame_assy.iam\", \"projectPath\":\"input\\\\unit_frame_assy.ipj\", \"values\": { \"UF_height\":\"2000\"}}")
-                        new JProperty("url", "data:application/json,{\"assemblyPath\":\"input\\\\Workspace\\\\Libraries_DH_Assembly_unit_frame_01\\\\Frame_Assy1.iam\", \"projectPath\":\"input\\\\Frame_Assy1.ipj\", \"values\": { \"Height\":\"1000\" , \"Width\":\"1000\" , \"Length\":\"1000\", \"Stiffener_Spacing\":\"455\", \"Stiffener_Count\":\"( Length / Stiffener_Spacing )\"}}")
+                        //new JProperty("url", "data:application/json,{\"assemblyPath\":\"input\\\\Workspace\\\\Libraries_DH_Assembly_unit_frame_01\\\\Frame_Assy1.iam\", \"projectPath\":\"input\\\\Frame_Assy1.ipj\", \"values\": { \"Height\":\"1000\" , \"Width\":\"1000\" , \"Length\":\"1000\", \"Stiffener_Spacing\":\"455\", \"Stiffener_Count\":\"( Length / Stiffener_Spacing )\"}}")
+                        new JProperty("url", "data:application/json,{\"assemblyPath\":\"input\\\\Workspace\\\\Libraries_DH_Assembly_window\\\\Test_Frame Assy.iam\", \"projectPath\":\"input\\\\Test_Frame Assy.ipj\", \"values\": { \"Height\":\"1000\" , \"Width\":\"1000\" }}")
                     )),
                     new JProperty(itemParamOutput, new JObject(
                         new JProperty("url", outputSignedUrl),
