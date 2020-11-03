@@ -273,11 +273,11 @@ namespace RevitInventorExchange.WindowsFormBusinesslayer
             return paramJson.ToString();
         }
 
-        internal void RunDesignAutomation(string jsonParams, string invTemplFolder)
+        internal async Task RunDesignAutomation(string jsonParams, string invTemplFolder)
         {
             NLogger.LogText("Entered RunDesignAutomation");
 
-            daHandler.RunDesignAutomationForgeWorkflow(jsonParams, invTemplFolder);
+            await daHandler.RunDesignAutomationForgeWorkflow(jsonParams, invTemplFolder);
 
             NLogger.LogText("Exit RunDesignAutomation");
         }

@@ -46,7 +46,7 @@ namespace RevitInventorExchange.WindowsFormUI
         private IList<ADSK.Element> RevitFamTypes = null;       
         private string rootPath = "";
         private string invTemplFolder = "";
-        public readonly SelectionMode selMode;
+        public readonly SelectionMode selMode;       
 
         //  Initialize the form and its elements
         public OffsiteForm(IList<ADSK.Element> elementStructureList, UIApplication uiapplication)
@@ -106,20 +106,37 @@ namespace RevitInventorExchange.WindowsFormUI
             NLogger.LogText("Exit Offsite Form constructor");
         }
 
+
+
         //  Fill logs textbox with messages coming from background
         private void DaEvHandler_DACurrentStepHandler(object sender, string e)
         {
             NLogger.LogText("Entered DaEvHandler_DACurrentStepHandler");
+            
+            //  This construct is needed in order to access a Win Form control from a thread different from the UI thread
+            richTextBoxLogs.BeginInvoke(new Action(() =>
+            {
+               if (!string.IsNullOrWhiteSpace(richTextBoxLogs.Text))
+               {
+                   richTextBoxLogs.AppendText("\r\n" + e);
+               }
+               else
+               {
+                   richTextBoxLogs.AppendText(e);
+               }
+               richTextBoxLogs.ScrollToCaret();
+            }));
 
-            if (!string.IsNullOrWhiteSpace(richTextBoxLogs.Text))
-            {
-                richTextBoxLogs.AppendText("\r\n" + e);
-            }
-            else
-            {
-                richTextBoxLogs.AppendText(e);
-            }
-            richTextBoxLogs.ScrollToCaret();
+
+            //if (!string.IsNullOrWhiteSpace(richTextBoxLogs.Text))
+            //{
+            //    richTextBoxLogs.AppendText("\r\n" + e);
+            //}
+            //else
+            //{
+            //    richTextBoxLogs.AppendText(e);
+            //}
+            //richTextBoxLogs.ScrollToCaret();
 
             NLogger.LogText("Exit DaEvHandler_DACurrentStepHandler");
         }
@@ -228,7 +245,7 @@ namespace RevitInventorExchange.WindowsFormUI
             Close();
         }
 
-        private void btnExportPropVals_Click(object sender, EventArgs e)
+        private async void btnExportPropVals_Click(object sender, EventArgs e)
         {
             NLogger.LogText("Entered btnExportPropVals_Click");
             
@@ -241,15 +258,27 @@ namespace RevitInventorExchange.WindowsFormUI
                 return;
             }
 
+            //  Disable the tab during DA workflow execution  
+            ((System.Windows.Forms.Control)tabControl1.TabPages[tabName]).Enabled = false;
+            ((System.Windows.Forms.Control)tabControl1.TabPages["TabSOW"]).Enabled = false;
+
             //  Handle event and build json from Revit elements + Revit - Inventor mapping
             var daEvHandler = offsitePanelHandler.DaEventHandler;
             daEvHandler.DACurrentStepHandler += DaEvHandler_DACurrentStepHandler;
             var jsonParams = offsitePanelHandler.GetRevitPropertiesValues(runtimeElStructureList);
 
             //  Call Design Automation Forge APIs via HTTP calls to trigger Inventor Cloud execution engine            
-            offsitePanelHandler.RunDesignAutomation(jsonParams, invTemplFolder);
+            /*var ret = */await offsitePanelHandler.RunDesignAutomation(jsonParams, invTemplFolder);
+            //ret.Wait();
 
             daEvHandler.DACurrentStepHandler -= DaEvHandler_DACurrentStepHandler;
+
+            //  Enable the tab after DA workflow execution        
+            BeginInvoke(new Action(() =>
+            {
+                ((System.Windows.Forms.Control)tabControl1.TabPages[tabName]).Enabled = true;
+                ((System.Windows.Forms.Control)tabControl1.TabPages["TabSOW"]).Enabled = true;
+            }));
 
             NLogger.LogText("Exit btnExportPropVals_Click");
         }

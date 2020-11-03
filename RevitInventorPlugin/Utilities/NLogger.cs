@@ -9,6 +9,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Diagnostics;
 using System.Runtime.CompilerServices;
+using System.Threading;
 
 namespace RevitInventorExchange
 {
@@ -32,7 +33,7 @@ namespace RevitInventorExchange
             {
                 DeleteOldFileOnStartup = false,
                 FileName = logFilePath,
-                Layout = @"${longdate} ${level} ${message}",
+                Layout = @"${longdate} ${level} Thread: [${threadname:whenEmpty=${threadid}}] ${message}",
                 ArchiveAboveSize = 1024 * 1024, // 1MB
                 ArchiveEvery = FileArchivePeriod.Day,
                 MaxArchiveFiles = 20,
@@ -61,7 +62,7 @@ namespace RevitInventorExchange
             var stack = new StackFrame(1).GetMethod();
             var methodName = stack.Name;
             var className = stack.DeclaringType.Name;
-
+            
             var fullText = ($"{className}: {methodName} - {text}");
 
             logger?.Info(fullText);
