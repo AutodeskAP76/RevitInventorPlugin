@@ -227,11 +227,12 @@ namespace RevitInventorExchange.CoreBusinessLayer
                 && p.ParametersMapping.Any(n => !string.IsNullOrEmpty(n.InventorParamName))
                 );
 
+
             //  Loop on Revit families in mapping structure
             foreach (var map in invRevMapped)
             {
                 var revFamily = map.RevitFamily;
-                var invTemplate = map.InventorTemplate;
+                var invTemplate = GetInventorTemplate(map.InventorTemplate); // map.InventorTemplate;
 
                 dynamic familyJson = new JObject();
                 familyJson.RevitFamily = revFamily;
@@ -276,6 +277,45 @@ namespace RevitInventorExchange.CoreBusinessLayer
             NLogger.LogText("Exit ExtractRevitPropertiesValues method");
 
             return paramJson;
+        }
+
+        //  This method checks following:
+        //  - if file is an assembly and exists in the same folder a corresponding zip file with same name, then it passes the zip file as input file
+        //  - if file is an assembly and does NOT exists in the same folder then it passes the assembly file as input file
+        //  - if file is a part then it passes the part file as input file
+        private string GetInventorTemplate(string inventorTemplate)
+        {
+            NLogger.LogText("Entered GetInventorTemplate method");
+
+            var retInventorTemplate = inventorTemplate;
+
+            var templateName = System.IO.Path.GetFileNameWithoutExtension(inventorTemplate);
+            var templateExtension = System.IO.Path.GetExtension(inventorTemplate);
+            var templateZip = templateName + ".zip";
+
+            NLogger.LogText($"In Inventor template: {inventorTemplate}");
+
+            if (templateExtension == ".iam")
+            {
+                var existZipFile = invRevMappingStructList.Exists(p => p.InventorTemplate == templateZip);
+
+                if(existZipFile)
+                {
+                    NLogger.LogText($"A corresponding zip package: {templateZip} for the assembly input file has been found");
+
+                    retInventorTemplate = retInventorTemplate.Replace("iam", "zip");
+                }
+                else
+                {
+                    NLogger.LogText($"A corresponding zip package for the assembly input file has not been found");
+                }
+            }
+
+            NLogger.LogText($"Out Inventor template: {retInventorTemplate}");
+
+            NLogger.LogText("Exit GetInventorTemplate method");
+
+            return retInventorTemplate;
         }
 
         internal bool CheckMappingConsistency()

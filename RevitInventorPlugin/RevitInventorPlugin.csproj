@@ -88,6 +88,7 @@
   <ItemGroup>
     <Compile Include="CoreBusinessLayer\BIM360StructureBuilder.cs" />
     <Compile Include="CoreBusinessLayer\DesignAutomationHandler.cs" />
+    <Compile Include="CoreBusinessLayer\EnumStructures.cs" />
     <Compile Include="CoreBusinessLayer\ExportDataHandler.cs" />
     <Compile Include="CoreBusinessLayer\ForgeClientHandler.cs" />
     <Compile Include="CoreBusinessLayer\InventorElementsHandler.cs" />

@@ -19,6 +19,7 @@ using Autodesk.Revit.UI;
 using System.Windows.Controls;
 using System.Diagnostics;
 using RevitInventorExchange.Utilities;
+using RevitInventorExchange.CoreBusinessLayer;
 
 namespace RevitInventorExchange.WindowsFormUI
 {
@@ -26,13 +27,7 @@ namespace RevitInventorExchange.WindowsFormUI
     {
         ResetRevitFamily,
         SetRevitFamily
-    }
-
-    public enum SelectionMode
-    {
-        FromView,
-        FromFilters
-    }
+    }    
 
     public partial class OffsiteForm : Form
     {
@@ -46,10 +41,10 @@ namespace RevitInventorExchange.WindowsFormUI
         private IList<ADSK.Element> RevitFamTypes = null;       
         private string rootPath = "";
         private string invTemplFolder = "";
-        public readonly SelectionMode selMode;       
+        public readonly RevitElementSelectionMode selMode;       
 
         //  Initialize the form and its elements
-        public OffsiteForm(IList<ADSK.Element> elementStructureList, UIApplication uiapplication)
+        public OffsiteForm(IList<ADSK.Element> elementStructureList, UIApplication uiapplication, RevitElementSelectionMode RevitselMode)
         {
             NLogger.LogText("Entered Offsite Form constructor");
           
@@ -63,23 +58,21 @@ namespace RevitInventorExchange.WindowsFormUI
             offsitePanelHandler = new OffsitePanelHandler(uiapplication);
             this.Size = new Size(1380, 800);
 
+            selMode = RevitselMode;
+
             //  Check if selection mode is from Viewer or from Revit Families filter
-            if (elementStructureList != null)
+            if (selMode == RevitElementSelectionMode.FromView)
             {
                 var tempelStructureList = offsitePanelHandler.ProcessElements(elementStructureList);
                 elStructureList = offsitePanelHandler.FilterElements(tempelStructureList);
                 runtimeElStructureList = elStructureList;
                 groupBox2.Visible = false;
                 groupBox3.Visible = false;
-
-                selMode = SelectionMode.FromView;
             }
             else
             {
                 groupBox2.Visible = true;
                 groupBox3.Visible = true;
-
-                selMode = SelectionMode.FromFilters;
             }
 
             NLogger.LogText($"Selection mode: {selMode}");
@@ -93,7 +86,7 @@ namespace RevitInventorExchange.WindowsFormUI
             InitializeMappingGrid(dgInvRevMapping);
             InitializeParametersMappingGrid(dgParamsMapping);
 
-            if (selMode == SelectionMode.FromView)
+            if (selMode == RevitElementSelectionMode.FromView)
             {
                 btnSelectAllElements.Visible = false;
                 btnUnselectAll.Visible = false;
@@ -114,7 +107,7 @@ namespace RevitInventorExchange.WindowsFormUI
             NLogger.LogText("Entered DaEvHandler_DACurrentStepHandler");
             
             //  This construct is needed in order to access a Win Form control from a thread different from the UI thread
-            richTextBoxLogs.BeginInvoke(new Action(() =>
+            BeginInvoke(new Action(() =>
             {
                if (!string.IsNullOrWhiteSpace(richTextBoxLogs.Text))
                {
@@ -127,17 +120,6 @@ namespace RevitInventorExchange.WindowsFormUI
                richTextBoxLogs.ScrollToCaret();
             }));
 
-
-            //if (!string.IsNullOrWhiteSpace(richTextBoxLogs.Text))
-            //{
-            //    richTextBoxLogs.AppendText("\r\n" + e);
-            //}
-            //else
-            //{
-            //    richTextBoxLogs.AppendText(e);
-            //}
-            //richTextBoxLogs.ScrollToCaret();
-
             NLogger.LogText("Exit DaEvHandler_DACurrentStepHandler");
         }
 
@@ -146,7 +128,7 @@ namespace RevitInventorExchange.WindowsFormUI
             NLogger.LogText("Entered ElementsForm_Load");
 
             //  Load either Revit Elements grid or Revit Families dropdownlist, depending on how the user wants to select elements in Revit file
-            if (elStructureList != null)
+            if (elStructureList != null && elStructureList.Count != 0)
             {
                 // Populate the Element datagrid
                 var dataSources = offsitePanelHandler.GetElementsDataGridSource(elStructureList);
@@ -154,6 +136,8 @@ namespace RevitInventorExchange.WindowsFormUI
                 elementList = dataSources["Elements"];
 
                 offsitePanelHandler.FillGrid(dgElements, elementList);
+
+                //DataGridAutoSize(dgElements);                
             }
             else
             {
@@ -168,7 +152,7 @@ namespace RevitInventorExchange.WindowsFormUI
                 comboBoxRevitFamilies.SelectedIndex = -1;
 
                 //  populate filtering drowdown lists
-                //var dataSource = offsitePanelHandler.GetListFamilyTypeSource(RevitFamTypes);  
+                //var dataSource = offsitePanelHandler.GetListFamilyTypeSource(RevitFamTypes);
                 //offsitePanelHandler.FillComboRevitFamTypes(comboBoxRevitFamilyTypes, dataSource, "FamilyTypeName");
             }
             
@@ -743,7 +727,7 @@ namespace RevitInventorExchange.WindowsFormUI
             //  depending on Selection mode and if there are Revit selected elements in the grid, enable / disable tab
             ((System.Windows.Forms.Control)tabControl1.TabPages[tabName]).Enabled = false;
 
-            if (selMode == SelectionMode.FromFilters)
+            if (selMode == RevitElementSelectionMode.FromFilters)
             {               
                 if (rowsCount > 0)
                 {
@@ -767,7 +751,7 @@ namespace RevitInventorExchange.WindowsFormUI
                 }
             }
             
-            if (selMode == SelectionMode.FromView)
+            if (selMode == RevitElementSelectionMode.FromView)
             {
                 ((System.Windows.Forms.Control)tabControl1.TabPages[tabName]).Enabled = true;
                 tabControl1.SelectedTab = tabControl1.TabPages[tabName];
@@ -790,5 +774,18 @@ namespace RevitInventorExchange.WindowsFormUI
         {
             Process.Start(txtInventorTemplatesPath.Text);
         }
+
+
+
+
+        //private void DataGridAutoSize(DataGridView dg)
+        //{
+        //    int sum = dg.ColumnHeadersHeight;
+
+        //    foreach (DataGridViewRow row in dg.Rows)
+        //        sum += row.Height + 1; // I dont think the height property includes the cell border size, so + 1
+
+        //    dg.Height = sum;
+        //}
     }
 }

@@ -75,7 +75,7 @@ namespace RevitInventorExchange
                     else
                     {
                         //  Pass elements info to the opened form
-                        elementWindow = new OffsiteForm(selectedElements, uiapp);
+                        elementWindow = new OffsiteForm(selectedElements, uiapp, RevitElementSelectionMode.FromView);
                         elementWindow.Show();
                     }                    
                 }
@@ -90,7 +90,6 @@ namespace RevitInventorExchange
 
             return Result.Succeeded;
         }
-
 
         private System.Windows.Forms.Form CheckOpened(string name)
         {

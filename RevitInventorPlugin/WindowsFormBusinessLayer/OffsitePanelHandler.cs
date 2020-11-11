@@ -268,9 +268,11 @@ namespace RevitInventorExchange.WindowsFormBusinesslayer
                 ExportPropertiesValues(paramJson.ToString());
             }
 
+            var jsonString = paramJson.ToString();
+            
             NLogger.LogText("Exit GetRevitPropertiesValues");
 
-            return paramJson.ToString();
+            return jsonString;
         }
 
         internal async Task RunDesignAutomation(string jsonParams, string invTemplFolder)

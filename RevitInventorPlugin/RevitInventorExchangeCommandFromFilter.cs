@@ -46,7 +46,7 @@ namespace RevitInventorExchange
                 else
                 {
                     //  Pass elements info to the opened form
-                    elementWindow = new OffsiteForm(selectedElements, uiapp);
+                    elementWindow = new OffsiteForm(selectedElements, uiapp, RevitElementSelectionMode.FromFilters);
                     elementWindow.Show();
                 }
 

@@ -20,6 +20,7 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using RestSharp;
 using RestSharp.Authenticators;
+using RevitInventorExchange.Utilities;
 
 namespace RevitInventorExchange.CoreBusinessLayer
 {
@@ -34,6 +35,8 @@ namespace RevitInventorExchange.CoreBusinessLayer
 
         protected ForgeClientHandler(string baseURL, string clientId, string clientSecret, string authScope)
         {
+            NLogger.LogText("Entered ForgeClientHandler");
+
             Uri baseUri = new Uri(baseURL);
             string domain = baseUri.GetLeftPart(UriPartial.Authority);
             bool isLocal = baseUri.Host.Equals("localhost", StringComparison.OrdinalIgnoreCase);
@@ -42,6 +45,14 @@ namespace RevitInventorExchange.CoreBusinessLayer
             {
                 Authenticator = isLocal ? null : new ForgeAuthenticator(domain, clientId, clientSecret, authScope)                 
             };
+
+            //NLogger.LogText($"Set HTTP CLient timeout: {ConfigUtilities.GetAsyncHTTPCallWaitTime()} milliseconds");
+            NLogger.LogText($"Set HTTP CLient domain: {domain}");
+            NLogger.LogText($"Set HTTP CLient isLocal: {isLocal}");
+
+            //Client.Timeout = ConfigUtilities.GetAsyncHTTPCallWaitTime();
+
+            NLogger.LogText("Exit ForgeClientHandler");
         }
 
         public void SetBaseURL(string baseURL)
@@ -65,9 +76,12 @@ namespace RevitInventorExchange.CoreBusinessLayer
         public async Task<ForgeRestResponse> RequestAsync(string path, string payload, Method method)
         {
             NLogger.LogText($"Entered RequestAsync with url {Client.BaseUrl}{path}, method {method.ToString()}");
-            
+
             if (!string.IsNullOrEmpty(payload))
-                NLogger.LogText($"Entered RequestAsync with payload {payload}");
+            {
+                var loggedPayload = Utility.HideTokenInJson(payload);
+                NLogger.LogText($"Entered RequestAsync with payload {loggedPayload}");
+            }
 
             RestRequest request = new RestRequest(path, method);
             request.AddParameter("application/json", payload, ParameterType.RequestBody);
@@ -115,6 +129,7 @@ namespace RevitInventorExchange.CoreBusinessLayer
         public ForgeDAClient(string baseURL, string clientId, string clientSecret, string authScope = "code:all data:read data:write") :
             base(baseURL, clientId, clientSecret, authScope)
         {
+            NLogger.LogText("ForgeDAClient constructor");
         }
 
         public async Task<ForgeRestResponse> PostWorkItem(string payload)
@@ -137,6 +152,7 @@ namespace RevitInventorExchange.CoreBusinessLayer
         public ForgeDMClient(string baseURL, string clientId, string clientSecret, string authScope = "code:all") :
             base(baseURL, clientId, clientSecret, authScope)
         {
+            NLogger.LogText("ForgeDMClient constructor");
         }
 
         public async Task<ForgeRestResponse> GetHub(Dictionary<string, string> parameters)
@@ -247,6 +263,8 @@ namespace RevitInventorExchange.CoreBusinessLayer
 
         public ForgeAuthenticator(string url, string key, string secret, string authScope)
         {
+            NLogger.LogText("ForgeAuthenticator constructor");
+
             Url = url;
             Key = key;
             Secret = secret;
@@ -303,6 +321,8 @@ namespace RevitInventorExchange.CoreBusinessLayer
     {
         public HttpStatusCode Status => Response.StatusCode;
         public string ResponseContent => Response.Content;
+
+        public IRestResponse RetResponse => Response;
 
         private IRestResponse Response;
         public ForgeRestResponse(IRestResponse response)

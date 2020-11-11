@@ -6,6 +6,7 @@ using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using Autodesk.Revit.DB;
+using Newtonsoft.Json.Linq;
 using RevitInventorExchange.CoreBusinessLayer;
 using RevitInventorExchange.CoreDataStructures;
 
@@ -185,11 +186,60 @@ namespace RevitInventorExchange.Utilities
         public static void HandleErrorInForgeResponse(string messageParam, ForgeRestResponse res)
         {
             NLogger.LogText($"Exit {messageParam} with Error");
-            var ex = new Exception($"Following error occurred: {res.ResponseContent}");
+            var ex = new Exception($"Following error occurred: Response Content: {res.ResponseContent}; Response Error: {res.RetResponse.ErrorMessage}");
 
             NLogger.LogError(ex);
 
             throw ex;
+        }
+
+        //public static string GetSubstringBetween(string Text, string FirstString, string LastString)
+        //{
+        //    string STR = Text;
+        //    string STRFirst = FirstString;
+        //    string STRLast = LastString;
+        //    string FinalString;
+        //    string TempString;
+
+        //    int Pos1 = STR.IndexOf(FirstString) + FirstString.Length;
+        //    int Pos2 = STR.IndexOf(LastString);
+
+        //    FinalString = STR.Substring(Pos1, Pos2 - Pos1);
+
+        //    return FinalString;
+        //}
+
+        public static string HideTokenInJson(string inputJson)
+        {
+            string retJson = "";
+
+            JObject json = JObject.Parse(inputJson);
+
+            try
+            {
+                if (json["arguments"]["InventorDoc"] != null)
+                {
+                    json["arguments"]["InventorDoc"]["Headers"]["Authorization"] = "***";
+                }
+
+                if (json["arguments"][ConfigUtilities.GetDAWorkItemParamsOutputIpt()] != null)
+                {
+                    json["arguments"][ConfigUtilities.GetDAWorkItemParamsOutputIpt()]["Headers"]["Authorization"] = "***";
+                }
+
+                if (json["arguments"][ConfigUtilities.GetDAWorkItemParamsOutputIam()] != null)
+                {
+                    json["arguments"][ConfigUtilities.GetDAWorkItemParamsOutputIam()]["Headers"]["Authorization"] = "***";
+                }
+
+                retJson = json.ToString();
+            }
+            catch
+            {
+                retJson = inputJson;
+            }
+           
+            return retJson;
         }
     }
 }
