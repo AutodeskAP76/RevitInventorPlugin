@@ -78,8 +78,8 @@ namespace RevitInventorExchange.WindowsFormUI
             if (revitFamiliesRowCount == 1)
             {
                 var selRevFamParam = dgRevitFamParams.SelectedRows[0].Cells["Revit Family Parameters"].Value.ToString();
-                SelectedRevitFamilyParam = selRevFamParam;
-
+                
+                //  Check if selected parameter has already been assigned
                 var alreadyAssigned = revitUsedParams.Any(l => l == selRevFamParam);
 
                 if (alreadyAssigned)
@@ -88,6 +88,8 @@ namespace RevitInventorExchange.WindowsFormUI
 
                     return;
                 }
+
+                SelectedRevitFamilyParam = selRevFamParam;
             }
             else
             {

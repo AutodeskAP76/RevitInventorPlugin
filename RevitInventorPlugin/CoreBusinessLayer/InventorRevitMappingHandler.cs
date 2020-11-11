@@ -115,9 +115,16 @@ namespace RevitInventorExchange.CoreBusinessLayer
             //  Clear Inventor Params - revit prop association as a new Revit Family has been selected
             NLogger.LogText("Clear Inventor Parameters - Revit Properties association");
 
-            foreach (var map in selInventor.ParametersMapping)
+            if (selInventor.ParametersMapping != null)
             {
-                map.RevitParamName = "";
+                foreach (var map in selInventor.ParametersMapping)
+                {
+                    map.RevitParamName = "";
+                }
+            }
+            else
+            {
+                NLogger.LogText("'ParametersMapping' is null");
             }
 
             NLogger.LogText("Exit UpdateMappingStructure method");
@@ -151,59 +158,59 @@ namespace RevitInventorExchange.CoreBusinessLayer
         /// Returns a json structure containing Revit properties values, based on Revit - Inventor mapping
         /// </summary>
         /// <param name="elStructureList"></param>
-        internal JObject ExtractRevitPropertiesValues_ORIGINAL(List<ElementStructure> elStructureList)
-        {
-            NLogger.LogText("Entered ExtractRevitPropertiesValues method");
+        //internal JObject ExtractRevitPropertiesValues_ORIGINAL(List<ElementStructure> elStructureList)
+        //{
+        //    NLogger.LogText("Entered ExtractRevitPropertiesValues method");
 
-            //  Based on Revit prop - Inventor params mapping, extract real values from Revit selected elements
-            var revitElementList = elStructureList;
+        //    //  Based on Revit prop - Inventor params mapping, extract real values from Revit selected elements
+        //    var revitElementList = elStructureList;
 
-            dynamic paramJson = new JObject();
-            paramJson.ILogicParams = new JArray();
+        //    dynamic paramJson = new JObject();
+        //    paramJson.ILogicParams = new JArray();
 
-            //  Extract currently mapped Revit - Inventor files
-            var invRevMapped = invRevMappingStructList.Where(p => !string.IsNullOrEmpty(p.RevitFamily) && p.ParametersMapping != null);
+        //    //  Extract currently mapped Revit - Inventor files
+        //    var invRevMapped = invRevMappingStructList.Where(p => !string.IsNullOrEmpty(p.RevitFamily) && p.ParametersMapping != null);
 
-            //  Loop on Revit families in mapping structure
-            foreach (var map in invRevMapped)
-            {
-                var revFamily = map.RevitFamily;
-                var invTemplate = map.InventorTemplate;
+        //    //  Loop on Revit families in mapping structure
+        //    foreach (var map in invRevMapped)
+        //    {
+        //        var revFamily = map.RevitFamily;
+        //        var invTemplate = map.InventorTemplate;
 
-                dynamic familyJson = new JObject();
-                familyJson.RevitFamily = revFamily;
-                familyJson.InventorTemplate = invTemplate;
-                familyJson.paramsValues = new JObject();
+        //        dynamic familyJson = new JObject();
+        //        familyJson.RevitFamily = revFamily;
+        //        familyJson.InventorTemplate = invTemplate;
+        //        familyJson.paramsValues = new JObject();
 
-                var elStructFamTypeList = Utility.GetElementsOnFamilyType(revitElementList, revFamily);
+        //        var elStructFamTypeList = Utility.GetElementsOnFamilyType(revitElementList, revFamily);
                 
-                //  Loop on Revit - Inventor params mapping
-                foreach (var paramMap in map.ParametersMapping)
-                {
-                    var revProp = paramMap.RevitParamName;
-                    var invParam = paramMap.InventorParamName;
+        //        //  Loop on Revit - Inventor params mapping
+        //        foreach (var paramMap in map.ParametersMapping)
+        //        {
+        //            var revProp = paramMap.RevitParamName;
+        //            var invParam = paramMap.InventorParamName;
 
-                    if (!string.IsNullOrEmpty(revProp))
-                    {
-                        foreach (var elStructFamType in elStructFamTypeList)
-                        {
-                            var elTypePropList = elStructFamType.ElementTypeOrderedParameters;
+        //            if (!string.IsNullOrEmpty(revProp))
+        //            {
+        //                foreach (var elStructFamType in elStructFamTypeList)
+        //                {
+        //                    var elTypePropList = elStructFamType.ElementTypeOrderedParameters;
 
-                            var propValue = elTypePropList.First(o => o.ParameterName == revProp).ParameterValue;
+        //                    var propValue = elTypePropList.First(o => o.ParameterName == revProp).ParameterValue;
 
-                            JProperty prop = new JProperty(invParam, propValue);
-                            familyJson.paramsValues.Add(prop);
-                        }
-                    }
-                }
+        //                    JProperty prop = new JProperty(invParam, propValue);
+        //                    familyJson.paramsValues.Add(prop);
+        //                }
+        //            }
+        //        }
 
-                paramJson.ILogicParams.Add(familyJson);
-            }
+        //        paramJson.ILogicParams.Add(familyJson);
+        //    }
 
-            NLogger.LogText("Exit ExtractRevitPropertiesValues method");
+        //    NLogger.LogText("Exit ExtractRevitPropertiesValues method");
 
-            return paramJson;
-        }
+        //    return paramJson;
+        //}
 
         /// <summary>
         /// Returns a json structure containing Revit properties values, based on Revit - Inventor mapping
@@ -226,7 +233,6 @@ namespace RevitInventorExchange.CoreBusinessLayer
                 && p.ParametersMapping != null 
                 && p.ParametersMapping.Any(n => !string.IsNullOrEmpty(n.InventorParamName))
                 );
-
 
             //  Loop on Revit families in mapping structure
             foreach (var map in invRevMapped)

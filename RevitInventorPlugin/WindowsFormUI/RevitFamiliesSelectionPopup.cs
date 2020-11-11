@@ -81,6 +81,13 @@ namespace RevitInventorExchange.WindowsFormUI
                 var selRevFam = dgRevitFamilies.SelectedRows[0].Cells[0].Value.ToString();
                 SelectedRevitFamily = selRevFam;
             }
+            else
+            {
+                MessageBoxButtons buttons = MessageBoxButtons.OK;
+                MessageBox.Show("You have to select one row", "", buttons);
+
+                return;
+            }
 
             this.DialogResult = DialogResult.OK;
             this.Close();

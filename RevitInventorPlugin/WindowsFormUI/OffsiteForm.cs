@@ -349,10 +349,23 @@ namespace RevitInventorExchange.WindowsFormUI
                 return;
             }
 
+            //  If zip file, cannot associate parameters
+            var isZipFile = System.IO.Path.GetExtension(invTemplateFileName) == ".zip";
+            if (isZipFile)
+            {
+                MessageBox.Show("Cannot map parameters for zip file");
+                return;
+            }
+
             //  Set or reset Revit Family
             var selRevFamily = GetRevitFamily(mode);
 
             NLogger.LogText($"Selected Revit Family {selRevFamily}");
+
+            if (string.IsNullOrEmpty(selRevFamily))
+            {
+                return;
+            }
 
             var dataSource = offsitePanelHandler.RefreshInvRevitMappingDataGridSource(selRevFamily, invTemplateFileName);
 
@@ -482,8 +495,13 @@ namespace RevitInventorExchange.WindowsFormUI
                 {
                     dgParamsMapping.Rows[0].Selected = true;
                 }
-            }
 
+                var mappedParams = elementList.Where(l => !string.IsNullOrEmpty(l.RevitParamName)).Count();
+                lblNumbOfMappedParams.Text = mappedParams.ToString();
+                lblNumberOfParams.Text = dgParamsMapping.Rows.Count.ToString();
+
+            }
+            
             NLogger.LogText("Exit dgInvRevMapping_SelectionChanged");
         }               
         
@@ -550,28 +568,44 @@ namespace RevitInventorExchange.WindowsFormUI
 
             var dataSource = offsitePanelHandler.RefreshInvRevitParamsMappingDataGridSource(revitFamily, inventorTemplate, selInvParam, selRevFamilyParam);
 
+            //  Fill grid
             var elementList = dataSource["ParamsMapping"];
-
             offsitePanelHandler.FillGrid(dgParamsMapping, elementList);
 
-            if (selectedRow < (dgParamsMapping.Rows.Count - 1))
+            //  Update counter of mapped parameters
+            var mappedParams = elementList.Where(l => !string.IsNullOrEmpty(l.RevitParamName)).Count();
+            lblNumbOfMappedParams.Text = mappedParams.ToString();
+            
+            //  Set selected row            
+            if (selectedRow < (dgParamsMapping.Rows.Count - 1) && mode == RevitFamilyHandling.SetRevitFamily && !(selRevFamilyParam == currentRevitParam))
             {
-                dgParamsMapping.ClearSelection();
-                dgParamsMapping.CurrentCell = dgParamsMapping.Rows[selectedRow + 1].Cells["Inventor Key Parameters"];
-                dgParamsMapping.CurrentRow.Selected = false;
-                dgParamsMapping.Rows[selectedRow + 1].Selected = true;
-
                 selectedRow = selectedRow + 1;
+
+                UpdateRowSelection(selectedRow);
+                //dgParamsMapping.ClearSelection();
+                //dgParamsMapping.CurrentCell = dgParamsMapping.Rows[selectedRow].Cells["Inventor Key Parameters"];
+                //dgParamsMapping.CurrentRow.Selected = false;
+                //dgParamsMapping.Rows[selectedRow].Selected = true;                
             }
             else
             {
-                dgParamsMapping.ClearSelection();
-                dgParamsMapping.CurrentCell = dgParamsMapping.Rows[selectedRow].Cells["Inventor Key Parameters"];
-                dgParamsMapping.CurrentRow.Selected = false;
-                dgParamsMapping.Rows[selectedRow].Selected = true;
-            }
+                UpdateRowSelection(selectedRow);
 
+                //dgParamsMapping.ClearSelection();
+                //dgParamsMapping.CurrentCell = dgParamsMapping.Rows[selectedRow].Cells["Inventor Key Parameters"];
+                //dgParamsMapping.CurrentRow.Selected = false;
+                //dgParamsMapping.Rows[selectedRow].Selected = true;
+            }
+            
             NLogger.LogText("Exit HandleRowSelectionParams");
+        }
+
+        private void UpdateRowSelection(int selectedRow)
+        {
+            dgParamsMapping.ClearSelection();
+            dgParamsMapping.CurrentCell = dgParamsMapping.Rows[selectedRow].Cells["Inventor Key Parameters"];
+            dgParamsMapping.CurrentRow.Selected = false;
+            dgParamsMapping.Rows[selectedRow].Selected = true;
         }
 
         /// <summary>

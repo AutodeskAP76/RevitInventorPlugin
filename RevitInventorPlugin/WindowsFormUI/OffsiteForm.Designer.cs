@@ -57,6 +57,10 @@
             this.txtInventorTemplatesPath = new System.Windows.Forms.TextBox();
             this.dgInvRevMapping = new System.Windows.Forms.DataGridView();
             this.folderBrowserDialogInventorTemplates = new System.Windows.Forms.FolderBrowserDialog();
+            this.label02 = new System.Windows.Forms.Label();
+            this.lblNumberOfParams = new System.Windows.Forms.Label();
+            this.label1 = new System.Windows.Forms.Label();
+            this.lblNumbOfMappedParams = new System.Windows.Forms.Label();
             this.tabControl1.SuspendLayout();
             this.tabSOW.SuspendLayout();
             this.groupBox3.SuspendLayout();
@@ -257,6 +261,10 @@
             // 
             // grpBoxRevitFamilies
             // 
+            this.grpBoxRevitFamilies.Controls.Add(this.lblNumbOfMappedParams);
+            this.grpBoxRevitFamilies.Controls.Add(this.label1);
+            this.grpBoxRevitFamilies.Controls.Add(this.lblNumberOfParams);
+            this.grpBoxRevitFamilies.Controls.Add(this.label02);
             this.grpBoxRevitFamilies.Controls.Add(this.btnClearSelectedParamMapping);
             this.grpBoxRevitFamilies.Controls.Add(this.btnRevitParametersSel);
             this.grpBoxRevitFamilies.Controls.Add(this.dgParamsMapping);
@@ -365,6 +373,42 @@
             this.dgInvRevMapping.TabIndex = 0;
             this.dgInvRevMapping.SelectionChanged += new System.EventHandler(this.dgInvRevMapping_SelectionChanged);
             // 
+            // label02
+            // 
+            this.label02.AutoSize = true;
+            this.label02.Location = new System.Drawing.Point(24, 45);
+            this.label02.Name = "label02";
+            this.label02.Size = new System.Drawing.Size(222, 25);
+            this.label02.TabIndex = 8;
+            this.label02.Text = "Total # of parameters:";
+            // 
+            // lblNumberOfParams
+            // 
+            this.lblNumberOfParams.AutoSize = true;
+            this.lblNumberOfParams.Location = new System.Drawing.Point(256, 45);
+            this.lblNumberOfParams.Name = "lblNumberOfParams";
+            this.lblNumberOfParams.Size = new System.Drawing.Size(24, 25);
+            this.lblNumberOfParams.TabIndex = 9;
+            this.lblNumberOfParams.Text = "0";
+            // 
+            // label1
+            // 
+            this.label1.AutoSize = true;
+            this.label1.Location = new System.Drawing.Point(400, 45);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(305, 25);
+            this.label1.TabIndex = 10;
+            this.label1.Text = "Total # of mapped parameters:";
+            // 
+            // lblNumbOfMappedParams
+            // 
+            this.lblNumbOfMappedParams.AutoSize = true;
+            this.lblNumbOfMappedParams.Location = new System.Drawing.Point(715, 45);
+            this.lblNumbOfMappedParams.Name = "lblNumbOfMappedParams";
+            this.lblNumbOfMappedParams.Size = new System.Drawing.Size(24, 25);
+            this.lblNumbOfMappedParams.TabIndex = 11;
+            this.lblNumbOfMappedParams.Text = "0";
+            // 
             // OffsiteForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(12F, 25F);
@@ -386,6 +430,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.dgElements)).EndInit();
             this.tabMappings.ResumeLayout(false);
             this.grpBoxRevitFamilies.ResumeLayout(false);
+            this.grpBoxRevitFamilies.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dgParamsMapping)).EndInit();
             this.grpBoxInventorTemplates.ResumeLayout(false);
             this.grpBoxInventorTemplates.PerformLayout();
@@ -423,5 +468,9 @@
         private System.Windows.Forms.Button btnProcessElements;
         private System.Windows.Forms.Button btnSelectAllElements;
         private System.Windows.Forms.Button btnUnselectAll;
+        private System.Windows.Forms.Label label02;
+        private System.Windows.Forms.Label lblNumberOfParams;
+        private System.Windows.Forms.Label lblNumbOfMappedParams;
+        private System.Windows.Forms.Label label1;
     }
 }
