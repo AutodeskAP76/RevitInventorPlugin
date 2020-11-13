@@ -27,6 +27,9 @@ namespace RevitInventorExchange
 
             NLogger.LogText("Entered Execute method");
 
+            ConfigUtilities.LoadConfig();
+            LanguageHandler.Init();
+
             uiapp = commandData.Application;
             doc = uiapp.ActiveUIDocument.Document;
 
@@ -60,7 +63,8 @@ namespace RevitInventorExchange
 
                 if (fileredElStrRevitFamilies.Count > 1)
                 {
-                    MessageBox.Show("Selected elements belong to more than one family. They have to be part of a unique family.");
+                    //MessageBox.Show("Selected elements belong to more than one family. They have to be part of a unique family.");
+                    MessageBox.Show(LanguageHandler.GetString("msgBox_SelMultipleRevFam"));
                 }
                 else
                 {

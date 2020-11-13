@@ -1,15 +1,10 @@
-﻿using RevitInventorExchange.CoreDataStructures;
+﻿using RevitInventorExchange.CoreBusinessLayer;
+using RevitInventorExchange.CoreDataStructures;
+using RevitInventorExchange.Data;
 using RevitInventorExchange.WindowsFormBusinesslayer;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
-using RevitInventorExchange.Data;
 
 namespace RevitInventorExchange.WindowsFormUI
 {
@@ -24,9 +19,11 @@ namespace RevitInventorExchange.WindowsFormUI
         public RevitFamiliesSelectionPopup(IList<ElementStructure> elementStructureList)
         {
             InitializeComponent();
+            InitializeLanguage();
+
             elStructureList = elementStructureList;
             revitFamiliesSelectionHandler = new RevitFamiliesSelectionPopupHandler();
-        }
+        }       
 
         private void RevitFamiliesSelectionPopup_Load(object sender, EventArgs e)
         {
@@ -47,6 +44,7 @@ namespace RevitInventorExchange.WindowsFormUI
             var colRevitFam = new DataGridViewTextBoxColumn();
             colRevitFam.ReadOnly = true;
             colRevitFam.Name = "Revit Family";
+            colRevitFam.HeaderText = LanguageHandler.GetString("dgInvRevMapping_Col_RevFam_Text");
             colRevitFam.DataPropertyName = "RevitFamily";
             colRevitFam.SortMode = DataGridViewColumnSortMode.Automatic;
            
@@ -83,14 +81,22 @@ namespace RevitInventorExchange.WindowsFormUI
             }
             else
             {
-                MessageBoxButtons buttons = MessageBoxButtons.OK;
-                MessageBox.Show("You have to select one row", "", buttons);
+                //MessageBox.Show("You have to select one row");
+                MessageBox.Show(LanguageHandler.GetString("msgBox_SelOneRow"));
 
                 return;
             }
 
             this.DialogResult = DialogResult.OK;
             this.Close();
+        }
+
+        private void InitializeLanguage()
+        {
+            this.Text = LanguageHandler.GetString("RevInventor_Popup_Text");
+            grBoxSelCurrScope.Text = LanguageHandler.GetString("grBoxSelCurrScope_Text");
+            btnSelect.Text = LanguageHandler.GetString("btnSelect_Text");
+            btnClose.Text = LanguageHandler.GetString("btnClose_Text");
         }
     }
 }

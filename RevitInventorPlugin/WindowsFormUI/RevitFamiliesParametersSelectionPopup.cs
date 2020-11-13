@@ -10,6 +10,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using RevitInventorExchange.CoreBusinessLayer;
 
 namespace RevitInventorExchange.WindowsFormUI
 {
@@ -27,6 +28,7 @@ namespace RevitInventorExchange.WindowsFormUI
         public RevitFamiliesParametersSelectionPopup(string RevitFamily, IList<ElementStructure> elementStructureList, IList<string> RevitUsedParams)
         {
             InitializeComponent();
+            InitializeLanguage();
 
             elStructureList = elementStructureList;
             revitFamily = RevitFamily;
@@ -53,6 +55,7 @@ namespace RevitInventorExchange.WindowsFormUI
             var colRevitFam = new DataGridViewTextBoxColumn();
             colRevitFam.ReadOnly = true;
             colRevitFam.Name = "Revit Family Parameters";
+            colRevitFam.HeaderText = LanguageHandler.GetString("dgParamsMapping_Col_RevitParam_Text");
             colRevitFam.DataPropertyName = "RevitFamilyParam";
             colRevitFam.SortMode = DataGridViewColumnSortMode.Automatic;
 
@@ -84,7 +87,8 @@ namespace RevitInventorExchange.WindowsFormUI
 
                 if (alreadyAssigned)
                 {
-                    MessageBox.Show("The selected Revit property has already been assigned. Please select another one.");
+                    //MessageBox.Show("The selected Revit property has already been assigned. Please select another one.");
+                    MessageBox.Show(LanguageHandler.GetString("msgBox_SelPropAlreadyAssigned"));
 
                     return;
                 }
@@ -93,8 +97,8 @@ namespace RevitInventorExchange.WindowsFormUI
             }
             else
             {
-                MessageBoxButtons buttons = MessageBoxButtons.OK;
-                MessageBox.Show("You have to select one row", "", buttons);
+                //MessageBox.Show("You have to select one row");
+                MessageBox.Show(LanguageHandler.GetString("msgBox_SelOneRow"));
 
                 return;
             }
@@ -107,6 +111,14 @@ namespace RevitInventorExchange.WindowsFormUI
         {
             this.DialogResult = DialogResult.Cancel;
             Close();
-        }       
+        }
+
+        private void InitializeLanguage()
+        {
+            this.Text = LanguageHandler.GetString("RevInventorParam_Popup_Text");
+            grBoxSelParams.Text = LanguageHandler.GetString("grBoxSelParams_Text");
+            btnSelect.Text = LanguageHandler.GetString("btnSelect_Text");
+            btnClose.Text = LanguageHandler.GetString("btnClose_Text");
+        }
     }
 }

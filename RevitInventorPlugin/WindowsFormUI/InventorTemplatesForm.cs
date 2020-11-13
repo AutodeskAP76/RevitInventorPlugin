@@ -12,6 +12,7 @@ using System.Xml.Serialization.Configuration;
 using Inventor;
 using RevitInventorExchange.WindowsFormBusinesslayer;
 using RevitInventorExchange.RevitDataStructures;
+using RevitInventorExchange.CoreBusinessLayer;
 
 namespace RevitInventorExchange.WindowsFormUI
 {
@@ -98,8 +99,8 @@ namespace RevitInventorExchange.WindowsFormUI
             }
             else
             {
-                MessageBoxButtons buttons = MessageBoxButtons.OK;
-                MessageBox.Show("You have to select one Inventor Template", "", buttons);
+                //MessageBox.Show("You have to select one Inventor Template");
+                lll 
 
                 return;
             }

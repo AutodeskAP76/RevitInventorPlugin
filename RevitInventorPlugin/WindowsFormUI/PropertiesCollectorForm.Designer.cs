@@ -31,21 +31,21 @@
             this.btnCreateFilterFile = new System.Windows.Forms.Button();
             this.btnCancel = new System.Windows.Forms.Button();
             this.dgElementParams = new System.Windows.Forms.DataGridView();
-            this.grpBoxProp = new System.Windows.Forms.GroupBox();
-            this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.grBoxProp = new System.Windows.Forms.GroupBox();
+            this.grBoxElTypeProps = new System.Windows.Forms.GroupBox();
             this.dgElementTypeParams = new System.Windows.Forms.DataGridView();
             this.btnCopyPaste = new System.Windows.Forms.Button();
             this.chckBoxApplyFilters = new System.Windows.Forms.CheckBox();
             this.lblApplyFilters = new System.Windows.Forms.Label();
             this.lblFamType = new System.Windows.Forms.Label();
             this.txtFamType = new System.Windows.Forms.TextBox();
-            this.groupBox2 = new System.Windows.Forms.GroupBox();
-            this.lblFamily = new System.Windows.Forms.Label();
+            this.grBoxElTypeInfo = new System.Windows.Forms.GroupBox();
             this.txtFamily = new System.Windows.Forms.TextBox();
+            this.lblFamily = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.dgElementParams)).BeginInit();
-            this.groupBox1.SuspendLayout();
+            this.grBoxElTypeProps.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dgElementTypeParams)).BeginInit();
-            this.groupBox2.SuspendLayout();
+            this.grBoxElTypeInfo.SuspendLayout();
             this.SuspendLayout();
             // 
             // btnCreateFilterFile
@@ -86,28 +86,28 @@
             this.dgElementParams.TabIndex = 2;
             this.dgElementParams.ColumnHeaderMouseClick += new System.Windows.Forms.DataGridViewCellMouseEventHandler(this.dgElementParams_ColumnHeaderMouseClick);
             // 
-            // grpBoxProp
+            // grBoxProp
             // 
-            this.grpBoxProp.Location = new System.Drawing.Point(24, 277);
-            this.grpBoxProp.Margin = new System.Windows.Forms.Padding(6);
-            this.grpBoxProp.Name = "grpBoxProp";
-            this.grpBoxProp.Padding = new System.Windows.Forms.Padding(6);
-            this.grpBoxProp.Size = new System.Drawing.Size(1236, 488);
-            this.grpBoxProp.TabIndex = 3;
-            this.grpBoxProp.TabStop = false;
-            this.grpBoxProp.Text = "Element properties";
+            this.grBoxProp.Location = new System.Drawing.Point(24, 277);
+            this.grBoxProp.Margin = new System.Windows.Forms.Padding(6);
+            this.grBoxProp.Name = "grBoxProp";
+            this.grBoxProp.Padding = new System.Windows.Forms.Padding(6);
+            this.grBoxProp.Size = new System.Drawing.Size(1236, 488);
+            this.grBoxProp.TabIndex = 3;
+            this.grBoxProp.TabStop = false;
+            this.grBoxProp.Text = "Element properties";
             // 
-            // groupBox1
+            // grBoxElTypeProps
             // 
-            this.groupBox1.Controls.Add(this.dgElementTypeParams);
-            this.groupBox1.Location = new System.Drawing.Point(24, 781);
-            this.groupBox1.Margin = new System.Windows.Forms.Padding(6);
-            this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Padding = new System.Windows.Forms.Padding(6);
-            this.groupBox1.Size = new System.Drawing.Size(1236, 650);
-            this.groupBox1.TabIndex = 4;
-            this.groupBox1.TabStop = false;
-            this.groupBox1.Text = "Element Type properties";
+            this.grBoxElTypeProps.Controls.Add(this.dgElementTypeParams);
+            this.grBoxElTypeProps.Location = new System.Drawing.Point(24, 781);
+            this.grBoxElTypeProps.Margin = new System.Windows.Forms.Padding(6);
+            this.grBoxElTypeProps.Name = "grBoxElTypeProps";
+            this.grBoxElTypeProps.Padding = new System.Windows.Forms.Padding(6);
+            this.grBoxElTypeProps.Size = new System.Drawing.Size(1236, 650);
+            this.grBoxElTypeProps.TabIndex = 4;
+            this.grBoxElTypeProps.TabStop = false;
+            this.grBoxElTypeProps.Text = "Element Type properties";
             // 
             // dgElementTypeParams
             // 
@@ -175,20 +175,28 @@
             this.txtFamType.Size = new System.Drawing.Size(1052, 31);
             this.txtFamType.TabIndex = 7;
             // 
-            // groupBox2
+            // grBoxElTypeInfo
             // 
-            this.groupBox2.Controls.Add(this.txtFamily);
-            this.groupBox2.Controls.Add(this.lblFamily);
-            this.groupBox2.Controls.Add(this.lblFamType);
-            this.groupBox2.Controls.Add(this.txtFamType);
-            this.groupBox2.Location = new System.Drawing.Point(24, 38);
-            this.groupBox2.Margin = new System.Windows.Forms.Padding(2);
-            this.groupBox2.Name = "groupBox2";
-            this.groupBox2.Padding = new System.Windows.Forms.Padding(2);
-            this.groupBox2.Size = new System.Drawing.Size(1236, 169);
-            this.groupBox2.TabIndex = 8;
-            this.groupBox2.TabStop = false;
-            this.groupBox2.Text = "Element type information";
+            this.grBoxElTypeInfo.Controls.Add(this.txtFamily);
+            this.grBoxElTypeInfo.Controls.Add(this.lblFamily);
+            this.grBoxElTypeInfo.Controls.Add(this.lblFamType);
+            this.grBoxElTypeInfo.Controls.Add(this.txtFamType);
+            this.grBoxElTypeInfo.Location = new System.Drawing.Point(24, 38);
+            this.grBoxElTypeInfo.Margin = new System.Windows.Forms.Padding(2);
+            this.grBoxElTypeInfo.Name = "grBoxElTypeInfo";
+            this.grBoxElTypeInfo.Padding = new System.Windows.Forms.Padding(2);
+            this.grBoxElTypeInfo.Size = new System.Drawing.Size(1236, 169);
+            this.grBoxElTypeInfo.TabIndex = 8;
+            this.grBoxElTypeInfo.TabStop = false;
+            this.grBoxElTypeInfo.Text = "Element type information";
+            // 
+            // txtFamily
+            // 
+            this.txtFamily.Location = new System.Drawing.Point(150, 54);
+            this.txtFamily.Name = "txtFamily";
+            this.txtFamily.ReadOnly = true;
+            this.txtFamily.Size = new System.Drawing.Size(1052, 31);
+            this.txtFamily.TabIndex = 9;
             // 
             // lblFamily
             // 
@@ -199,14 +207,6 @@
             this.lblFamily.TabIndex = 8;
             this.lblFamily.Text = "Family:";
             // 
-            // txtFamily
-            // 
-            this.txtFamily.Location = new System.Drawing.Point(150, 54);
-            this.txtFamily.Name = "txtFamily";
-            this.txtFamily.ReadOnly = true;
-            this.txtFamily.Size = new System.Drawing.Size(1052, 31);
-            this.txtFamily.TabIndex = 9;
-            // 
             // PropertiesCollectorForm
             // 
             this.AcceptButton = this.btnCreateFilterFile;
@@ -214,24 +214,24 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.CancelButton = this.btnCancel;
             this.ClientSize = new System.Drawing.Size(1284, 1506);
-            this.Controls.Add(this.groupBox2);
+            this.Controls.Add(this.grBoxElTypeInfo);
             this.Controls.Add(this.lblApplyFilters);
             this.Controls.Add(this.chckBoxApplyFilters);
             this.Controls.Add(this.btnCopyPaste);
-            this.Controls.Add(this.groupBox1);
+            this.Controls.Add(this.grBoxElTypeProps);
             this.Controls.Add(this.btnCancel);
             this.Controls.Add(this.dgElementParams);
             this.Controls.Add(this.btnCreateFilterFile);
-            this.Controls.Add(this.grpBoxProp);
+            this.Controls.Add(this.grBoxProp);
             this.Margin = new System.Windows.Forms.Padding(6);
             this.Name = "PropertiesCollectorForm";
             this.Text = "Properties Collector";
             this.Load += new System.EventHandler(this.PropertiesCollectorForm_Load);
             ((System.ComponentModel.ISupportInitialize)(this.dgElementParams)).EndInit();
-            this.groupBox1.ResumeLayout(false);
+            this.grBoxElTypeProps.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.dgElementTypeParams)).EndInit();
-            this.groupBox2.ResumeLayout(false);
-            this.groupBox2.PerformLayout();
+            this.grBoxElTypeInfo.ResumeLayout(false);
+            this.grBoxElTypeInfo.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -242,15 +242,15 @@
         private System.Windows.Forms.Button btnCreateFilterFile;
         private System.Windows.Forms.Button btnCancel;
         private System.Windows.Forms.DataGridView dgElementParams;
-        private System.Windows.Forms.GroupBox grpBoxProp;
-        private System.Windows.Forms.GroupBox groupBox1;
+        private System.Windows.Forms.GroupBox grBoxProp;
+        private System.Windows.Forms.GroupBox grBoxElTypeProps;
         private System.Windows.Forms.DataGridView dgElementTypeParams;
         private System.Windows.Forms.Button btnCopyPaste;
         private System.Windows.Forms.Label lblApplyFilters;
         private System.Windows.Forms.CheckBox chckBoxApplyFilters;
         private System.Windows.Forms.Label lblFamType;
         private System.Windows.Forms.TextBox txtFamType;
-        private System.Windows.Forms.GroupBox groupBox2;
+        private System.Windows.Forms.GroupBox grBoxElTypeInfo;
         private System.Windows.Forms.TextBox txtFamily;
         private System.Windows.Forms.Label lblFamily;
     }

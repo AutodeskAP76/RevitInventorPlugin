@@ -28,23 +28,23 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.grBoxSelCurrScope = new System.Windows.Forms.GroupBox();
             this.dgRevitFamilies = new System.Windows.Forms.DataGridView();
             this.btnSelect = new System.Windows.Forms.Button();
             this.btnClose = new System.Windows.Forms.Button();
-            this.groupBox1.SuspendLayout();
+            this.grBoxSelCurrScope.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dgRevitFamilies)).BeginInit();
             this.SuspendLayout();
             // 
-            // groupBox1
+            // grBoxSelCurrScope
             // 
-            this.groupBox1.Controls.Add(this.dgRevitFamilies);
-            this.groupBox1.Location = new System.Drawing.Point(13, 22);
-            this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(775, 863);
-            this.groupBox1.TabIndex = 0;
-            this.groupBox1.TabStop = false;
-            this.groupBox1.Text = "Select from Current Scope";
+            this.grBoxSelCurrScope.Controls.Add(this.dgRevitFamilies);
+            this.grBoxSelCurrScope.Location = new System.Drawing.Point(13, 22);
+            this.grBoxSelCurrScope.Name = "grBoxSelCurrScope";
+            this.grBoxSelCurrScope.Size = new System.Drawing.Size(775, 863);
+            this.grBoxSelCurrScope.TabIndex = 0;
+            this.grBoxSelCurrScope.TabStop = false;
+            this.grBoxSelCurrScope.Text = "Select from Current Scope";
             // 
             // dgRevitFamilies
             // 
@@ -87,11 +87,11 @@
             this.ClientSize = new System.Drawing.Size(800, 1008);
             this.Controls.Add(this.btnClose);
             this.Controls.Add(this.btnSelect);
-            this.Controls.Add(this.groupBox1);
+            this.Controls.Add(this.grBoxSelCurrScope);
             this.Name = "RevitFamiliesSelectionPopup";
             this.Text = "Revit Families";
             this.Load += new System.EventHandler(this.RevitFamiliesSelectionPopup_Load);
-            this.groupBox1.ResumeLayout(false);
+            this.grBoxSelCurrScope.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.dgRevitFamilies)).EndInit();
             this.ResumeLayout(false);
 
@@ -99,7 +99,7 @@
 
         #endregion
 
-        private System.Windows.Forms.GroupBox groupBox1;
+        private System.Windows.Forms.GroupBox grBoxSelCurrScope;
         private System.Windows.Forms.DataGridView dgRevitFamilies;
         private System.Windows.Forms.Button btnSelect;
         private System.Windows.Forms.Button btnClose;

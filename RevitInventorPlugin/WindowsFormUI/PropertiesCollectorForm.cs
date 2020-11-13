@@ -40,6 +40,7 @@ namespace RevitInventorExchange.WindowsFormUI
             InitializeGrid(dgElementTypeParams);
 
             InitBehaviour();
+            InitializeLanguage();
         }
 
         private void PropertiesCollectorForm_Load(object sender, EventArgs e)
@@ -63,18 +64,21 @@ namespace RevitInventorExchange.WindowsFormUI
             var colId = new DataGridViewTextBoxColumn();
             colId.ReadOnly = true;
             colId.Name = "Property Id";
+            colId.HeaderText = LanguageHandler.GetString("dgElementParams_Col_Id_Text");
             colId.DataPropertyName = "PropertyId";
             colId.SortMode = DataGridViewColumnSortMode.Automatic;
 
             var colName = new DataGridViewTextBoxColumn();
             colName.ReadOnly = true;
             colName.Name = "Property Name";
+            colName.HeaderText = LanguageHandler.GetString("dgElementParams_Col_Name_Text");
             colName.DataPropertyName = "PropertyName";
             colName.SortMode = DataGridViewColumnSortMode.Automatic;
 
             var colValue = new DataGridViewTextBoxColumn();
             colValue.ReadOnly = true;
             colValue.Name = "Property Value";
+            colValue.HeaderText = LanguageHandler.GetString("dgElementParams_Col_Value_Text");
             colValue.DataPropertyName = "PropertyValue";
             colValue.SortMode = DataGridViewColumnSortMode.Automatic;
 
@@ -186,6 +190,18 @@ namespace RevitInventorExchange.WindowsFormUI
         {            
             var controls = new List<Control> { lblApplyFilters, chckBoxApplyFilters, btnCreateFilterFile };
             Utility.SetRuntimeBehaviour(controls);
+        }
+
+
+        private void InitializeLanguage()
+        {
+            this.Text = LanguageHandler.GetString("RevProp_Popup_Text");
+            grBoxElTypeInfo.Text = LanguageHandler.GetString("grBoxElTypeInfo_Text");
+            lblFamily.Text = LanguageHandler.GetString("lblFamily_Text");
+            lblFamType.Text = LanguageHandler.GetString("lblFamilyType_Text");
+            btnCancel.Text = LanguageHandler.GetString("btnCancel_Text");
+            grBoxProp.Text = LanguageHandler.GetString("grBoxProp_Text");
+            grBoxElTypeProps.Text = LanguageHandler.GetString("grBoxElTypeProps_Text");
         }
     }
 }

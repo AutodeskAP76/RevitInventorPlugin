@@ -31,22 +31,26 @@
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(OffsiteForm));
             this.btnProperties = new System.Windows.Forms.Button();
             this.btnCancel = new System.Windows.Forms.Button();
-            this.btnExportPropVals = new System.Windows.Forms.Button();
+            this.btnTriggerDA = new System.Windows.Forms.Button();
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.tabSOW = new System.Windows.Forms.TabPage();
             this.btnUnselectAll = new System.Windows.Forms.Button();
             this.btnSelectAllElements = new System.Windows.Forms.Button();
             this.btnProcessElements = new System.Windows.Forms.Button();
-            this.groupBox3 = new System.Windows.Forms.GroupBox();
+            this.grBoxRevFamilies = new System.Windows.Forms.GroupBox();
             this.comboBoxRevitFamilies = new System.Windows.Forms.ComboBox();
-            this.groupBox2 = new System.Windows.Forms.GroupBox();
+            this.grBoxRevFamTypes = new System.Windows.Forms.GroupBox();
             this.comboBoxRevitFamilyTypes = new System.Windows.Forms.ComboBox();
-            this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.grBoxRevElements = new System.Windows.Forms.GroupBox();
             this.dgElements = new System.Windows.Forms.DataGridView();
             this.tabMappings = new System.Windows.Forms.TabPage();
             this.btnClearLogs = new System.Windows.Forms.Button();
             this.richTextBoxLogs = new System.Windows.Forms.RichTextBox();
             this.grpBoxRevitFamilies = new System.Windows.Forms.GroupBox();
+            this.lblNumbOfMappedParams = new System.Windows.Forms.Label();
+            this.lblTotalParamMappedNr = new System.Windows.Forms.Label();
+            this.lblNumberOfParams = new System.Windows.Forms.Label();
+            this.lblTotalParamNr = new System.Windows.Forms.Label();
             this.btnClearSelectedParamMapping = new System.Windows.Forms.Button();
             this.btnRevitParametersSel = new System.Windows.Forms.Button();
             this.dgParamsMapping = new System.Windows.Forms.DataGridView();
@@ -57,15 +61,11 @@
             this.txtInventorTemplatesPath = new System.Windows.Forms.TextBox();
             this.dgInvRevMapping = new System.Windows.Forms.DataGridView();
             this.folderBrowserDialogInventorTemplates = new System.Windows.Forms.FolderBrowserDialog();
-            this.label02 = new System.Windows.Forms.Label();
-            this.lblNumberOfParams = new System.Windows.Forms.Label();
-            this.label1 = new System.Windows.Forms.Label();
-            this.lblNumbOfMappedParams = new System.Windows.Forms.Label();
             this.tabControl1.SuspendLayout();
             this.tabSOW.SuspendLayout();
-            this.groupBox3.SuspendLayout();
-            this.groupBox2.SuspendLayout();
-            this.groupBox1.SuspendLayout();
+            this.grBoxRevFamilies.SuspendLayout();
+            this.grBoxRevFamTypes.SuspendLayout();
+            this.grBoxRevElements.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dgElements)).BeginInit();
             this.tabMappings.SuspendLayout();
             this.grpBoxRevitFamilies.SuspendLayout();
@@ -96,15 +96,15 @@
             this.btnCancel.UseVisualStyleBackColor = true;
             this.btnCancel.Click += new System.EventHandler(this.btnCancel_Click);
             // 
-            // btnExportPropVals
+            // btnTriggerDA
             // 
-            this.btnExportPropVals.Location = new System.Drawing.Point(2340, 1238);
-            this.btnExportPropVals.Name = "btnExportPropVals";
-            this.btnExportPropVals.Size = new System.Drawing.Size(301, 47);
-            this.btnExportPropVals.TabIndex = 3;
-            this.btnExportPropVals.Text = "Generate Inventor files";
-            this.btnExportPropVals.UseVisualStyleBackColor = true;
-            this.btnExportPropVals.Click += new System.EventHandler(this.btnExportPropVals_Click);
+            this.btnTriggerDA.Location = new System.Drawing.Point(2340, 1238);
+            this.btnTriggerDA.Name = "btnTriggerDA";
+            this.btnTriggerDA.Size = new System.Drawing.Size(301, 47);
+            this.btnTriggerDA.TabIndex = 3;
+            this.btnTriggerDA.Text = "Generate Inventor files";
+            this.btnTriggerDA.UseVisualStyleBackColor = true;
+            this.btnTriggerDA.Click += new System.EventHandler(this.btnExportPropVals_Click);
             // 
             // tabControl1
             // 
@@ -121,9 +121,9 @@
             this.tabSOW.Controls.Add(this.btnUnselectAll);
             this.tabSOW.Controls.Add(this.btnSelectAllElements);
             this.tabSOW.Controls.Add(this.btnProcessElements);
-            this.tabSOW.Controls.Add(this.groupBox3);
-            this.tabSOW.Controls.Add(this.groupBox2);
-            this.tabSOW.Controls.Add(this.groupBox1);
+            this.tabSOW.Controls.Add(this.grBoxRevFamilies);
+            this.tabSOW.Controls.Add(this.grBoxRevFamTypes);
+            this.tabSOW.Controls.Add(this.grBoxRevElements);
             this.tabSOW.Controls.Add(this.btnProperties);
             this.tabSOW.Location = new System.Drawing.Point(8, 39);
             this.tabSOW.Name = "tabSOW";
@@ -163,15 +163,15 @@
             this.btnProcessElements.UseVisualStyleBackColor = true;
             this.btnProcessElements.Click += new System.EventHandler(this.btnProcessElements_Click);
             // 
-            // groupBox3
+            // grBoxRevFamilies
             // 
-            this.groupBox3.Controls.Add(this.comboBoxRevitFamilies);
-            this.groupBox3.Location = new System.Drawing.Point(17, 18);
-            this.groupBox3.Name = "groupBox3";
-            this.groupBox3.Size = new System.Drawing.Size(923, 114);
-            this.groupBox3.TabIndex = 4;
-            this.groupBox3.TabStop = false;
-            this.groupBox3.Text = "Revit families";
+            this.grBoxRevFamilies.Controls.Add(this.comboBoxRevitFamilies);
+            this.grBoxRevFamilies.Location = new System.Drawing.Point(17, 18);
+            this.grBoxRevFamilies.Name = "grBoxRevFamilies";
+            this.grBoxRevFamilies.Size = new System.Drawing.Size(923, 114);
+            this.grBoxRevFamilies.TabIndex = 4;
+            this.grBoxRevFamilies.TabStop = false;
+            this.grBoxRevFamilies.Text = "Revit families";
             // 
             // comboBoxRevitFamilies
             // 
@@ -182,15 +182,15 @@
             this.comboBoxRevitFamilies.TabIndex = 0;
             this.comboBoxRevitFamilies.SelectedIndexChanged += new System.EventHandler(this.comboBoxRevitFamilies_SelectedIndexChanged);
             // 
-            // groupBox2
+            // grBoxRevFamTypes
             // 
-            this.groupBox2.Controls.Add(this.comboBoxRevitFamilyTypes);
-            this.groupBox2.Location = new System.Drawing.Point(946, 18);
-            this.groupBox2.Name = "groupBox2";
-            this.groupBox2.Size = new System.Drawing.Size(1690, 114);
-            this.groupBox2.TabIndex = 3;
-            this.groupBox2.TabStop = false;
-            this.groupBox2.Text = "Revit Family Types";
+            this.grBoxRevFamTypes.Controls.Add(this.comboBoxRevitFamilyTypes);
+            this.grBoxRevFamTypes.Location = new System.Drawing.Point(946, 18);
+            this.grBoxRevFamTypes.Name = "grBoxRevFamTypes";
+            this.grBoxRevFamTypes.Size = new System.Drawing.Size(1690, 114);
+            this.grBoxRevFamTypes.TabIndex = 3;
+            this.grBoxRevFamTypes.TabStop = false;
+            this.grBoxRevFamTypes.Text = "Revit Family Types";
             // 
             // comboBoxRevitFamilyTypes
             // 
@@ -201,15 +201,15 @@
             this.comboBoxRevitFamilyTypes.TabIndex = 0;
             this.comboBoxRevitFamilyTypes.SelectedIndexChanged += new System.EventHandler(this.comboBoxRevitFamilyTypes_SelectedIndexChanged);
             // 
-            // groupBox1
+            // grBoxRevElements
             // 
-            this.groupBox1.Controls.Add(this.dgElements);
-            this.groupBox1.Location = new System.Drawing.Point(17, 151);
-            this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(2618, 1054);
-            this.groupBox1.TabIndex = 2;
-            this.groupBox1.TabStop = false;
-            this.groupBox1.Text = "Revit elements";
+            this.grBoxRevElements.Controls.Add(this.dgElements);
+            this.grBoxRevElements.Location = new System.Drawing.Point(17, 151);
+            this.grBoxRevElements.Name = "grBoxRevElements";
+            this.grBoxRevElements.Size = new System.Drawing.Size(2618, 1054);
+            this.grBoxRevElements.TabIndex = 2;
+            this.grBoxRevElements.TabStop = false;
+            this.grBoxRevElements.Text = "Revit elements";
             // 
             // dgElements
             // 
@@ -229,7 +229,7 @@
             // tabMappings
             // 
             this.tabMappings.Controls.Add(this.btnClearLogs);
-            this.tabMappings.Controls.Add(this.btnExportPropVals);
+            this.tabMappings.Controls.Add(this.btnTriggerDA);
             this.tabMappings.Controls.Add(this.richTextBoxLogs);
             this.tabMappings.Controls.Add(this.grpBoxRevitFamilies);
             this.tabMappings.Controls.Add(this.grpBoxInventorTemplates);
@@ -262,9 +262,9 @@
             // grpBoxRevitFamilies
             // 
             this.grpBoxRevitFamilies.Controls.Add(this.lblNumbOfMappedParams);
-            this.grpBoxRevitFamilies.Controls.Add(this.label1);
+            this.grpBoxRevitFamilies.Controls.Add(this.lblTotalParamMappedNr);
             this.grpBoxRevitFamilies.Controls.Add(this.lblNumberOfParams);
-            this.grpBoxRevitFamilies.Controls.Add(this.label02);
+            this.grpBoxRevitFamilies.Controls.Add(this.lblTotalParamNr);
             this.grpBoxRevitFamilies.Controls.Add(this.btnClearSelectedParamMapping);
             this.grpBoxRevitFamilies.Controls.Add(this.btnRevitParametersSel);
             this.grpBoxRevitFamilies.Controls.Add(this.dgParamsMapping);
@@ -274,6 +274,42 @@
             this.grpBoxRevitFamilies.TabIndex = 3;
             this.grpBoxRevitFamilies.TabStop = false;
             this.grpBoxRevitFamilies.Text = "Parameters Mapping";
+            // 
+            // lblNumbOfMappedParams
+            // 
+            this.lblNumbOfMappedParams.AutoSize = true;
+            this.lblNumbOfMappedParams.Location = new System.Drawing.Point(715, 45);
+            this.lblNumbOfMappedParams.Name = "lblNumbOfMappedParams";
+            this.lblNumbOfMappedParams.Size = new System.Drawing.Size(24, 25);
+            this.lblNumbOfMappedParams.TabIndex = 11;
+            this.lblNumbOfMappedParams.Text = "0";
+            // 
+            // lblTotalParamMappedNr
+            // 
+            this.lblTotalParamMappedNr.AutoSize = true;
+            this.lblTotalParamMappedNr.Location = new System.Drawing.Point(400, 45);
+            this.lblTotalParamMappedNr.Name = "lblTotalParamMappedNr";
+            this.lblTotalParamMappedNr.Size = new System.Drawing.Size(305, 25);
+            this.lblTotalParamMappedNr.TabIndex = 10;
+            this.lblTotalParamMappedNr.Text = "Total # of mapped parameters:";
+            // 
+            // lblNumberOfParams
+            // 
+            this.lblNumberOfParams.AutoSize = true;
+            this.lblNumberOfParams.Location = new System.Drawing.Point(256, 45);
+            this.lblNumberOfParams.Name = "lblNumberOfParams";
+            this.lblNumberOfParams.Size = new System.Drawing.Size(24, 25);
+            this.lblNumberOfParams.TabIndex = 9;
+            this.lblNumberOfParams.Text = "0";
+            // 
+            // lblTotalParamNr
+            // 
+            this.lblTotalParamNr.AutoSize = true;
+            this.lblTotalParamNr.Location = new System.Drawing.Point(24, 45);
+            this.lblTotalParamNr.Name = "lblTotalParamNr";
+            this.lblTotalParamNr.Size = new System.Drawing.Size(222, 25);
+            this.lblTotalParamNr.TabIndex = 8;
+            this.lblTotalParamNr.Text = "Total # of parameters:";
             // 
             // btnClearSelectedParamMapping
             // 
@@ -373,42 +409,6 @@
             this.dgInvRevMapping.TabIndex = 0;
             this.dgInvRevMapping.SelectionChanged += new System.EventHandler(this.dgInvRevMapping_SelectionChanged);
             // 
-            // label02
-            // 
-            this.label02.AutoSize = true;
-            this.label02.Location = new System.Drawing.Point(24, 45);
-            this.label02.Name = "label02";
-            this.label02.Size = new System.Drawing.Size(222, 25);
-            this.label02.TabIndex = 8;
-            this.label02.Text = "Total # of parameters:";
-            // 
-            // lblNumberOfParams
-            // 
-            this.lblNumberOfParams.AutoSize = true;
-            this.lblNumberOfParams.Location = new System.Drawing.Point(256, 45);
-            this.lblNumberOfParams.Name = "lblNumberOfParams";
-            this.lblNumberOfParams.Size = new System.Drawing.Size(24, 25);
-            this.lblNumberOfParams.TabIndex = 9;
-            this.lblNumberOfParams.Text = "0";
-            // 
-            // label1
-            // 
-            this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(400, 45);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(305, 25);
-            this.label1.TabIndex = 10;
-            this.label1.Text = "Total # of mapped parameters:";
-            // 
-            // lblNumbOfMappedParams
-            // 
-            this.lblNumbOfMappedParams.AutoSize = true;
-            this.lblNumbOfMappedParams.Location = new System.Drawing.Point(715, 45);
-            this.lblNumbOfMappedParams.Name = "lblNumbOfMappedParams";
-            this.lblNumbOfMappedParams.Size = new System.Drawing.Size(24, 25);
-            this.lblNumbOfMappedParams.TabIndex = 11;
-            this.lblNumbOfMappedParams.Text = "0";
-            // 
             // OffsiteForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(12F, 25F);
@@ -424,9 +424,9 @@
             this.Load += new System.EventHandler(this.ElementsForm_Load);
             this.tabControl1.ResumeLayout(false);
             this.tabSOW.ResumeLayout(false);
-            this.groupBox3.ResumeLayout(false);
-            this.groupBox2.ResumeLayout(false);
-            this.groupBox1.ResumeLayout(false);
+            this.grBoxRevFamilies.ResumeLayout(false);
+            this.grBoxRevFamTypes.ResumeLayout(false);
+            this.grBoxRevElements.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.dgElements)).EndInit();
             this.tabMappings.ResumeLayout(false);
             this.grpBoxRevitFamilies.ResumeLayout(false);
@@ -442,7 +442,7 @@
         #endregion
         private System.Windows.Forms.Button btnProperties;
         private System.Windows.Forms.Button btnCancel;
-        private System.Windows.Forms.Button btnExportPropVals;
+        private System.Windows.Forms.Button btnTriggerDA;
         private System.Windows.Forms.TabControl tabControl1;
         private System.Windows.Forms.TabPage tabSOW;
         private System.Windows.Forms.DataGridView dgElements;
@@ -460,17 +460,17 @@
         private System.Windows.Forms.Button btnClearLogs;
         private System.Windows.Forms.Button btnClearSelectedParamMapping;
         private System.Windows.Forms.Button btnClearSelectedMapping;
-        private System.Windows.Forms.GroupBox groupBox1;
-        private System.Windows.Forms.GroupBox groupBox2;
+        private System.Windows.Forms.GroupBox grBoxRevElements;
+        private System.Windows.Forms.GroupBox grBoxRevFamTypes;
         private System.Windows.Forms.ComboBox comboBoxRevitFamilyTypes;
-        private System.Windows.Forms.GroupBox groupBox3;
+        private System.Windows.Forms.GroupBox grBoxRevFamilies;
         private System.Windows.Forms.ComboBox comboBoxRevitFamilies;
         private System.Windows.Forms.Button btnProcessElements;
         private System.Windows.Forms.Button btnSelectAllElements;
         private System.Windows.Forms.Button btnUnselectAll;
-        private System.Windows.Forms.Label label02;
+        private System.Windows.Forms.Label lblTotalParamNr;
         private System.Windows.Forms.Label lblNumberOfParams;
         private System.Windows.Forms.Label lblNumbOfMappedParams;
-        private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.Label lblTotalParamMappedNr;
     }
 }

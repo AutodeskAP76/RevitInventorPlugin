@@ -28,23 +28,23 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.grBoxSelParams = new System.Windows.Forms.GroupBox();
             this.dgRevitFamParams = new System.Windows.Forms.DataGridView();
             this.btnClose = new System.Windows.Forms.Button();
             this.btnSelect = new System.Windows.Forms.Button();
-            this.groupBox1.SuspendLayout();
+            this.grBoxSelParams.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dgRevitFamParams)).BeginInit();
             this.SuspendLayout();
             // 
-            // groupBox1
+            // grBoxSelParams
             // 
-            this.groupBox1.Controls.Add(this.dgRevitFamParams);
-            this.groupBox1.Location = new System.Drawing.Point(13, 22);
-            this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(775, 891);
-            this.groupBox1.TabIndex = 0;
-            this.groupBox1.TabStop = false;
-            this.groupBox1.Text = "Select Parameters";
+            this.grBoxSelParams.Controls.Add(this.dgRevitFamParams);
+            this.grBoxSelParams.Location = new System.Drawing.Point(13, 22);
+            this.grBoxSelParams.Name = "grBoxSelParams";
+            this.grBoxSelParams.Size = new System.Drawing.Size(775, 891);
+            this.grBoxSelParams.TabIndex = 0;
+            this.grBoxSelParams.TabStop = false;
+            this.grBoxSelParams.Text = "Select Parameters";
             // 
             // dgRevitFamParams
             // 
@@ -87,11 +87,11 @@
             this.ClientSize = new System.Drawing.Size(800, 1008);
             this.Controls.Add(this.btnClose);
             this.Controls.Add(this.btnSelect);
-            this.Controls.Add(this.groupBox1);
+            this.Controls.Add(this.grBoxSelParams);
             this.Name = "RevitFamiliesParametersSelectionPopup";
             this.Text = "Revit Families Parameters";
             this.Load += new System.EventHandler(this.RevitFamiliesParametersSelectionPopup_Load);
-            this.groupBox1.ResumeLayout(false);
+            this.grBoxSelParams.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.dgRevitFamParams)).EndInit();
             this.ResumeLayout(false);
 
@@ -99,7 +99,7 @@
 
         #endregion
 
-        private System.Windows.Forms.GroupBox groupBox1;
+        private System.Windows.Forms.GroupBox grBoxSelParams;
         private System.Windows.Forms.DataGridView dgRevitFamParams;
         private System.Windows.Forms.Button btnClose;
         private System.Windows.Forms.Button btnSelect;

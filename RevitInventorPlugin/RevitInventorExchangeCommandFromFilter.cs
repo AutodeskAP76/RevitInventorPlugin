@@ -26,6 +26,9 @@ namespace RevitInventorExchange
 
             NLogger.LogText("Entered Execute method");
 
+            ConfigUtilities.LoadConfig();
+            LanguageHandler.Init();
+
             uiapp = commandData.Application;
             doc = uiapp.ActiveUIDocument.Document;
 

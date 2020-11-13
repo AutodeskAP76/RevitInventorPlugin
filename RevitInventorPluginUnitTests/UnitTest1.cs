@@ -20,8 +20,9 @@ namespace RevitInventorPluginUnitTests
             string json = GetJson();
             string InventorFilePath = @"C:\Users\parodiaadmin\BIM 360\ATDSK DEV\Sample Project\Project Files\Libraries_DH_Assembly_wall";
             DesignAutomationHandler daHandler = new DesignAutomationHandler();
-
-            daHandler.RunDesignAutomationForgeWorkflow(json, InventorFilePath);
+           
+            var ret = daHandler.RunDesignAutomationForgeWorkflow(json, InventorFilePath);
+            ret.Wait();
         }
 
         private string GetJson()

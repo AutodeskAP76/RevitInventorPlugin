@@ -1,0 +1,298 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  
+  <!--  Main Form elements  -->
+  <data name="OffsiteForm_Text" xml:space="preserve">
+    <value>Pannello Offsite</value>
+  </data>
+  <data name="tabControl1_tabSOW_Text" xml:space="preserve">
+    <value>Gruppo di Lavoro</value>
+  </data>
+  <data name="tabControl1_tabMapping_Text" xml:space="preserve">
+    <value>Mappatura</value>
+  </data>
+  <data name="grBoxRevFamilies_Text" xml:space="preserve">
+    <value>Famiglie Revit</value>
+  </data>
+  <data name="grBoxRevFamTypes_Text" xml:space="preserve">
+    <value>Tipi di Famiglie Revit</value>
+  </data>
+  <data name="grBoxRevElements_Text" xml:space="preserve">
+    <value>Elementi Revit</value>
+  </data>
+  <data name="btnProperties_Text" xml:space="preserve">
+    <value>Mostra Proprieta'</value>
+  </data>
+  <data name="btnSelectAllElements_Text" xml:space="preserve">
+    <value>Seleziona tutto</value>
+  </data>
+  <data name="btnUnselectAll_Text" xml:space="preserve">
+    <value>Deseleziona tutto</value>
+  </data>
+  <data name="btnProcessElements_Text" xml:space="preserve">
+    <value>Processa elementi selezionati</value>
+  </data>
+  <data name="dgElements_Col_ElId_Text" xml:space="preserve">
+    <value>Identificativo Elemento</value>
+  </data>
+  <data name="dgElements_Col_ElName_Text" xml:space="preserve">
+    <value>Nome Elemento</value>
+  </data>
+  <data name="dgElements_Col_ElVal_Text" xml:space="preserve">
+    <value>Tipo famiglia Elemento</value>
+  </data>  
+  
+  <data name="grpBoxInventorTemplates_Text" xml:space="preserve">
+    <value>Mappatura Famiglie Revit - Template Inventor</value>
+  </data>  
+  <data name="btnBrowse_Text" xml:space="preserve">
+    <value>Apri</value>
+  </data>
+  <data name="btnSelectFromScope_Text" xml:space="preserve">
+    <value>Seleziona famiglie Revit</value>
+  </data>  
+  <data name="btnClearSelectedMapping_Text" xml:space="preserve">
+    <value>Cancella selezione</value>
+  </data>  
+  <data name="grpBoxRevitFamilies_Text" xml:space="preserve">
+    <value>Mappatura Parametri</value>
+  </data>
+  <data name="lblTotalParamNr_Text" xml:space="preserve">
+    <value># totale di parametri:</value>
+  </data>
+  <data name="lblTotalParamMappedNr_Text" xml:space="preserve">
+    <value># totale di parametri mappati:</value>
+  </data>
+  <data name="btnRevitParametersSel_Text" xml:space="preserve">
+    <value>Seleziona parametri Revit</value>
+  </data>
+  <data name="btnClearSelectedParamMapping_Text" xml:space="preserve">
+    <value>Cancella selezione</value>
+  </data>  
+  <data name="btnClearLogs_Text" xml:space="preserve">
+    <value>Cancella Logs</value>
+  </data>
+  <data name="btnTriggerDA_Text" xml:space="preserve">
+    <value>Genera files Inventor</value>
+  </data>
+  <data name="dgInvRevMapping_Col_InvTempl_Text" xml:space="preserve">
+    <value>Template Inventor</value>
+  </data>
+  <data name="dgInvRevMapping_Col_RevFam_Text" xml:space="preserve">
+    <value>Famiglia Revit</value>
+  </data>  
+  <data name="dgParamsMapping_Col_InvParam_Text" xml:space="preserve">
+    <value>Parametro di Inventor</value>
+  </data>
+  <data name="dgParamsMapping_Col_RevitParam_Text" xml:space="preserve">
+    <value>Parametro di Revit</value>
+  </data>   
+  
+  <data name="btnCancel_Text" xml:space="preserve">
+    <value>Chiudi</value>
+  </data>
+  
+  <!--  Message Boxes  -->
+  <data name="msgBox_SelInvTemplate" xml:space="preserve">
+    <value>Devi selezionare un template di Inventor</value>
+  </data>
+  <data name="msgBox_ZipFileParamMap" xml:space="preserve">
+    <value>Non puoi mappare i parametri per un file zip</value>
+  </data>
+  <data name="msgBox_RevitFamAssociat" xml:space="preserve">
+    <value>Deve esserci una famiglia revit associata al template di Inventor selezionato</value>
+  </data>
+  <data name="msgBox_SelInvRevMapRow" xml:space="preserve">
+    <value>Devi selezionare una mappatura Revit - Inventor</value>
+  </data>
+  <data name="msgBox_SelParamMapRow" xml:space="preserve">
+    <value>Devi selezionare una mappatura di parametri </value>
+  </data>
+  <data name="msgBox_SelRevElement" xml:space="preserve">
+    <value>Almento un elemento Revit deve essere selezionato</value>
+  </data>
+  <data name="msgBox_SelRevElement1" xml:space="preserve">
+    <value>Un solo elemento Revit deve essere selezionato</value>
+  </data>
+  <data name="msgBox_MissingMapp" xml:space="preserve">
+    <value>Ci sono delle mappature mancanti</value>
+  </data>
+  <data name="msgBox_SelMultipleRevFam" xml:space="preserve">
+    <value>Gli elementi selezionati appartengono a piu' di una famiglia Revit. Essi devono appartenere ad una sola famiglia</value>
+  </data>
+  <data name="msgBox_SelPropAlreadyAssigned" xml:space="preserve">
+    <value>La proprieta' di Revit selezionata e' gia' stata assegnata. Cambiare selezione</value>
+  </data>
+  <data name="msgBox_SelOneRow" xml:space="preserve">
+    <value>Una riga deve essere selezionata</value>
+  </data>
+  
+  <!--  Revit Inventor Mapping popup  -->
+  <data name="RevInventor_Popup_Text" xml:space="preserve">
+    <value>Famiglie Revit</value>
+  </data>
+  <data name="grBoxSelCurrScope_Text" xml:space="preserve">
+    <value>Selezionare dal gruppo corrente</value>
+  </data>  
+  <data name="btnSelect_Text" xml:space="preserve">
+    <value>Selezionare</value>
+  </data>
+  <data name="btnClose_Text" xml:space="preserve">
+    <value>Chiudere</value>
+  </data>
+  
+  <!--  Revit Inventor Parameters Mapping popup  -->
+  <data name="RevInventorParam_Popup_Text" xml:space="preserve">
+    <value>Parametri famiglia Revit</value>
+  </data>
+  <data name="grBoxSelParams_Text" xml:space="preserve">
+    <value>Selezionare parametri</value>
+  </data>
+  
+  <!--  Properties popup  -->
+  <data name="RevProp_Popup_Text" xml:space="preserve">
+    <value>Elenco Proprietà</value>
+  </data>
+  <data name="grBoxElTypeInfo_Text" xml:space="preserve">
+    <value>Tipo dell'elemento</value>
+  </data>  
+  <data name="lblFamily_Text" xml:space="preserve">
+    <value>Famiglia</value>
+  </data> 
+  <data name="lblFamilyType_Text" xml:space="preserve">
+    <value>Tipo della Famiglia</value>
+  </data>  
+  <data name="grBoxProp_Text" xml:space="preserve">
+    <value>Proprieta' dell'elemento</value>
+  </data> 
+  <data name="grBoxElTypeProps_Text" xml:space="preserve">
+    <value>Proprieta' del tipo dell'elemento</value>
+  </data>
+  <data name="dgElementParams_Col_Id_Text" xml:space="preserve">
+    <value>Identificatido Proprietà</value>
+  </data>
+  <data name="dgElementParams_Col_Name_Text" xml:space="preserve">
+    <value>Nome Proprietà</value>
+  </data>
+  <data name="dgElementParams_Col_Value_Text" xml:space="preserve">
+    <value>Valore Proprietà</value>
+  </data>
+  
+</root>

@@ -92,6 +92,7 @@
     <Compile Include="CoreBusinessLayer\ExportDataHandler.cs" />
     <Compile Include="CoreBusinessLayer\ForgeClientHandler.cs" />
     <Compile Include="CoreBusinessLayer\InventorElementsHandler.cs" />
+    <Compile Include="CoreBusinessLayer\LanguageHandler.cs" />
     <Compile Include="CoreBusinessLayer\RevitElementsHandler.cs" />
     <Compile Include="CoreBusinessLayer\RevitFiltersHandler.cs" />
     <Compile Include="CoreDataStructures\BIM360DocsStructure.cs" />
@@ -157,6 +158,9 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
+    <EmbeddedResource Include="Resources\Language.it.resx" />
+    <EmbeddedResource Include="Resources\Language.ja.resx" />
+    <EmbeddedResource Include="Resources\Language.resx" />
     <EmbeddedResource Include="WindowsFormUI\OffsiteForm.resx">
       <DependentUpon>OffsiteForm.cs</DependentUpon>
     </EmbeddedResource>

@@ -41,16 +41,13 @@ namespace RevitInventorExchange.WindowsFormUI
         private IList<ADSK.Element> RevitFamTypes = null;       
         private string rootPath = "";
         private string invTemplFolder = "";
-        public readonly RevitElementSelectionMode selMode;       
+        private readonly RevitElementSelectionMode selMode;       
 
         //  Initialize the form and its elements
         public OffsiteForm(IList<ADSK.Element> elementStructureList, UIApplication uiapplication, RevitElementSelectionMode RevitselMode)
         {
             NLogger.LogText("Entered Offsite Form constructor");
-          
-            //  Load Configuration file
-            ConfigUtilities.LoadConfig();
-
+                      
             InitializeComponent();
            
             //  Initialize Offsite Panel BL handler.
@@ -59,6 +56,7 @@ namespace RevitInventorExchange.WindowsFormUI
             this.Size = new Size(1380, 800);
 
             selMode = RevitselMode;
+            NLogger.LogText($"Selection mode: {selMode}");
 
             //  Check if selection mode is from Viewer or from Revit Families filter
             if (selMode == RevitElementSelectionMode.FromView)
@@ -66,17 +64,17 @@ namespace RevitInventorExchange.WindowsFormUI
                 var tempelStructureList = offsitePanelHandler.ProcessElements(elementStructureList);
                 elStructureList = offsitePanelHandler.FilterElements(tempelStructureList);
                 runtimeElStructureList = elStructureList;
-                groupBox2.Visible = false;
-                groupBox3.Visible = false;
+                grBoxRevFamTypes.Visible = false;
+                grBoxRevFamilies.Visible = false;
+                btnSelectAllElements.Visible = false;
+                btnUnselectAll.Visible = false;
             }
             else
             {
-                groupBox2.Visible = true;
-                groupBox3.Visible = true;
+                grBoxRevFamTypes.Visible = true;
+                grBoxRevFamilies.Visible = true;
             }
-
-            NLogger.LogText($"Selection mode: {selMode}");
-
+            
             //  Set local BIM 360 folder as root path            
             rootPath = Utility.GetInventorTemplateFolder(); // Utilities.GetBIM360RootPath();     
             folderBrowserDialogInventorTemplates.SelectedPath = rootPath;
@@ -85,12 +83,7 @@ namespace RevitInventorExchange.WindowsFormUI
             InitializeSOWGrid(dgElements);
             InitializeMappingGrid(dgInvRevMapping);
             InitializeParametersMappingGrid(dgParamsMapping);
-
-            if (selMode == RevitElementSelectionMode.FromView)
-            {
-                btnSelectAllElements.Visible = false;
-                btnUnselectAll.Visible = false;
-            }
+            InitializeLanguage();
 
             ((System.Windows.Forms.Control)tabControl1.TabPages[tabName]).Enabled = false;
             //InitializeCombobox(comboBoxRevitFamilies);
@@ -98,9 +91,7 @@ namespace RevitInventorExchange.WindowsFormUI
 
             NLogger.LogText("Exit Offsite Form constructor");
         }
-
-
-
+        
         //  Fill logs textbox with messages coming from background
         private void DaEvHandler_DACurrentStepHandler(object sender, string e)
         {
@@ -173,18 +164,21 @@ namespace RevitInventorExchange.WindowsFormUI
             var colElId= new DataGridViewTextBoxColumn();
             colElId.ReadOnly = true;
             colElId.Name = "Element Identifier";
+            colElId.HeaderText = LanguageHandler.GetString("dgElements_Col_ElId_Text");
             colElId.DataPropertyName = "ElementId";
             colElId.SortMode = DataGridViewColumnSortMode.Automatic;
 
             var colName = new DataGridViewTextBoxColumn();
             colName.ReadOnly = true;
             colName.Name = "Element Name";
+            colName.HeaderText = LanguageHandler.GetString("dgElements_Col_ElName_Text");
             colName.DataPropertyName = "ElementName";
             colName.SortMode = DataGridViewColumnSortMode.Automatic;
 
             var colValue = new DataGridViewTextBoxColumn();
             colValue.ReadOnly = true;
             colValue.Name = "Element Family Type";
+            colValue.HeaderText = LanguageHandler.GetString("dgElements_Col_ElVal_Text");
             colValue.DataPropertyName = "ElementFamilyType";
             colValue.SortMode = DataGridViewColumnSortMode.Automatic;
 
@@ -214,8 +208,8 @@ namespace RevitInventorExchange.WindowsFormUI
             }     
             else
             {
-                MessageBoxButtons buttons = MessageBoxButtons.OK;
-                MessageBox.Show("You have to select one Revit Element", "", buttons);
+                //MessageBox.Show("You have to select one Revit Element");
+                MessageBox.Show(LanguageHandler.GetString("msgBox_SelRevElement1"));
 
                 return;
             }
@@ -238,7 +232,8 @@ namespace RevitInventorExchange.WindowsFormUI
 
             if (!checkConsistency)
             {
-                MessageBox.Show("There are some missing mappings");
+                //MessageBox.Show("There are some missing mappings");
+                MessageBox.Show(LanguageHandler.GetString("msgBox_MissingMapp"));
                 return;
             }
 
@@ -343,8 +338,8 @@ namespace RevitInventorExchange.WindowsFormUI
             }
             else
             {
-                MessageBoxButtons buttons = MessageBoxButtons.OK;
-                MessageBox.Show("You have to select one Inventor Template", "", buttons);
+                //MessageBox.Show("You have to select one Inventor Template");
+                MessageBox.Show(LanguageHandler.GetString("msgBox_SelInvTemplate"));
 
                 return;
             }
@@ -353,7 +348,8 @@ namespace RevitInventorExchange.WindowsFormUI
             var isZipFile = System.IO.Path.GetExtension(invTemplateFileName) == ".zip";
             if (isZipFile)
             {
-                MessageBox.Show("Cannot map parameters for zip file");
+                //MessageBox.Show("Cannot map parameters for zip file");
+                MessageBox.Show(LanguageHandler.GetString("msgBox_ZipFileParamMap"));
                 return;
             }
 
@@ -420,12 +416,14 @@ namespace RevitInventorExchange.WindowsFormUI
             var colInvTempl = new DataGridViewTextBoxColumn();
             colInvTempl.ReadOnly = true;
             colInvTempl.Name = "Inventor Template";
+            colInvTempl.HeaderText = LanguageHandler.GetString("dgInvRevMapping_Col_InvTempl_Text");
             colInvTempl.DataPropertyName = "InventorTemplate";
             colInvTempl.SortMode = DataGridViewColumnSortMode.Automatic;
 
             var colRevitFam = new DataGridViewTextBoxColumn();
             colRevitFam.ReadOnly = true;
             colRevitFam.Name = "Revit Family";
+            colRevitFam.HeaderText = LanguageHandler.GetString("dgInvRevMapping_Col_RevFam_Text");
             colRevitFam.DataPropertyName = "RevitFamily";
             colRevitFam.SortMode = DataGridViewColumnSortMode.Automatic;
 
@@ -443,12 +441,14 @@ namespace RevitInventorExchange.WindowsFormUI
             var colInvParams = new DataGridViewTextBoxColumn();
             colInvParams.ReadOnly = true;
             colInvParams.Name = "Inventor Key Parameters";
+            colInvParams.HeaderText = LanguageHandler.GetString("dgParamsMapping_Col_InvParam_Text");
             colInvParams.DataPropertyName = "InventorParamName";
             colInvParams.SortMode = DataGridViewColumnSortMode.Automatic;
 
             var colRevitParams = new DataGridViewTextBoxColumn();
             colRevitParams.ReadOnly = true;
             colRevitParams.Name = "Revit Parameters";
+            colRevitParams.HeaderText = LanguageHandler.GetString("dgParamsMapping_Col_RevitParam_Text");
             colRevitParams.DataPropertyName = "RevitParamName";
             colRevitParams.SortMode = DataGridViewColumnSortMode.Automatic;
 
@@ -498,7 +498,7 @@ namespace RevitInventorExchange.WindowsFormUI
 
                 var mappedParams = elementList.Where(l => !string.IsNullOrEmpty(l.RevitParamName)).Count();
                 lblNumbOfMappedParams.Text = mappedParams.ToString();
-                lblNumberOfParams.Text = dgParamsMapping.Rows.Count.ToString();
+                lblNumberOfParams.Text = elementList.Count.ToString();
 
             }
             
@@ -528,16 +528,16 @@ namespace RevitInventorExchange.WindowsFormUI
                 }
                 else
                 {
-                    MessageBoxButtons buttons = MessageBoxButtons.OK;
-                    MessageBox.Show("There must be a Revit Family associated with the selected inventor template", "", buttons);
+                    //MessageBox.Show("There must be a Revit Family associated with the selected inventor template");
+                    MessageBox.Show(LanguageHandler.GetString("msgBox_RevitFamAssociat"));
 
                     return;
                 }
             }
             else
             {
-                MessageBoxButtons buttons = MessageBoxButtons.OK;
-                MessageBox.Show("You have to select one Inventor - Revit mapping row", "", buttons);
+                //MessageBox.Show("You have to select one Inventor - Revit mapping row");
+                MessageBox.Show(LanguageHandler.GetString("msgBox_SelInvRevMapRow"));
 
                 return;
             }
@@ -555,8 +555,8 @@ namespace RevitInventorExchange.WindowsFormUI
             }
             else
             {
-                MessageBoxButtons buttons = MessageBoxButtons.OK;
-                MessageBox.Show("You have to select one Parameter mapping row", "", buttons);
+                //MessageBox.Show("You have to select one Parameter mapping row");
+                MessageBox.Show(LanguageHandler.GetString("msgBox_SelParamMapRow"));
 
                 return;
             }
@@ -576,25 +576,20 @@ namespace RevitInventorExchange.WindowsFormUI
             var mappedParams = elementList.Where(l => !string.IsNullOrEmpty(l.RevitParamName)).Count();
             lblNumbOfMappedParams.Text = mappedParams.ToString();
             
-            //  Set selected row            
-            if (selectedRow < (dgParamsMapping.Rows.Count - 1) && mode == RevitFamilyHandling.SetRevitFamily && !(selRevFamilyParam == currentRevitParam))
+            //  Set selected row:
+            //  the row is changes if a real parameter mapping has been done and if the end of the grid has not been reached
+            if (selectedRow < (dgParamsMapping.Rows.Count - 1) && 
+                mode == RevitFamilyHandling.SetRevitFamily && 
+                !(selRevFamilyParam == currentRevitParam)
+                )
             {
                 selectedRow = selectedRow + 1;
 
-                UpdateRowSelection(selectedRow);
-                //dgParamsMapping.ClearSelection();
-                //dgParamsMapping.CurrentCell = dgParamsMapping.Rows[selectedRow].Cells["Inventor Key Parameters"];
-                //dgParamsMapping.CurrentRow.Selected = false;
-                //dgParamsMapping.Rows[selectedRow].Selected = true;                
+                UpdateRowSelection(selectedRow);                              
             }
             else
             {
                 UpdateRowSelection(selectedRow);
-
-                //dgParamsMapping.ClearSelection();
-                //dgParamsMapping.CurrentCell = dgParamsMapping.Rows[selectedRow].Cells["Inventor Key Parameters"];
-                //dgParamsMapping.CurrentRow.Selected = false;
-                //dgParamsMapping.Rows[selectedRow].Selected = true;
             }
             
             NLogger.LogText("Exit HandleRowSelectionParams");
@@ -779,9 +774,9 @@ namespace RevitInventorExchange.WindowsFormUI
                     runtimeElStructureList = elStructureList.Where(l => selectedElementsIds.Contains(l.Element.Id.ToString())).ToList();
                 }
                 else
-                {
-                    MessageBoxButtons buttons = MessageBoxButtons.OK;
-                    MessageBox.Show("At least one Revit Element must be selected", "", buttons);
+                {                    
+                    //MessageBox.Show("At least one Revit Element must be selected");
+                    MessageBox.Show(LanguageHandler.GetString("msgBox_SelRevElement"));
                 }
             }
             
@@ -809,7 +804,32 @@ namespace RevitInventorExchange.WindowsFormUI
             Process.Start(txtInventorTemplatesPath.Text);
         }
 
-
+        private void InitializeLanguage()
+        {            
+            this.Text = LanguageHandler.GetString("OffsiteForm_Text");
+            ((System.Windows.Forms.Control)tabControl1.TabPages["tabSOW"]).Text = LanguageHandler.GetString("tabControl1_tabSOW_Text");
+            ((System.Windows.Forms.Control)tabControl1.TabPages["tabMappings"]).Text = LanguageHandler.GetString("tabControl1_tabMapping_Text");
+            grBoxRevFamilies.Text = LanguageHandler.GetString("grBoxRevFamilies_Text");
+            grBoxRevFamTypes.Text = LanguageHandler.GetString("grBoxRevFamTypes_Text");
+            grBoxRevElements.Text = LanguageHandler.GetString("grBoxRevElements_Text");
+            btnProperties.Text = LanguageHandler.GetString("btnProperties_Text");
+            btnSelectAllElements.Text = LanguageHandler.GetString("btnSelectAllElements_Text");
+            btnUnselectAll.Text = LanguageHandler.GetString("btnUnselectAll_Text");
+            btnProcessElements.Text = LanguageHandler.GetString("btnProcessElements_Text");
+            grpBoxInventorTemplates.Text = LanguageHandler.GetString("grpBoxInventorTemplates_Text");
+            btnBrowse.Text = LanguageHandler.GetString("btnBrowse_Text");
+            btnSelectFromScope.Text = LanguageHandler.GetString("btnSelectFromScope_Text");
+            btnClearSelectedMapping.Text = LanguageHandler.GetString("btnClearSelectedMapping_Text");
+            grpBoxRevitFamilies.Text = LanguageHandler.GetString("grpBoxRevitFamilies_Text");
+            lblTotalParamNr.Text = LanguageHandler.GetString("lblTotalParamNr_Text");
+            lblTotalParamMappedNr.Text = LanguageHandler.GetString("lblTotalParamMappedNr_Text");
+            btnRevitParametersSel.Text = LanguageHandler.GetString("btnRevitParametersSel_Text");
+            btnClearSelectedParamMapping.Text = LanguageHandler.GetString("btnClearSelectedParamMapping_Text");
+            btnClearLogs.Text = LanguageHandler.GetString("btnClearLogs_Text");
+            btnTriggerDA.Text = LanguageHandler.GetString("btnTriggerDA_Text");
+            btnCancel.Text = LanguageHandler.GetString("btnCancel_Text");
+            
+        }
 
 
         //private void DataGridAutoSize(DataGridView dg)
