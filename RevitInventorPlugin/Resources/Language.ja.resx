@@ -120,14 +120,15 @@
   
   <!--  Main Form elements  -->
   <data name="OffsiteForm_Text" xml:space="preserve">
-    <value>オフサイトパネル</value>
+    <value></value>
   </data>
   <data name="tabControl1_tabSOW_Text" xml:space="preserve">
-    <value>作業範囲</value>
+    <value></value>
   </data>
   <data name="tabControl1_tabMapping_Text" xml:space="preserve">
     <value></value>
   </data>
+  
   <data name="grBoxRevFamilies_Text" xml:space="preserve">
     <value></value>
   </data>

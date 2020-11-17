@@ -41,7 +41,10 @@ namespace RevitInventorExchange.WindowsFormUI
         private IList<ADSK.Element> RevitFamTypes = null;       
         private string rootPath = "";
         private string invTemplFolder = "";
-        private readonly RevitElementSelectionMode selMode;       
+        private readonly RevitElementSelectionMode selMode;
+
+        private bool sortAscendingdgInvRevMapping = false;
+        private bool sortAscendingdgParamsMapping = false;
 
         //  Initialize the form and its elements
         public OffsiteForm(IList<ADSK.Element> elementStructureList, UIApplication uiapplication, RevitElementSelectionMode RevitselMode)
@@ -829,6 +832,30 @@ namespace RevitInventorExchange.WindowsFormUI
             btnTriggerDA.Text = LanguageHandler.GetString("btnTriggerDA_Text");
             btnCancel.Text = LanguageHandler.GetString("btnCancel_Text");
             
+        }
+
+        private void dgInvRevMapping_ColumnHeaderMouseClick(object sender, DataGridViewCellMouseEventArgs e)
+        {           
+            var ds = (List<InvRevMappingDataGridSourceData>)dgInvRevMapping.DataSource;
+
+            if (sortAscendingdgInvRevMapping)                
+                dgInvRevMapping.DataSource = ds.OrderBy(dgInvRevMapping.Columns[e.ColumnIndex].DataPropertyName).ToList();
+            else
+                dgInvRevMapping.DataSource = ds.OrderBy(dgInvRevMapping.Columns[e.ColumnIndex].DataPropertyName).Reverse().ToList();
+
+            sortAscendingdgInvRevMapping = !sortAscendingdgInvRevMapping;
+        }
+
+        private void dgParamsMapping_ColumnHeaderMouseClick(object sender, DataGridViewCellMouseEventArgs e)
+        {            
+            var ds = (List<InvRevParamMappingDataGridSourceData>)dgParamsMapping.DataSource;
+
+            if (sortAscendingdgParamsMapping)
+                dgParamsMapping.DataSource = ds.OrderBy(dgParamsMapping.Columns[e.ColumnIndex].DataPropertyName).ToList();
+            else
+                dgParamsMapping.DataSource = ds.OrderBy(dgParamsMapping.Columns[e.ColumnIndex].DataPropertyName).Reverse().ToList();
+
+            sortAscendingdgParamsMapping = !sortAscendingdgParamsMapping;
         }
 
 

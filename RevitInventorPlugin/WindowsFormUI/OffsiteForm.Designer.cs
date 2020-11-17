@@ -343,6 +343,7 @@
             this.dgParamsMapping.RowTemplate.Height = 33;
             this.dgParamsMapping.Size = new System.Drawing.Size(1290, 702);
             this.dgParamsMapping.TabIndex = 0;
+            this.dgParamsMapping.ColumnHeaderMouseClick += new System.Windows.Forms.DataGridViewCellMouseEventHandler(this.dgParamsMapping_ColumnHeaderMouseClick);
             // 
             // grpBoxInventorTemplates
             // 
@@ -407,6 +408,7 @@
             this.dgInvRevMapping.RowTemplate.Height = 33;
             this.dgInvRevMapping.Size = new System.Drawing.Size(1244, 702);
             this.dgInvRevMapping.TabIndex = 0;
+            this.dgInvRevMapping.ColumnHeaderMouseClick += new System.Windows.Forms.DataGridViewCellMouseEventHandler(this.dgInvRevMapping_ColumnHeaderMouseClick);
             this.dgInvRevMapping.SelectionChanged += new System.EventHandler(this.dgInvRevMapping_SelectionChanged);
             // 
             // OffsiteForm
