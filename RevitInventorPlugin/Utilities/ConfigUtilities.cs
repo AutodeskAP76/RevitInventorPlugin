@@ -42,6 +42,11 @@ namespace RevitInventorExchange
             return doc.SelectSingleNode("/Configuration/key[@name='Application']/key[@name='Language']/@value").Value;
         }
 
+        public static string GetInventorElementShowOnlyKeys()
+        {
+            return doc.SelectSingleNode("/Configuration/key[@name='Application']/key[@name='InventorElementShowOnlyKeys']/@value").Value;
+        }
+
         public static string GetHub()
         {
             NLogger.LogText("Entered GetHub method");

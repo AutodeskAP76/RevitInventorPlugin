@@ -42,20 +42,19 @@ namespace RevitInventorExchange
 
                 if (win != null)
                 {
-                    elementWindow = win;
-                    elementWindow.Show();
-                    elementWindow.Focus();
+                    //elementWindow = win;
+                    //elementWindow.Show();
+                    //elementWindow.Focus();
+
+                    win.Close();
                 }
-                else
-                {
-                    //  Pass elements info to the opened form
-                    elementWindow = new OffsiteForm(selectedElements, uiapp, RevitElementSelectionMode.FromFilters);
-                    elementWindow.Show();
-                }
+
+                elementWindow = new OffsiteForm(selectedElements, uiapp, RevitElementSelectionMode.FromFilters);
+                elementWindow.Show();
 
                 NLogger.LogText("Exit Execute method with Success");
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 NLogger.LogError(ex);
                 NLogger.LogText("Exit Execute method with Error");

@@ -206,7 +206,7 @@ namespace RevitInventorExchange.WindowsFormUI
                 var elementId = Convert.ToInt32(dgElements.SelectedRows[0].Cells[0].Value);
                 var elStructure = elStructureList.SingleOrDefault(p => p.Element.Id.IntegerValue == elementId);
 
-                var popupWindow = new PropertiesCollectorForm(elStructure);
+                var popupWindow = new PropertiesCollectorForm(elStructure, this);
                 popupWindow.Show();
             }     
             else

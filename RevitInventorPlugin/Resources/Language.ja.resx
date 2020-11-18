@@ -120,180 +120,183 @@
   
   <!--  Main Form elements  -->
   <data name="OffsiteForm_Text" xml:space="preserve">
-    <value></value>
+    <value>オフサイトパネル</value>
   </data>
   <data name="tabControl1_tabSOW_Text" xml:space="preserve">
-    <value></value>
+    <value>作業範囲</value>
   </data>
   <data name="tabControl1_tabMapping_Text" xml:space="preserve">
-    <value></value>
+    <value>マッピング</value>
   </data>
   
   <data name="grBoxRevFamilies_Text" xml:space="preserve">
-    <value></value>
+    <value>Revitファミリ</value>
   </data>
   <data name="grBoxRevFamTypes_Text" xml:space="preserve">
-    <value></value>
+    <value>Revitファミリタイプ</value>
   </data>
   <data name="grBoxRevElements_Text" xml:space="preserve">
-    <value></value>
+    <value>Revit要素</value>
   </data>
   <data name="btnProperties_Text" xml:space="preserve">
-    <value></value>
+    <value>プロパティ表示</value>
   </data>
   <data name="btnSelectAllElements_Text" xml:space="preserve">
-    <value></value>
+    <value>すべてを選択</value>
   </data>
   <data name="btnUnselectAll_Text" xml:space="preserve">
-    <value></value>
+    <value>すべて選択解除</value>
   </data>
   <data name="btnProcessElements_Text" xml:space="preserve">
-    <value></value>
+    <value>プロセス開始</value>
   </data>  
   <data name="dgElements_Col_ElId_Text" xml:space="preserve">
-    <value></value>
+    <value>ＩＤ</value>
   </data>
   <data name="dgElements_Col_ElName_Text" xml:space="preserve">
-    <value></value>
+    <value>名前</value>
   </data>
   <data name="dgElements_Col_ElVal_Text" xml:space="preserve">
-    <value></value>
+    <value>ファミリタイプ</value>
   </data>
     
   <data name="grpBoxInventorTemplates_Text" xml:space="preserve">
-    <value></value>
+    <value>Inventorテンプレート-Revitファミリマッピング</value>
   </data>  
   <data name="btnBrowse_Text" xml:space="preserve">
-    <value></value>
+    <value>参照</value>
   </data>
   <data name="btnSelectFromScope_Text" xml:space="preserve">
-    <value></value>
+    <value>Revitファミリを選択</value>
   </data>  
   <data name="btnClearSelectedMapping_Text" xml:space="preserve">
-    <value></value>
+    <value>選択解除</value>
   </data>  
   <data name="grpBoxRevitFamilies_Text" xml:space="preserve">
-    <value></value>
+    <value>パラメータマッピング</value>
   </data>
   <data name="lblTotalParamNr_Text" xml:space="preserve">
-    <value></value>
+    <value>計 # 個のパラメータ:</value>
   </data>
   <data name="lblTotalParamMappedNr_Text" xml:space="preserve">
-    <value></value>
+    <value>計 # 個のマッピングされたパラメータ:</value>
   </data>
   <data name="btnRevitParametersSel_Text" xml:space="preserve">
-    <value></value>
+    <value>Revitパラメータを選択</value>
   </data>
   <data name="btnClearSelectedParamMapping_Text" xml:space="preserve">
-    <value></value>
+    <value>選択解除</value>
   </data>  
   <data name="btnClearLogs_Text" xml:space="preserve">
-    <value></value>
+    <value>ログをクリア</value>
   </data>
   <data name="btnTriggerDA_Text" xml:space="preserve">
-    <value></value>
+    <value>Inventorファイルを生成</value>
   </data>
    <data name="dgInvRevMapping_Col_InvTempl_Text" xml:space="preserve">
-    <value></value>
+    <value>Inventorテンプレート</value>
   </data>
   <data name="dgInvRevMapping_Col_RevFam_Text" xml:space="preserve">
-    <value></value>
+    <value>Revitファミリ</value>
   </data>  
   <data name="dgParamsMapping_Col_InvParam_Text" xml:space="preserve">
-    <value></value>
+    <value>Inventorキーパラメータ</value>
   </data>
   <data name="dgParamsMapping_Col_RevitParam_Text" xml:space="preserve">
-    <value></value>
+    <value>Revitパラメータ</value>
   </data>   
   
   <data name="btnCancel_Text" xml:space="preserve">
-    <value></value>
+    <value>閉じる</value>
   </data>
   
   <!--  Message Boxes  -->
   <data name="msgBox_SelInvTemplate" xml:space="preserve">
-    <value></value>
+    <value>１つのInventorテンプレートを選択してください。</value>
   </data>
   <data name="msgBox_ZipFileParamMap" xml:space="preserve">
-    <value></value>
+    <value>zipファイルへパラメータをマッピングできません。</value>
   </data>
   <data name="msgBox_RevitFamAssociat" xml:space="preserve">
-    <value></value>
+    <value>選択されたInventorテンプレートに関連付けられたRevitファミリが必要です。</value>
   </data>
   <data name="msgBox_SelInvRevMapRow" xml:space="preserve">
-    <value></value>
+    <value>1つのInventor-Revitマッピングの行を選択してください。</value>
   </data>
   <data name="msgBox_SelParamMapRow" xml:space="preserve">
-    <value></value>
+    <value>1つのパラメータマッピングの行を選択してください。</value>
   </data>
   <data name="msgBox_SelRevElement" xml:space="preserve">
-    <value></value>
+    <value>少なくとも１つのRevit要素が選択される必要があります。</value>
   </data>
   <data name="msgBox_SelRevElement1" xml:space="preserve">
-    <value></value>
+    <value>１つのRevitエレメントを選択する必要があります。</value>
   </data>
   <data name="msgBox_MissingMapp" xml:space="preserve">
-    <value></value>
+    <value>マッピングにいくつかの不足があります。</value>
   </data>
   <data name="msgBox_SelMultipleRevFam" xml:space="preserve">
-    <value></value>
+    <value>選択された要素が1つ以上のファミリに属しています。要素を1つのファミリだけに関連付けてください。</value>
+  </data>
+  <data name="msgBox_SelElNoRevFam" xml:space="preserve">
+    <value>選択された要素に対応するファミリタイプが存在しません。選択しなおしてください。</value>
   </data>
   <data name="msgBox_SelPropAlreadyAssigned" xml:space="preserve">
-    <value></value>
+    <value>選択されたRevitプロパティはすでに使われています。異なるプロパティを選択してください。</value>
   </data>
   <data name="msgBox_SelOneRow" xml:space="preserve">
-    <value></value>
+    <value>１つの行を選択してください。</value>
   </data>
   
   <!--  Revit Inventor Mapping popup  -->
   <data name="RevInventor_Popup_Text" xml:space="preserve">
-    <value></value>
+    <value>Revitファミリ</value>
   </data>
   <data name="grBoxSelCurrScope_Text" xml:space="preserve">
-    <value></value>
+    <value>現在の範囲から選択してください。</value>
   </data>  
   <data name="btnSelect_Text" xml:space="preserve">
-    <value></value>
+    <value>選択</value>
   </data>
   <data name="btnClose_Text" xml:space="preserve">
-    <value></value>
+    <value>閉じる</value>
   </data>
   
   <!--  Revit Inventor Parameters Mapping popup  -->
   <data name="RevInventorParam_Popup_Text" xml:space="preserve">
-    <value></value>
+    <value>Revitファミリパラメータ</value>
   </data>
   <data name="grBoxSelParams_Text" xml:space="preserve">
-    <value></value>
+    <value>パラメータを選択</value>
   </data>
   
   <!--  Properties popup  -->
   <data name="RevProp_Popup_Text" xml:space="preserve">
-    <value></value>
+    <value>プロパティを集める</value>
   </data>
   <data name="grBoxElTypeInfo_Text" xml:space="preserve">
-    <value></value>
+    <value>要素タイプの情報</value>
   </data>  
   <data name="lblFamily_Text" xml:space="preserve">
-    <value></value>
+    <value>ファミリ</value>
   </data> 
   <data name="lblFamilyType_Text" xml:space="preserve">
-    <value></value>
+    <value>ファミリタイプ</value>
   </data>  
   <data name="grBoxProp_Text" xml:space="preserve">
-    <value></value>
+    <value>要素プロパティ</value>
   </data> 
   <data name="grBoxElTypeProps_Text" xml:space="preserve">
-    <value></value>
+    <value>要素タイププロパティ</value>
   </data>
   <data name="dgElementParams_Col_Id_Text" xml:space="preserve">
-    <value></value>
+    <value>プロパティID</value>
   </data>
   <data name="dgElementParams_Col_Name_Text" xml:space="preserve">
-    <value></value>
+    <value>プロパティ名</value>
   </data>
   <data name="dgElementParams_Col_Value_Text" xml:space="preserve">
-    <value></value>
+    <value>プロパティ値</value>
   </data>
 
 </root>

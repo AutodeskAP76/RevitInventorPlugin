@@ -46,6 +46,11 @@ namespace RevitInventorExchange.CoreBusinessLayer
                 var elemTypeId = elem.GetTypeId();
                 ElementType elemType = (ElementType)doc.GetElement(elemTypeId);
 
+                if (elemType == null)
+                {
+                    throw new UIRelevantException(LanguageHandler.GetString("msgBox_SelElNoRevFam"));
+                }   
+                
                 elementTypeOrderedParamsList = GetParameters(elemType);
                 elementTypeSingleParamsList.Add(new ElementOrderedParameter
                 {
@@ -138,7 +143,7 @@ namespace RevitInventorExchange.CoreBusinessLayer
             }
             else
             {
-                NLogger.LogText("Received Revit element is null");
+                NLogger.LogText("Received Revit element or its corresponding family is null");
             }
 
             NLogger.LogText("Exit GetParameters");
@@ -151,8 +156,17 @@ namespace RevitInventorExchange.CoreBusinessLayer
         {
             NLogger.LogText("Entered GetSingleParameter");
 
-            var par = el.get_Parameter(parameter);
-            var parVal = Utility.ParameterToString(doc, par);
+            string parVal = "";
+
+            if (el != null)
+            {
+                var par = el.get_Parameter(parameter);
+                parVal = Utility.ParameterToString(doc, par);
+            }
+            else
+            {
+                NLogger.LogText("Received Revit element family is null");
+            }
 
             NLogger.LogText("Exit GetSingleParameter");
 

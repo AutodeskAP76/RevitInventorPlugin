@@ -328,10 +328,10 @@ namespace RevitInventorExchange.CoreBusinessLayer
         {
             var consistency = false;
             
-            var mappingCount = invRevMappingStructList.Count();
+            var mappingCount = invRevMappingStructList?.Count();
 
             //  No Revit - Inventor mappings
-            if (!(mappingCount > 0))
+            if (invRevMappingStructList == null || !(mappingCount > 0))
             {
                 return consistency;
             }

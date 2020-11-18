@@ -1,7 +1,13 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <Configuration>
-  <key name="DEVMODE" value="true">
+  <key name="DEVMODE" value="false">
     <key name="SaveRevitParamsValueFile" value="true"/>
+  </key>
+  <key name="Application">
+    <!-- Language: Language of UI. Possible values are 'en', 'ja' -->
+    <key name="Language" value="en"/>
+    <!-- InventorElementShowOnlyKeys: show only Inventor key parameters toggle -->
+    <key name="InventorElementShowOnlyKeys" value="false"/>
   </key>
   <key name="BIM360">
     <key name="HUB" value="ATDSK DEV" />
@@ -9,26 +15,35 @@
     <key name="InventorTemplateFolder" value="Project Files\Libraries_DH_Assembly_wall"/>
   </key>
   <key name="Forge">
-    <key name="ClientID" value="txSv5RooCcXxTpkMM2AvwMzQR13iHRdW"/>
-    <key name="ClientSecret" value="57EQiy8kSi63HeLV"/>
-    <!-- HTTPAsyncCallsWaitingTime: number of milliseconds waited when executing async call to Forge APIs -->
-    <key name="HTTPAsyncCallsWaitingTime" value="2000"/>
-    <!-- HTTPRetryAsyncCallsWaitingTime: number of milliseconds waited when retry async call due to previous error to Forge APIs -->
-    <key name="HTTPRetryAsyncCallsWaitingTime" value="2000"/>
-    <!-- HTTPRetryAsyncCallsNumberOfRetries: number of retries when retry async call due to previous error to Forge APIs -->
+    <!-- ClientID: ClientId of App created to connect to Forge API -->
+    <key name="ClientID" value=""/>
+    <!-- ClientSecret: ClientSecret of App created to connect to Forge API -->
+    <key name="ClientSecret" value=""/>
+    <!-- HTTPAsyncCallsWaitingTime: number of milliseconds waited when executing async HTTP call to Forge APIs -->
+    <key name="HTTPAsyncCallsWaitingTime" value="10000"/>
+    <!-- HTTPRetryAsyncCallsWaitingTime: number of milliseconds waited when retry async HTTP call due to previous error to Forge APIs -->
+    <key name="HTTPRetryAsyncCallsWaitingTime" value="3000"/>
+    <!-- HTTPRetryAsyncCallsNumberOfRetries: number of retries when retry async HTTP call due to previous error to Forge APIs -->
     <key name="HTTPRetryAsyncCallsNumberOfRetries" value="3"/>
     <!-- WorkItemCreationPollingTime: number of milliseconds waited when polling on WorkItem execution status -->
-    <key name="WorkItemCreationPollingTime" value="2000"/>
+    <key name="WorkItemCreationPollingTime" value="3000"/>
+    <!-- PartActivityId: Id of the Activity used to handle Part files -->
+    <key name="PartActivityId" value="DH_POC_App1.DHIlogicPartActivity+version1" />
+    <!-- AssemblyActivityId: Id of the Activity used to handle assembly files -->
+    <!--<key name="AssemblyActivityId" value="DH_POC_App1.DHIlogicAssemblyActivity+version1" />-->
+    <key name="AssemblyActivityId" value="DH_POC_App1.DHIlogicAssembly_TEMP_Activity+version1" />
+    <!-- RequestDocInputArgName: Name of Activity parameter specifying input document -->
+    <key name="RequestDocInputArgName" value="InventorDoc" />
+    <!-- RequestParamInputArgName:  Name of Activity parameter specifying input json containing extracted Revit values, based on Revit - Inventor mapping -->
+    <key name="RequestParamInputArgName" value="InventorParams" />
+    <!-- RequestDocInputArgName: Name of Activity parameter specifying output Part document -->
+    <key name="RequestParamOutputIpt" value="OutputIpt" />
+    <!-- RequestDocInputArgName: Name of Activity parameter specifying output Assembly document -->
+    <key name="RequestParamOutputIam" value="OutputIam" />
     <!--  PLEASE DO NOT MODIFY BELOW VALUES -->
     <key name="DABaseURL" value="https://developer.api.autodesk.com/da/us-east/v3/"/>
     <key name="DABaseLinkURL" value="https://developer.api.autodesk.com/oss/v2/" />
     <key name="DMBaseProjectURL" value="https://developer.api.autodesk.com/project/v1/"/>
     <key name="DMBaseDataURL" value="https://developer.api.autodesk.com/data/v1/"/>
-    <key name="PartActivityId" value="DH_POC_App.DHIlogicPartActivity+version1" />
-    <key name="AssemblyActivityId" value="DH_POC_App.DHIlogicAssemblyActivity+version1" />
-    <key name="RequestDocInputArgName" value="InventorDoc" />
-    <key name="RequestParamInputArgName" value="InventorParams" />
-    <key name="RequestParamOutputIpt" value="OutputIpt" />
-    <key name="RequestParamOutputIam" value="OutputIam" />
   </key>
 </Configuration>

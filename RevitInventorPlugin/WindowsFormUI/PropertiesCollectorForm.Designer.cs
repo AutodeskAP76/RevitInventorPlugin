@@ -42,6 +42,8 @@
             this.grBoxElTypeInfo = new System.Windows.Forms.GroupBox();
             this.txtFamily = new System.Windows.Forms.TextBox();
             this.lblFamily = new System.Windows.Forms.Label();
+            this.txtPropName = new System.Windows.Forms.TextBox();
+            this.txtPropValue = new System.Windows.Forms.TextBox();
             ((System.ComponentModel.ISupportInitialize)(this.dgElementParams)).BeginInit();
             this.grBoxElTypeProps.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dgElementTypeParams)).BeginInit();
@@ -50,7 +52,7 @@
             // 
             // btnCreateFilterFile
             // 
-            this.btnCreateFilterFile.Location = new System.Drawing.Point(24, 1442);
+            this.btnCreateFilterFile.Location = new System.Drawing.Point(24, 1518);
             this.btnCreateFilterFile.Margin = new System.Windows.Forms.Padding(6);
             this.btnCreateFilterFile.Name = "btnCreateFilterFile";
             this.btnCreateFilterFile.Size = new System.Drawing.Size(256, 44);
@@ -62,7 +64,7 @@
             // btnCancel
             // 
             this.btnCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.btnCancel.Location = new System.Drawing.Point(1110, 1442);
+            this.btnCancel.Location = new System.Drawing.Point(1110, 1518);
             this.btnCancel.Margin = new System.Windows.Forms.Padding(6);
             this.btnCancel.Name = "btnCancel";
             this.btnCancel.Size = new System.Drawing.Size(150, 44);
@@ -85,6 +87,7 @@
             this.dgElementParams.Size = new System.Drawing.Size(1168, 423);
             this.dgElementParams.TabIndex = 2;
             this.dgElementParams.ColumnHeaderMouseClick += new System.Windows.Forms.DataGridViewCellMouseEventHandler(this.dgElementParams_ColumnHeaderMouseClick);
+            this.dgElementParams.SelectionChanged += new System.EventHandler(this.dgElementParams_SelectionChanged);
             // 
             // grBoxProp
             // 
@@ -119,13 +122,15 @@
             this.dgElementTypeParams.Name = "dgElementTypeParams";
             this.dgElementTypeParams.ReadOnly = true;
             this.dgElementTypeParams.RowHeadersWidth = 102;
+            this.dgElementTypeParams.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.dgElementTypeParams.Size = new System.Drawing.Size(1168, 596);
             this.dgElementTypeParams.TabIndex = 0;
             this.dgElementTypeParams.ColumnHeaderMouseClick += new System.Windows.Forms.DataGridViewCellMouseEventHandler(this.dgElementTypeParams_ColumnHeaderMouseClick);
+            this.dgElementTypeParams.SelectionChanged += new System.EventHandler(this.dgElementTypeParams_SelectionChanged);
             // 
             // btnCopyPaste
             // 
-            this.btnCopyPaste.Location = new System.Drawing.Point(558, 1442);
+            this.btnCopyPaste.Location = new System.Drawing.Point(558, 1518);
             this.btnCopyPaste.Margin = new System.Windows.Forms.Padding(2);
             this.btnCopyPaste.Name = "btnCopyPaste";
             this.btnCopyPaste.Size = new System.Drawing.Size(184, 44);
@@ -207,13 +212,31 @@
             this.lblFamily.TabIndex = 8;
             this.lblFamily.Text = "Family:";
             // 
+            // txtPropName
+            // 
+            this.txtPropName.Location = new System.Drawing.Point(58, 1456);
+            this.txtPropName.Name = "txtPropName";
+            this.txtPropName.ReadOnly = true;
+            this.txtPropName.Size = new System.Drawing.Size(518, 31);
+            this.txtPropName.TabIndex = 9;
+            // 
+            // txtPropValue
+            // 
+            this.txtPropValue.Location = new System.Drawing.Point(708, 1456);
+            this.txtPropValue.Name = "txtPropValue";
+            this.txtPropValue.ReadOnly = true;
+            this.txtPropValue.Size = new System.Drawing.Size(518, 31);
+            this.txtPropValue.TabIndex = 10;
+            // 
             // PropertiesCollectorForm
             // 
             this.AcceptButton = this.btnCreateFilterFile;
             this.AutoScaleDimensions = new System.Drawing.SizeF(12F, 25F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.CancelButton = this.btnCancel;
-            this.ClientSize = new System.Drawing.Size(1284, 1506);
+            this.ClientSize = new System.Drawing.Size(1284, 1589);
+            this.Controls.Add(this.txtPropValue);
+            this.Controls.Add(this.txtPropName);
             this.Controls.Add(this.grBoxElTypeInfo);
             this.Controls.Add(this.lblApplyFilters);
             this.Controls.Add(this.chckBoxApplyFilters);
@@ -253,5 +276,7 @@
         private System.Windows.Forms.GroupBox grBoxElTypeInfo;
         private System.Windows.Forms.TextBox txtFamily;
         private System.Windows.Forms.Label lblFamily;
+        private System.Windows.Forms.TextBox txtPropName;
+        private System.Windows.Forms.TextBox txtPropValue;
     }
 }

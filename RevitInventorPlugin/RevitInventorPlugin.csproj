@@ -95,6 +95,7 @@
     <Compile Include="CoreBusinessLayer\LanguageHandler.cs" />
     <Compile Include="CoreBusinessLayer\RevitElementsHandler.cs" />
     <Compile Include="CoreBusinessLayer\RevitFiltersHandler.cs" />
+    <Compile Include="CoreBusinessLayer\UIRelevantException.cs" />
     <Compile Include="CoreDataStructures\BIM360DocsStructure.cs" />
     <Compile Include="CoreDataStructures\BIM360DocsStructure1.cs" />
     <Compile Include="CoreDataStructures\DesignAutomationStructure.cs" />

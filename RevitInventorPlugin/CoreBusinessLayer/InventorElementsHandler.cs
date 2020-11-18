@@ -144,7 +144,17 @@ namespace RevitInventorExchange.CoreBusinessLayer
 
             for (int h = 1; h <= InventorParams.Count; h++)
             {
-                inventorParams.Add(new InventorParameterStructure { Name = InventorParams[h].Name.ToString() });
+                if (ConfigUtilities.GetInventorElementShowOnlyKeys().ToLower() == "true")
+                {
+                    if (InventorParams[h].IsKey)
+                    {
+                        inventorParams.Add(new InventorParameterStructure { Name = InventorParams[h].Name.ToString() });
+                    }
+                }
+                else
+                {
+                    inventorParams.Add(new InventorParameterStructure { Name = InventorParams[h].Name.ToString() });
+                }
             }
 
             NLogger.LogText("Remove documents from  Inventor application instance");

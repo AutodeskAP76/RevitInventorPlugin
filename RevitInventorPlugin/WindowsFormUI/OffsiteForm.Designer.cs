@@ -222,6 +222,7 @@
             this.dgElements.ReadOnly = true;
             this.dgElements.RowHeadersWidth = 102;
             this.dgElements.RowTemplate.Height = 40;
+            this.dgElements.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.dgElements.Size = new System.Drawing.Size(2570, 985);
             this.dgElements.TabIndex = 0;
             this.dgElements.ColumnHeaderMouseClick += new System.Windows.Forms.DataGridViewCellMouseEventHandler(this.dgElements_ColumnHeaderMouseClick);
@@ -341,6 +342,7 @@
             this.dgParamsMapping.ReadOnly = true;
             this.dgParamsMapping.RowHeadersWidth = 82;
             this.dgParamsMapping.RowTemplate.Height = 33;
+            this.dgParamsMapping.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.dgParamsMapping.Size = new System.Drawing.Size(1290, 702);
             this.dgParamsMapping.TabIndex = 0;
             this.dgParamsMapping.ColumnHeaderMouseClick += new System.Windows.Forms.DataGridViewCellMouseEventHandler(this.dgParamsMapping_ColumnHeaderMouseClick);
@@ -406,6 +408,7 @@
             this.dgInvRevMapping.ReadOnly = true;
             this.dgInvRevMapping.RowHeadersWidth = 82;
             this.dgInvRevMapping.RowTemplate.Height = 33;
+            this.dgInvRevMapping.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.dgInvRevMapping.Size = new System.Drawing.Size(1244, 702);
             this.dgInvRevMapping.TabIndex = 0;
             this.dgInvRevMapping.ColumnHeaderMouseClick += new System.Windows.Forms.DataGridViewCellMouseEventHandler(this.dgInvRevMapping_ColumnHeaderMouseClick);

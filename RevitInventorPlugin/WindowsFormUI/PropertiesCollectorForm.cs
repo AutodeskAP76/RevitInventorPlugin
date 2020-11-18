@@ -28,19 +28,21 @@ namespace RevitInventorExchange.WindowsFormUI
         private bool enableFilter;
         private PropertiesCollectorFormHandler winFormHandler;
 
-        public PropertiesCollectorForm(ElementStructure elementStructureList)
+        public PropertiesCollectorForm(ElementStructure elementStructureList, Form parentForm)
         {
             InitializeComponent();
             elStructureList = elementStructureList;
             enableFilter = chckBoxApplyFilters.Checked;
             winFormHandler = new PropertiesCollectorFormHandler();
-            this.Size = new Size(655, 840);
+            this.Size = new Size(655, 870);
 
             InitializeGrid(dgElementParams);
             InitializeGrid(dgElementTypeParams);
 
             InitBehaviour();
             InitializeLanguage();
+
+            parentForm.Closed += (s, e) => this.Close();
         }
 
         private void PropertiesCollectorForm_Load(object sender, EventArgs e)
@@ -53,8 +55,11 @@ namespace RevitInventorExchange.WindowsFormUI
             winFormHandler.FillGrid(dgElementParams, elementParamList);
             winFormHandler.FillGrid(dgElementTypeParams, elementTypeParamList);
 
-            txtFamily.Text = elStructureList.ElementType.FamilyName;
-            txtFamType.Text = elStructureList.ElementTypeSingleParameters.Single(p => p.ParameterName == "SYMBOL_FAMILY_AND_TYPE_NAMES_PARAM").ParameterValue.ToString();
+            if (elStructureList.ElementType != null)
+            {
+                txtFamily.Text = elStructureList.ElementType.FamilyName;
+                txtFamType.Text = elStructureList.ElementTypeSingleParameters.Single(p => p.ParameterName == "SYMBOL_FAMILY_AND_TYPE_NAMES_PARAM").ParameterValue.ToString();
+            }
         }       
 
         private void InitializeGrid(DataGridView dgParam)
@@ -202,6 +207,28 @@ namespace RevitInventorExchange.WindowsFormUI
             btnCancel.Text = LanguageHandler.GetString("btnCancel_Text");
             grBoxProp.Text = LanguageHandler.GetString("grBoxProp_Text");
             grBoxElTypeProps.Text = LanguageHandler.GetString("grBoxElTypeProps_Text");
+        }
+
+        private void dgElementParams_SelectionChanged(object sender, EventArgs e)
+        {
+            var rowsCount = dgElementParams.Rows.GetRowCount(DataGridViewElementStates.Selected);
+
+            if (rowsCount > 0)
+            {
+                txtPropName.Text = dgElementParams.SelectedRows[0].Cells[1]?.Value?.ToString();
+                txtPropValue.Text = dgElementParams.SelectedRows[0].Cells[2]?.Value?.ToString();
+            }
+        }
+
+        private void dgElementTypeParams_SelectionChanged(object sender, EventArgs e)
+        {
+            var rowsCount = dgElementTypeParams.Rows.GetRowCount(DataGridViewElementStates.Selected);
+
+            if (rowsCount > 0)
+            {
+                txtPropName.Text = dgElementTypeParams.SelectedRows[0].Cells[1]?.Value?.ToString();
+                txtPropValue.Text = dgElementTypeParams.SelectedRows[0].Cells[2]?.Value?.ToString();
+            }
         }
     }
 }

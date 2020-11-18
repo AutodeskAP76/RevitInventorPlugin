@@ -8,6 +8,7 @@ using RevitInventorExchange.WindowsFormUI;
 using System;
 using System.Collections.Generic;
 using System.Windows.Forms;
+using System.Linq;
 
 namespace RevitInventorExchange
 {
@@ -55,6 +56,10 @@ namespace RevitInventorExchange
 
                 //  TODO: DETERMINE IF SAME FAMILY OR NOT
                 //  Handle selected elements info extraction
+
+
+                
+
                 var elStructureList = revElementHandler.ProcessElements(selectedElements);
                 var filteredElStrList = revFilterHandler.FilterElements(elStructureList);
 
@@ -72,19 +77,22 @@ namespace RevitInventorExchange
 
                     if (win != null)
                     {
-                        elementWindow = win;
-                        elementWindow.Show();
-                        elementWindow.Focus();
+                        //elementWindow = win;
+                        //elementWindow.Show();
+                        //elementWindow.Focus();
+
+                        win.Close();
                     }
-                    else
-                    {
-                        //  Pass elements info to the opened form
-                        elementWindow = new OffsiteForm(selectedElements, uiapp, RevitElementSelectionMode.FromView);
-                        elementWindow.Show();
-                    }                    
+
+                    elementWindow = new OffsiteForm(selectedElements, uiapp, RevitElementSelectionMode.FromView);
+                    elementWindow.Show();
                 }
 
                 NLogger.LogText("Exit Execute method with Success");
+            }
+            catch(UIRelevantException ex)
+            {
+                MessageBox.Show(ex.Message);
             }
             catch (Exception ex)
             {

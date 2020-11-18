@@ -238,6 +238,9 @@
   <data name="msgBox_SelMultipleRevFam" xml:space="preserve">
     <value>Selected elements belong to more than one family. They have to be part of a unique family</value>
   </data>
+  <data name="msgBox_SelElNoRevFam" xml:space="preserve">
+    <value>Selected elements do not have a corresponding family type. Please modify your selection</value>
+  </data>
   <data name="msgBox_SelPropAlreadyAssigned" xml:space="preserve">
     <value>The selected Revit property has already been assigned. Please select another one</value>
   </data>
