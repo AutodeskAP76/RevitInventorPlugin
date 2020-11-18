@@ -7,7 +7,7 @@
     <!-- Language: Language of UI. Possible values are 'en', 'ja' -->
     <key name="Language" value="en"/>
     <!-- InventorElementShowOnlyKeys: show only Inventor key parameters toggle -->
-    <key name="InventorElementShowOnlyKeys" value="false"/>
+    <key name="InventorElementShowOnlyKeys" value="true"/>
   </key>
   <key name="BIM360">
     <key name="HUB" value="ATDSK DEV" />

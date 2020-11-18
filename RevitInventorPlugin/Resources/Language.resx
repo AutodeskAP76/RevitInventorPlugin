@@ -190,9 +190,17 @@
   <data name="btnClearLogs_Text" xml:space="preserve">
     <value>Clear Logs</value>
   </data>
-  <data name="btnTriggerDA_Text" xml:space="preserve">
-    <value>Generate Inventor files</value>
+  <data name="btnGenerateModel_Text" xml:space="preserve">
+    <value>Generate Inventor Model</value>
   </data>
+  
+  <data name="btnGenerateBOM_Text" xml:space="preserve">
+    <value>Generate Inventor BOM</value>
+  </data>  
+  <data name="btnGenerateDrawings_Text" xml:space="preserve">
+    <value>Generate Inventor Drawings</value>
+  </data>  
+  
   <data name="dgInvRevMapping_Col_InvTempl_Text" xml:space="preserve">
     <value>Inventor Template</value>
   </data>

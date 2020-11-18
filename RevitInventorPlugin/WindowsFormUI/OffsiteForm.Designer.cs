@@ -31,7 +31,7 @@
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(OffsiteForm));
             this.btnProperties = new System.Windows.Forms.Button();
             this.btnCancel = new System.Windows.Forms.Button();
-            this.btnTriggerDA = new System.Windows.Forms.Button();
+            this.btnGenerateModel = new System.Windows.Forms.Button();
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.tabSOW = new System.Windows.Forms.TabPage();
             this.btnUnselectAll = new System.Windows.Forms.Button();
@@ -44,6 +44,8 @@
             this.grBoxRevElements = new System.Windows.Forms.GroupBox();
             this.dgElements = new System.Windows.Forms.DataGridView();
             this.tabMappings = new System.Windows.Forms.TabPage();
+            this.btnGenerateBOM = new System.Windows.Forms.Button();
+            this.btnGenerateDrawings = new System.Windows.Forms.Button();
             this.btnClearLogs = new System.Windows.Forms.Button();
             this.richTextBoxLogs = new System.Windows.Forms.RichTextBox();
             this.grpBoxRevitFamilies = new System.Windows.Forms.GroupBox();
@@ -96,15 +98,15 @@
             this.btnCancel.UseVisualStyleBackColor = true;
             this.btnCancel.Click += new System.EventHandler(this.btnCancel_Click);
             // 
-            // btnTriggerDA
+            // btnGenerateModel
             // 
-            this.btnTriggerDA.Location = new System.Drawing.Point(2340, 1238);
-            this.btnTriggerDA.Name = "btnTriggerDA";
-            this.btnTriggerDA.Size = new System.Drawing.Size(301, 47);
-            this.btnTriggerDA.TabIndex = 3;
-            this.btnTriggerDA.Text = "Generate Inventor files";
-            this.btnTriggerDA.UseVisualStyleBackColor = true;
-            this.btnTriggerDA.Click += new System.EventHandler(this.btnExportPropVals_Click);
+            this.btnGenerateModel.Location = new System.Drawing.Point(2340, 1222);
+            this.btnGenerateModel.Name = "btnGenerateModel";
+            this.btnGenerateModel.Size = new System.Drawing.Size(300, 60);
+            this.btnGenerateModel.TabIndex = 3;
+            this.btnGenerateModel.Text = "Generate Inventor Models";
+            this.btnGenerateModel.UseVisualStyleBackColor = true;
+            this.btnGenerateModel.Click += new System.EventHandler(this.btnExportPropVals_Click);
             // 
             // tabControl1
             // 
@@ -229,8 +231,10 @@
             // 
             // tabMappings
             // 
+            this.tabMappings.Controls.Add(this.btnGenerateBOM);
+            this.tabMappings.Controls.Add(this.btnGenerateDrawings);
             this.tabMappings.Controls.Add(this.btnClearLogs);
-            this.tabMappings.Controls.Add(this.btnTriggerDA);
+            this.tabMappings.Controls.Add(this.btnGenerateModel);
             this.tabMappings.Controls.Add(this.richTextBoxLogs);
             this.tabMappings.Controls.Add(this.grpBoxRevitFamilies);
             this.tabMappings.Controls.Add(this.grpBoxInventorTemplates);
@@ -241,6 +245,26 @@
             this.tabMappings.TabIndex = 1;
             this.tabMappings.Text = "Mappings";
             this.tabMappings.UseVisualStyleBackColor = true;
+            // 
+            // btnGenerateBOM
+            // 
+            this.btnGenerateBOM.Location = new System.Drawing.Point(2340, 1139);
+            this.btnGenerateBOM.Name = "btnGenerateBOM";
+            this.btnGenerateBOM.Size = new System.Drawing.Size(300, 60);
+            this.btnGenerateBOM.TabIndex = 7;
+            this.btnGenerateBOM.Text = "Generate Inventor BOM";
+            this.btnGenerateBOM.UseVisualStyleBackColor = true;
+            this.btnGenerateBOM.Visible = false;
+            // 
+            // btnGenerateDrawings
+            // 
+            this.btnGenerateDrawings.Location = new System.Drawing.Point(2340, 1056);
+            this.btnGenerateDrawings.Name = "btnGenerateDrawings";
+            this.btnGenerateDrawings.Size = new System.Drawing.Size(300, 60);
+            this.btnGenerateDrawings.TabIndex = 6;
+            this.btnGenerateDrawings.Text = "Generate Inventor Drawings";
+            this.btnGenerateDrawings.UseVisualStyleBackColor = true;
+            this.btnGenerateDrawings.Visible = false;
             // 
             // btnClearLogs
             // 
@@ -447,7 +471,7 @@
         #endregion
         private System.Windows.Forms.Button btnProperties;
         private System.Windows.Forms.Button btnCancel;
-        private System.Windows.Forms.Button btnTriggerDA;
+        private System.Windows.Forms.Button btnGenerateModel;
         private System.Windows.Forms.TabControl tabControl1;
         private System.Windows.Forms.TabPage tabSOW;
         private System.Windows.Forms.DataGridView dgElements;
@@ -477,5 +501,7 @@
         private System.Windows.Forms.Label lblNumberOfParams;
         private System.Windows.Forms.Label lblNumbOfMappedParams;
         private System.Windows.Forms.Label lblTotalParamMappedNr;
+        private System.Windows.Forms.Button btnGenerateBOM;
+        private System.Windows.Forms.Button btnGenerateDrawings;
     }
 }

@@ -190,9 +190,16 @@
   <data name="btnClearLogs_Text" xml:space="preserve">
     <value>ログをクリア</value>
   </data>
-  <data name="btnTriggerDA_Text" xml:space="preserve">
+  <data name="btnGenerateModel_Text" xml:space="preserve">
     <value>Inventorファイルを生成</value>
+  </data>  
+  <data name="btnGenerateBOM_Text" xml:space="preserve">
+    <value></value>
+  </data>  
+  <data name="btnGenerateDrawings_Text" xml:space="preserve">
+    <value></value>
   </data>
+    
    <data name="dgInvRevMapping_Col_InvTempl_Text" xml:space="preserve">
     <value>Inventorテンプレート</value>
   </data>

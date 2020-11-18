@@ -255,7 +255,7 @@ namespace RevitInventorExchange.WindowsFormUI
 
             daEvHandler.DACurrentStepHandler -= DaEvHandler_DACurrentStepHandler;
 
-            //  Enable the tab after DA workflow execution        
+            //  Enable the tabs after DA workflow execution        
             BeginInvoke(new Action(() =>
             {
                 ((System.Windows.Forms.Control)tabControl1.TabPages[tabName]).Enabled = true;
@@ -829,9 +829,11 @@ namespace RevitInventorExchange.WindowsFormUI
             btnRevitParametersSel.Text = LanguageHandler.GetString("btnRevitParametersSel_Text");
             btnClearSelectedParamMapping.Text = LanguageHandler.GetString("btnClearSelectedParamMapping_Text");
             btnClearLogs.Text = LanguageHandler.GetString("btnClearLogs_Text");
-            btnTriggerDA.Text = LanguageHandler.GetString("btnTriggerDA_Text");
+            btnGenerateModel.Text = LanguageHandler.GetString("btnGenerateModel_Text");
             btnCancel.Text = LanguageHandler.GetString("btnCancel_Text");
-            
+            btnGenerateBOM.Text = LanguageHandler.GetString("btnGenerateBOM_Text");
+            btnGenerateDrawings.Text = LanguageHandler.GetString("btnGenerateDrawings_Text");
+
         }
 
         private void dgInvRevMapping_ColumnHeaderMouseClick(object sender, DataGridViewCellMouseEventArgs e)

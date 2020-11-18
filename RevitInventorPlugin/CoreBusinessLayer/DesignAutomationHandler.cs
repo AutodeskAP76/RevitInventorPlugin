@@ -973,7 +973,7 @@ namespace RevitInventorExchange.CoreBusinessLayer
             {
                 JObject root = JObject.Parse(res.ResponseContent);
 
-                //  Extract the created strorage object identisfier. It is needed to create item versions
+                //  Extract the created storage object identisfier. It is needed to create item versions
                 OutFileStorageobjectId = root["data"]["id"].ToString();
 
                 NLogger.LogText($"Storage object {OutFileStorageobjectId} created");
