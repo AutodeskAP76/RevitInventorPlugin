@@ -36,6 +36,7 @@ namespace RevitInventorExchange.CoreBusinessLayer
             NLogger.LogText("Entered SetHubStructure");
 
             string hubId = "";
+            string configuredHub = ConfigUtilities.GetHub();
 
             NLogger.LogText("Parse ResponseContent");
             JObject res = JObject.Parse(ret.ResponseContent);
@@ -46,7 +47,7 @@ namespace RevitInventorExchange.CoreBusinessLayer
             {
                 var name = ((string)item.SelectToken("attributes.name"))/*.Replace("\u200B", "")*/;
 
-                if (name == ConfigUtilities.GetHub()/*.Replace("\u200B", "")*/)
+                if (name == configuredHub/*.Replace("\u200B", "")*/)
                 {
                     hubId = (string)item.SelectToken("id");
 
@@ -58,6 +59,11 @@ namespace RevitInventorExchange.CoreBusinessLayer
                         Type = BIM360Type.Hub
                     });
                 }
+            }
+
+            if (string.IsNullOrEmpty(hubId))
+            {
+                throw new Exception($"The configured Hub '{configuredHub}' is not in the returned list");
             }
 
             NLogger.LogText("Exit SetHubStructure");
@@ -198,7 +204,7 @@ namespace RevitInventorExchange.CoreBusinessLayer
             return fileId;
         }
 
-        //  Extracts the StorageObject givent its file name
+        //  Extracts the StorageObject given its file name
         internal string GetObjectStorageByFileName(string elName)
         {
             var file = bIM360DocsStructure1.BIM360DataRows1.FirstOrDefault(o => o.Name == elName);

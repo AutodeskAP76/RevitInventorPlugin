@@ -10,13 +10,13 @@ namespace RevitInventorExchange
         public Result OnStartup(UIControlledApplication application)
         {
             string assemblyPath = Assembly.GetExecutingAssembly().Location;
-            string starterTab = "Offsite";
+            string starterTab = "DfMA PoC";
 
             //Create Tab
             //----------
             application.CreateRibbonTab(starterTab);
             
-            RibbonPanel panel = application.CreateRibbonPanel(starterTab, "Offsite panel");
+            RibbonPanel panel = application.CreateRibbonPanel(starterTab, "DfMA PoC panel");
 
             PushButton buttonSelFromView = panel.AddItem(new PushButtonData("CP_Offsite_SelectFromView", "Selection \r\n from View", assemblyPath, "RevitInventorExchange.RevitInventorExchangeCommandFromView")) as PushButton;
 

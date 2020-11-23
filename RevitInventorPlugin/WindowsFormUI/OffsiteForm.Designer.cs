@@ -255,6 +255,7 @@
             this.btnGenerateBOM.Text = "Generate Inventor BOM";
             this.btnGenerateBOM.UseVisualStyleBackColor = true;
             this.btnGenerateBOM.Visible = false;
+            this.btnGenerateBOM.Click += new System.EventHandler(this.btnGenerateBOM_Click);
             // 
             // btnGenerateDrawings
             // 
@@ -265,6 +266,7 @@
             this.btnGenerateDrawings.Text = "Generate Inventor Drawings";
             this.btnGenerateDrawings.UseVisualStyleBackColor = true;
             this.btnGenerateDrawings.Visible = false;
+            this.btnGenerateDrawings.Click += new System.EventHandler(this.btnGenerateDrawings_Click);
             // 
             // btnClearLogs
             // 
@@ -303,7 +305,7 @@
             // lblNumbOfMappedParams
             // 
             this.lblNumbOfMappedParams.AutoSize = true;
-            this.lblNumbOfMappedParams.Location = new System.Drawing.Point(715, 45);
+            this.lblNumbOfMappedParams.Location = new System.Drawing.Point(741, 45);
             this.lblNumbOfMappedParams.Name = "lblNumbOfMappedParams";
             this.lblNumbOfMappedParams.Size = new System.Drawing.Size(24, 25);
             this.lblNumbOfMappedParams.TabIndex = 11;
@@ -321,7 +323,7 @@
             // lblNumberOfParams
             // 
             this.lblNumberOfParams.AutoSize = true;
-            this.lblNumberOfParams.Location = new System.Drawing.Point(256, 45);
+            this.lblNumberOfParams.Location = new System.Drawing.Point(267, 45);
             this.lblNumberOfParams.Name = "lblNumberOfParams";
             this.lblNumberOfParams.Size = new System.Drawing.Size(24, 25);
             this.lblNumberOfParams.TabIndex = 9;

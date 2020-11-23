@@ -191,13 +191,13 @@
     <value>ログをクリア</value>
   </data>
   <data name="btnGenerateModel_Text" xml:space="preserve">
-    <value>Inventorファイルを生成</value>
+    <value>Inventorモデルを生成する</value>
   </data>  
   <data name="btnGenerateBOM_Text" xml:space="preserve">
-    <value></value>
+    <value>部品表(BOM)を生成する</value>
   </data>  
   <data name="btnGenerateDrawings_Text" xml:space="preserve">
-    <value></value>
+    <value>図面を生成する</value>
   </data>
     
    <data name="dgInvRevMapping_Col_InvTempl_Text" xml:space="preserve">

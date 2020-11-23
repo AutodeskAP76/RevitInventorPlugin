@@ -860,6 +860,16 @@ namespace RevitInventorExchange.WindowsFormUI
             sortAscendingdgParamsMapping = !sortAscendingdgParamsMapping;
         }
 
+        private void btnGenerateDrawings_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void btnGenerateBOM_Click(object sender, EventArgs e)
+        {
+
+        }
+
 
         //private void DataGridAutoSize(DataGridView dg)
         //{

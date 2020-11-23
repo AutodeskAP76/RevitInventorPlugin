@@ -21,7 +21,7 @@ namespace RevitInventorExchange.CoreBusinessLayer
     {
         private readonly int HTTPNumberOfRetries = ConfigUtilities.GetAsyncHTTPCallNumberOfRetries(); 
         private readonly int HTTPCallRetryWaitTime = ConfigUtilities.GetAsyncHTTPCallRetryWaitTime();
-        private string jsonStruct = "";
+        //private string jsonStruct = "";
         private BIM360StructureBuilder bIM360DocsStructBuilder = null;
         private ForgeDMClient forgeDMClient = null;
         private ForgeDAClient forgeDAClient = null;
@@ -55,10 +55,10 @@ namespace RevitInventorExchange.CoreBusinessLayer
             NLogger.LogText("Entered RunDesignAutomationForgeWorkflow");
 
             inventorTemplatesFolder = invTemplFolder; // ConfigUtilities.GetInventorTemplateFolder();
-            jsonStruct = json;
+            var jsonStruct = JObject.Parse(json);
 
             NLogger.LogText($"Inventor templates used folder: {inventorTemplatesFolder}");
-            NLogger.LogText($"Received parameters json file: {jsonStruct}");
+            NLogger.LogText($"Received parameters json file: {jsonStruct.ToString()}");
 
             daEventHandler.TriggerDACurrentStepHandler("Workflow started");
 
@@ -74,8 +74,7 @@ namespace RevitInventorExchange.CoreBusinessLayer
                 daEventHandler.TriggerDACurrentStepHandler("BIM360 structure created");
 
                 //  build the input - output files internal structure
-
-                daStructure = GetDataFromInputJson1();
+                daStructure = GetDataFromInputJson1(json);
                 //daStructure = GetDataFromInputJson1_for_zip_tests();
 
                 //  Create output storage object, submit workitem and create version
@@ -793,7 +792,7 @@ namespace RevitInventorExchange.CoreBusinessLayer
 
         //  Extract data from Parameters values json file and put them into an internal structure to keep togehter data regarding input files and output files for Forge API automation
         
-        private DesignAutomationStructure GetDataFromInputJson1()
+        private DesignAutomationStructure GetDataFromInputJson1(string jsonStruct)
         {
             NLogger.LogText("Entered GetDataFromInputJson1");
 

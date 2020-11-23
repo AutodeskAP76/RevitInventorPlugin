@@ -43,6 +43,69 @@ namespace RevitInventorPluginUnitTests
             ret.Wait();
         }
 
+        [TestMethod]
+        public void UnitTest_Libraries_DH_Assembly_Floor_Panel_4_0_Zip_Tests()
+        {
+            NLogger.Initialize();
+
+            //  PLEASE NOTE:THE CONFIGURATION FILE MUST BE COPIED IN FOLDER "CONFIGURATION OF UNIT TESTS"
+            ConfigUtilities.LoadConfig();
+
+            string json = GetJson_Floor_Panel();
+            string InventorFilePath = @"C:\Users\parodiaadmin\BIM 360\ATDSK DEV\Sample Project\Project Files\Libraries_DH_Assembly_Floor_Panel_4.0_zip";
+            DesignAutomationHandler daHandler = new DesignAutomationHandler();
+
+            var ret = daHandler.RunDesignAutomationForgeWorkflow(json, InventorFilePath);
+            ret.Wait();
+        }
+
+        [TestMethod]
+        public void UnitTest_Libraries_DH_Assembly_Floor_Panel_5_0_Zip_Tests()
+        {
+            NLogger.Initialize();
+
+            //  PLEASE NOTE:THE CONFIGURATION FILE MUST BE COPIED IN FOLDER "CONFIGURATION OF UNIT TESTS"
+            ConfigUtilities.LoadConfig();
+
+            string json = GetJson_Floor_Panel();
+            string InventorFilePath = @"C:\Users\parodiaadmin\BIM 360\ATDSK DEV\Sample Project\Project Files\Libraries_DH_Assembly_Floor_Panel_5.0_zip";
+            DesignAutomationHandler daHandler = new DesignAutomationHandler();
+
+            var ret = daHandler.RunDesignAutomationForgeWorkflow(json, InventorFilePath);
+            ret.Wait();
+        }
+
+        [TestMethod]
+        public void UnitTest_Libraries_DH_Assembly_Floor_Panel_8_0_Zip_Tests()
+        {
+            NLogger.Initialize();
+
+            //  PLEASE NOTE:THE CONFIGURATION FILE MUST BE COPIED IN FOLDER "CONFIGURATION OF UNIT TESTS"
+            ConfigUtilities.LoadConfig();
+
+            string json = GetJson_Floor_Panel();
+            string InventorFilePath = @"C:\Users\parodiaadmin\BIM 360\ATDSK DEV\Sample Project\Project Files\Libraries_DH_Assembly_Floor_Panel_8.0_zip";
+            DesignAutomationHandler daHandler = new DesignAutomationHandler();
+
+            var ret = daHandler.RunDesignAutomationForgeWorkflow(json, InventorFilePath);
+            ret.Wait();
+        }
+
+        [TestMethod]
+        public void UnitTest_Libraries_DH_Assembly_Floor_Panel_9_0_Zip_Tests()
+        {
+            NLogger.Initialize();
+
+            //  PLEASE NOTE:THE CONFIGURATION FILE MUST BE COPIED IN FOLDER "CONFIGURATION OF UNIT TESTS"
+            ConfigUtilities.LoadConfig();
+
+            string json = GetJson_Floor_Panel();
+            string InventorFilePath = @"C:\Users\parodiaadmin\BIM 360\ATDSK DEV\Sample Project\Project Files\Libraries_DH_Assembly_Floor_Panel_9.0_zip";
+            DesignAutomationHandler daHandler = new DesignAutomationHandler();
+
+            var ret = daHandler.RunDesignAutomationForgeWorkflow(json, InventorFilePath);
+            ret.Wait();
+        }
 
 
         private string GetJson_Unit_Frame()
@@ -76,10 +139,7 @@ namespace RevitInventorPluginUnitTests
             string json = "{ " +
                   "'ILogicParams': [" +
                     "{" +
-                      //"'RevitFamily': 'Wall Panel_2.iam (Window_Ref).0001: Standard'," +
                       "'RevitFamily': 'Frame_Assy1: Standard'," +
-                      //"'InventorTemplate': 'Wall Panel.iam'," +
-                      //"'InventorTemplate': 'Unit_Frame_Package_01.zip'," +
                       "'InventorTemplate': 'Window_Package.zip'," +
 
                       "'ParametersInfo': [" +
@@ -88,8 +148,31 @@ namespace RevitInventorPluginUnitTests
                           "'elementId': '345678'," +
                           "'paramsValues': { " +
                                 "'Height': '3000'," +
-                                //"'Length': '3000'," +
                                 "'Width': '2000'" +
+                            "}" +
+                          "}" +
+                        "]" +
+                      "}" +
+                    "]" +
+                "}";
+
+            return json;
+        }
+
+        private string GetJson_Floor_Panel()
+        {
+            string json = "{ " +
+                  "'ILogicParams': [" +
+                    "{" +
+                      "'RevitFamily': 'Frame_Assy1: Standard'," +
+                      "'InventorTemplate': 'Floor Panel.zip'," +
+                      "'ParametersInfo': [" +
+                        "{" +
+                          "'elementName': ''," +
+                          "'elementId': '627668'," +
+                          "'paramsValues': {" +
+                                "'Floor_X_Width': '1820'," +
+                                "'Floor_Y_Length': '3840'" +
                             "}" +
                           "}" +
                         "]" +
