@@ -28,7 +28,8 @@ namespace RevitInventorExchange.CoreBusinessLayer
 
         private string inventorTemplatesFolder = "";        
 
-        private DesignAutomationStructure daStructure = null;
+        //private DesignAutomationStructure daStructure = null;
+        private DesignAutomationStructure1 daStructure1 = null;
         private DAEventHandlerUtilities daEventHandler;
 
         public DAEventHandlerUtilities DaEventHandler { get => daEventHandler; set => daEventHandler = value; }
@@ -74,11 +75,13 @@ namespace RevitInventorExchange.CoreBusinessLayer
                 daEventHandler.TriggerDACurrentStepHandler("BIM360 structure created");
 
                 //  build the input - output files internal structure
-                daStructure = GetDataFromInputJson1(json);
+                //daStructure = GetDataFromInputJson1(json);
+                daStructure1 = GetDataFromInputJson_2(json);
                 //daStructure = GetDataFromInputJson1_for_zip_tests();
 
                 //  Create output storage object, submit workitem and create version
-                await HandleDesignAutomationFlow(projId);
+                //await HandleDesignAutomationFlow(projId);
+                await HandleDesignAutomationFlow_2(projId);
 
                 daEventHandler.TriggerDACurrentStepHandler("Workflow completed");
             }
@@ -375,22 +378,32 @@ namespace RevitInventorExchange.CoreBusinessLayer
         }
 
 
-        //private void SubmitWokItem_original(string inFile, string outFile)
+
+        ////  Submit work item passing json with data extracted from Revit
+        //private async Task SubmitWokItem(string inFile, string outFile)
         //{
         //    NLogger.LogText("Entered SubmitWokItem");
 
         //    //  Submit work items 
-
+            
         //    //string payload = CreateWorkItemPayload1(inFile, outFile);
-        //    string payload = CreateWorkItemPayload1_ForZip_Test(inFile, outFile);
+        //    string payload = CreateWorkItemPayload1_Out_Zip_Test(inFile, outFile);
 
 
 
 
-        //    var retSubmitWotkItem = forgeDAClient.PostWorkItem(payload);
-        //    retSubmitWotkItem.Wait(ConfigUtilities.GetAsyncHTTPCallWaitTime());
+        //    //var retSubmitWotkItem = forgeDAClient.PostWorkItem(payload);
+        //    //retSubmitWotkItem.Wait(ConfigUtilities.GetAsyncHTTPCallWaitTime());
+        //    //var resSubmitWorkItem = retSubmitWotkItem.Result;
 
-        //    var resSubmitWorkItem = retSubmitWotkItem.Result;
+
+
+
+        //    var retSubmitWotkItem = await forgeDAClient.PostWorkItem(payload);            
+        //    var resSubmitWorkItem = retSubmitWotkItem;
+
+
+
 
         //    //  Get Response. Check response status
         //    if (resSubmitWorkItem.IsSuccessStatusCode())
@@ -405,15 +418,18 @@ namespace RevitInventorExchange.CoreBusinessLayer
         //        NLogger.LogText($"Work Item {id} in status {status}");
 
         //        //  Check work Item status
-        //        var ret1 = CheckWorkItemStatus(id);
-        //        ret1.Wait(ConfigUtilities.GetAsyncHTTPCallWaitTime());
+        //        //var ret1 = CheckWorkItemStatus(id);
+        //        //ret1.Wait(ConfigUtilities.GetAsyncHTTPCallWaitTime());
+        //        //var res2 = ret1.Result;
 
-        //        var res2 = ret1.Result;
+
+        //        var ret1 = await CheckWorkItemStatus(id);
+        //        var res2 = ret1;
 
         //        if (res2.IsSuccessStatusCode())
         //        {
         //            JObject res3 = JObject.Parse(res2.ResponseContent);
-
+                    
         //            status = res3.SelectToken("$.status").ToString();
         //            id = resSWIContent.SelectToken("$.id").ToString();
 
@@ -429,7 +445,7 @@ namespace RevitInventorExchange.CoreBusinessLayer
 
         //            daEventHandler.TriggerDACurrentStepHandler("WorkItem processing completed sucessfully");
 
-        //            NLogger.LogText("Exit SubmitWokItem sucessfully");
+        //            NLogger.LogText("Exit SubmitWokItem sucessfully");                    
         //        }
         //    }
         //    else
@@ -440,32 +456,32 @@ namespace RevitInventorExchange.CoreBusinessLayer
 
 
 
-
         //  Submit work item passing json with data extracted from Revit
-        private async Task SubmitWokItem(string inFile, string outFile)
+        
+        
+        private async Task SubmitWokItem_2(string inFile, string outFile, /*OutputFileCategory outfileCategory,*/ Func<string, string, string> CreateWorkItemPayload)
         {
-            NLogger.LogText("Entered SubmitWokItem");
+            NLogger.LogText("Entered SubmitWokItem_2");
 
             //  Submit work items 
-            
-            string payload = CreateWorkItemPayload1(inFile, outFile);
-            //string payload = CreateWorkItemPayload1_Zip_Test(inFile, outFile);
 
+            string payload = CreateWorkItemPayload(inFile, outFile);
 
+            //switch (outfileCategory)
+            //{
+            //    case OutputFileCategory.Assembly:
+            //        payload = CreateModelWorkItemPayload1_Out_Zip_Test_2(inFile, outFile);
+            //        break;
+            //    case OutputFileCategory.Part:
+            //        payload = CreateModelWorkItemPayload1_Out_Zip_Test_2(inFile, outFile);
+            //        break;
+            //    default:
+            //        break;
 
+            //}
 
-            //var retSubmitWotkItem = forgeDAClient.PostWorkItem(payload);
-            //retSubmitWotkItem.Wait(ConfigUtilities.GetAsyncHTTPCallWaitTime());
-            //var resSubmitWorkItem = retSubmitWotkItem.Result;
-
-
-
-
-            var retSubmitWotkItem = await forgeDAClient.PostWorkItem(payload);            
+            var retSubmitWotkItem = await forgeDAClient.PostWorkItem(payload);
             var resSubmitWorkItem = retSubmitWotkItem;
-
-
-
 
             //  Get Response. Check response status
             if (resSubmitWorkItem.IsSuccessStatusCode())
@@ -491,7 +507,7 @@ namespace RevitInventorExchange.CoreBusinessLayer
                 if (res2.IsSuccessStatusCode())
                 {
                     JObject res3 = JObject.Parse(res2.ResponseContent);
-                    
+
                     status = res3.SelectToken("$.status").ToString();
                     id = resSWIContent.SelectToken("$.id").ToString();
 
@@ -507,14 +523,15 @@ namespace RevitInventorExchange.CoreBusinessLayer
 
                     daEventHandler.TriggerDACurrentStepHandler("WorkItem processing completed sucessfully");
 
-                    NLogger.LogText("Exit SubmitWokItem sucessfully");                    
+                    NLogger.LogText("Exit SubmitWokItem_2 sucessfully");
                 }
             }
             else
             {
-                Utility.HandleErrorInForgeResponse("SubmitWokItem", resSubmitWorkItem);
+                Utility.HandleErrorInForgeResponse("SubmitWokItem_2", resSubmitWorkItem);
             }
         }
+
 
         //  Check workitem status
         private async Task<ForgeRestResponse> CheckWorkItemStatus(string workItemId)
@@ -549,24 +566,209 @@ namespace RevitInventorExchange.CoreBusinessLayer
             return ret;
         }
 
+        ////  Create json for Work Item submit
+        //private string CreateWorkItemPayload1(string inFileName, string outFileName)
+        //{
+        //    NLogger.LogText("Entered CreateWorkItemPayload1");
+
+        //    string ret = "";
+
+        //    var inputFilename = System.IO.Path.GetFileNameWithoutExtension(inFileName);
+        //    var daStructureRow = daStructure.FilesStructure.First(p => p.InputFilename == inFileName && p.OutputFileStructurelist.Any(k => k.OutFileName == outFileName));
+        //    string inputSignedUrl = daStructureRow.InputLink;
+        //    string inputSignedUrlExtension = System.IO.Path.GetExtension(inputSignedUrl);
+        //    //string outputFileName = daStructureRow.OutputFileStructurelist.First(l => l.OutFileName == outFileName).OutFileName;
+        //    string outFileStorageObj = daStructureRow.OutputFileStructurelist.First(l => l.OutFileName == outFileName).OutFileStorageobject;
+        //    string outputSignedUrl = GetOutputLinks(outFileStorageObj);
+        //    string jsonParams = daStructureRow.ParamValues; // dataFromJson["paramsValues"];
+        //    string jsonParam1 = jsonParams.Replace("\r\n", "");
+
+        //    var outputSignedUrlExtension = System.IO.Path.GetExtension(outputSignedUrl);           
+
+        //    var itemParamOutput = "";
+        //    var DAActivity = "";
+        //    var actualJsonParam = "";
+
+        //    //  Based on input file extension create json
+        //    //if (outputSignedUrlExtension == ".ipt")
+        //    if (inputSignedUrlExtension == ".ipt")
+        //    {
+        //        itemParamOutput = ConfigUtilities.GetDAWorkItemParamsOutputIpt();
+        //        DAActivity = ConfigUtilities.GetDAPartActivity();
+        //        actualJsonParam = jsonParam1;
+
+        //        ret = GetWorkItemJsonForIamIpt(DAActivity, inputSignedUrl, actualJsonParam, itemParamOutput, outputSignedUrl);
+        //    }
+        //    //if (outputSignedUrlExtension == ".iam")
+        //    if (inputSignedUrlExtension == ".iam")
+        //    {
+        //        itemParamOutput = ConfigUtilities.GetDAWorkItemParamsOutputIam();
+        //        DAActivity = ConfigUtilities.GetDAAssemblyActivity();
+        //        actualJsonParam = jsonParam1;
+
+        //        ret = GetWorkItemJsonForIamIpt(DAActivity, inputSignedUrl, actualJsonParam, itemParamOutput, outputSignedUrl);
+        //    }
+
+        //    //  If input file is assembly, it is expected to have a corresponding zip file with same name. Replace input file with zip extension
+        //    //if (inputSignedUrlExtension == ".iam")
+        //    //{
+        //    //    itemParamOutput = ConfigUtilities.GetDAWorkItemParamsOutputIam();
+        //    //    DAActivity = ConfigUtilities.GetDAAssemblyActivity();
+        //    //    actualJsonParam = $"{{\"assemblyPath\":\"input\\\\{inputFilename}.iam\", \"projectPath\":\"input\\\\{inputFilename}.ipj\", \"values\": {jsonParam1}}}";
+
+        //    //    inputSignedUrl = inputSignedUrl.Replace("iam", "zip");
+
+        //    //    ret = GetWorkItemJsonForZip(DAActivity, inputSignedUrl, actualJsonParam, itemParamOutput, outputSignedUrl);
+        //    //}
+
+        //    //if (outputSignedUrlExtension == ".zip")
+        //    if (inputSignedUrlExtension == ".zip")
+        //    {                
+        //        itemParamOutput = ConfigUtilities.GetDAWorkItemParamsOutputIam();
+        //        DAActivity = ConfigUtilities.GetDAAssemblyActivity();
+        //        //actualJsonParam = $"{{\"assemblyPath\":\"input\\\\Workspace\\\\Libraries_DH_Assembly_unit_frame_01\\\\Frame_Assy1.iam\", \"projectPath\":\"input\\\\Frame_Assy1.ipj\", \"values\": {jsonParam1}}}";
+        //        actualJsonParam = $"{{\"assemblyPath\":\"input\\\\{inputFilename}.iam\", \"projectPath\":\"input\\\\{inputFilename}.ipj\", \"values\": {jsonParam1}}}";
+        //        outputSignedUrl = outputSignedUrl.Replace("zip", "iam");
+
+        //        ret = GetWorkItemJsonForZip(DAActivity, inputSignedUrl, actualJsonParam, itemParamOutput, outputSignedUrl);
+        //    }
+
+        //    //JObject payload = new JObject(
+        //    //    new JProperty("activityId", DAActivity),
+        //    //    new JProperty("arguments", new JObject(
+        //    //        new JProperty(ConfigUtilities.GetDAWorkItemDocInputArgument(), new JObject(
+        //    //            new JProperty("url", inputSignedUrl),
+        //    //            new JProperty("localName", "input"),
+        //    //            new JProperty("Headers", new JObject(
+        //    //                new JProperty("Authorization", forgeDAClient.Authorization)
+        //    //                ))
+        //    //        )),
+        //    //        new JProperty(ConfigUtilities.GetDAWorkItemParamsInputArgument(), new JObject(
+        //    //            new JProperty("url", $"data:application/json, {actualJsonParam}")
+        //    //        )),
+        //    //        new JProperty(itemParamOutput, new JObject(
+        //    //            new JProperty("url", outputSignedUrl),
+        //    //            new JProperty("verb", "put"),
+        //    //            new JProperty("Headers", new JObject(
+        //    //                new JProperty("Authorization", forgeDAClient.Authorization),
+        //    //                new JProperty("Content-type", "application/octet-stream")
+        //    //            ))
+        //    //        ))
+        //    //    ))
+        //    //);
+
+        //    //var ret = payload.ToString();
+
+        //    NLogger.LogText("Exit CreateWorkItemPayload1");
+
+        //    return ret;
+        //}
+
+
+
+
         //  Create json for Work Item submit
-        private string CreateWorkItemPayload1(string inFileName, string outFileName)
+
+        //private string CreateWorkItemPayload1_Out_Zip_Test(string inFileName, string outFileName)
+        //{
+        //    NLogger.LogText("Entered CreateWorkItemPayload1_Out_Zip_Test");
+
+        //    string ret = "";
+
+        //    var inputFilename = System.IO.Path.GetFileNameWithoutExtension(inFileName);
+        //    var daStructureRow = daStructure.FilesStructure.First(p => p.InputFilename == inFileName && p.OutputFileStructurelist.Any(k => k.OutFileName == outFileName));
+        //    string inputSignedUrl = daStructureRow.InputLink;
+        //    string inputSignedUrlExtension = System.IO.Path.GetExtension(inputSignedUrl);
+        //    //string outputFileName = daStructureRow.OutputFileStructurelist.First(l => l.OutFileName == outFileName).OutFileName;
+        //    string outFileStorageObj = daStructureRow.OutputFileStructurelist.First(l => l.OutFileName == outFileName).OutFileStorageobject;
+        //    string outputSignedUrl = GetOutputLinks(outFileStorageObj);
+
+        //    string outZipFileStorageObj = daStructureRow.OutputFileStructurelist.First(l => l.OutFileName == outFileName).OutZipFileStorageobject;
+        //    string outputZipSignedUrl = GetOutputLinks(outZipFileStorageObj);
+
+
+        //    string jsonParams = daStructureRow.ParamValues; // dataFromJson["paramsValues"];
+        //    string jsonParam1 = jsonParams.Replace("\r\n", "");
+
+        //    var outputSignedUrlExtension = System.IO.Path.GetExtension(outputSignedUrl);
+
+        //    var itemParamOutput = "";
+        //    var DAActivity = "";
+        //    var actualJsonParam = "";
+
+        //    //  Based on input file extension create json
+        //    //if (outputSignedUrlExtension == ".ipt")
+        //    if (inputSignedUrlExtension == ".ipt")
+        //    {
+        //        itemParamOutput = ConfigUtilities.GetDAWorkItemParamsOutputIpt();
+        //        DAActivity = ConfigUtilities.GetDAPartActivity();
+        //        actualJsonParam = jsonParam1;
+
+        //        ret = GetWorkItemJsonForIamIpt(DAActivity, inputSignedUrl, actualJsonParam, itemParamOutput, outputSignedUrl);
+        //    }
+        //    //if (outputSignedUrlExtension == ".iam")
+        //    if (inputSignedUrlExtension == ".iam")
+        //    {
+        //        itemParamOutput = ConfigUtilities.GetDAWorkItemParamsOutputIam();
+        //        DAActivity = ConfigUtilities.GetDAAssemblyActivity();
+        //        actualJsonParam = jsonParam1;
+
+        //        ret = GetWorkItemJsonForIamIpt(DAActivity, inputSignedUrl, actualJsonParam, itemParamOutput, outputSignedUrl);
+        //    }
+
+        //    //  If input file is assembly, it is expected to have a corresponding zip file with same name. Replace input file with zip extension
+        //    //if (inputSignedUrlExtension == ".iam")
+        //    //{
+        //    //    itemParamOutput = ConfigUtilities.GetDAWorkItemParamsOutputIam();
+        //    //    DAActivity = ConfigUtilities.GetDAAssemblyActivity();
+        //    //    actualJsonParam = $"{{\"assemblyPath\":\"input\\\\{inputFilename}.iam\", \"projectPath\":\"input\\\\{inputFilename}.ipj\", \"values\": {jsonParam1}}}";
+
+        //    //    inputSignedUrl = inputSignedUrl.Replace("iam", "zip");
+
+        //    //    ret = GetWorkItemJsonForZip(DAActivity, inputSignedUrl, actualJsonParam, itemParamOutput, outputSignedUrl);
+        //    //}
+
+        //    //if (outputSignedUrlExtension == ".zip")
+        //    if (inputSignedUrlExtension == ".zip")
+        //    {
+        //        itemParamOutput = ConfigUtilities.GetDAWorkItemParamsOutputIam();
+        //        DAActivity = ConfigUtilities.GetDAAssemblyActivity();
+        //        //actualJsonParam = $"{{\"assemblyPath\":\"input\\\\Workspace\\\\Libraries_DH_Assembly_unit_frame_01\\\\Frame_Assy1.iam\", \"projectPath\":\"input\\\\Frame_Assy1.ipj\", \"values\": {jsonParam1}}}";
+        //        actualJsonParam = $"{{\"assemblyPath\":\"input\\\\{inputFilename}.iam\", \"projectPath\":\"input\\\\{inputFilename}.ipj\", \"values\": {jsonParam1}}}";
+        //        outputSignedUrl = outputSignedUrl.Replace("zip", "iam");
+
+        //        ret = GetWorkItemJsonForZip_For_Test(DAActivity, inputSignedUrl, actualJsonParam, itemParamOutput, outputSignedUrl, outputZipSignedUrl);
+        //    }
+
+        //    NLogger.LogText("Exit CreateWorkItemPayload1_Out_Zip_Test");
+
+        //    return ret;
+        //}
+
+
+
+        //  Create json for Work Item submit
+
+        //  Create json for Work Item submit
+
+
+        //  Create json for Work Item submit
+        
+        private string CreateModelWorkItemPayload1_2(string inFileName, string outFileName)
         {
-            NLogger.LogText("Entered CreateWorkItemPayload1");
+            NLogger.LogText("Entered CreateModelWorkItemPayload1_2");
 
             string ret = "";
 
             var inputFilename = System.IO.Path.GetFileNameWithoutExtension(inFileName);
-            var daStructureRow = daStructure.FilesStructure.First(p => p.InputFilename == inFileName && p.OutputFileStructurelist.Any(k => k.OutFileName == outFileName));
+            var daStructureRow = daStructure1.FilesStructure.First(p => p.InputFilename == inFileName && p.OutputFileStructurelist.Any(k => k.OutMainFileName == outFileName));
             string inputSignedUrl = daStructureRow.InputLink;
             string inputSignedUrlExtension = System.IO.Path.GetExtension(inputSignedUrl);
-            //string outputFileName = daStructureRow.OutputFileStructurelist.First(l => l.OutFileName == outFileName).OutFileName;
-            string outFileStorageObj = daStructureRow.OutputFileStructurelist.First(l => l.OutFileName == outFileName).OutFileStorageobject;
-            string outputSignedUrl = GetOutputLinks(outFileStorageObj);
+
             string jsonParams = daStructureRow.ParamValues; // dataFromJson["paramsValues"];
             string jsonParam1 = jsonParams.Replace("\r\n", "");
 
-            var outputSignedUrlExtension = System.IO.Path.GetExtension(outputSignedUrl);           
+            //var outputSignedUrlExtension = System.IO.Path.GetExtension(outputSignedUrl);
 
             var itemParamOutput = "";
             var DAActivity = "";
@@ -580,6 +782,11 @@ namespace RevitInventorExchange.CoreBusinessLayer
                 DAActivity = ConfigUtilities.GetDAPartActivity();
                 actualJsonParam = jsonParam1;
 
+                string outFileStorageObj = daStructureRow.OutputFileStructurelist.First(l => l.OutMainFileName == outFileName)
+                                            .OutFileStructure.First(l => l.OutFileCategory == OutputFileCategory.Part).OutFileStorageobject;
+
+                string outputSignedUrl = GetOutputLinks(outFileStorageObj);               
+
                 ret = GetWorkItemJsonForIamIpt(DAActivity, inputSignedUrl, actualJsonParam, itemParamOutput, outputSignedUrl);
             }
             //if (outputSignedUrlExtension == ".iam")
@@ -589,67 +796,83 @@ namespace RevitInventorExchange.CoreBusinessLayer
                 DAActivity = ConfigUtilities.GetDAAssemblyActivity();
                 actualJsonParam = jsonParam1;
 
+                string outFileStorageObj = daStructureRow.OutputFileStructurelist.First(l => l.OutMainFileName == outFileName)
+                                            .OutFileStructure.First(l => l.OutFileCategory == OutputFileCategory.Assembly).OutFileStorageobject;
+
+                string outputSignedUrl = GetOutputLinks(outFileStorageObj);                
+
                 ret = GetWorkItemJsonForIamIpt(DAActivity, inputSignedUrl, actualJsonParam, itemParamOutput, outputSignedUrl);
             }
 
-            //  If input file is assembly, it is expected to have a corresponding zip file with same name. Replace input file with zip extension
-            //if (inputSignedUrlExtension == ".iam")
-            //{
-            //    itemParamOutput = ConfigUtilities.GetDAWorkItemParamsOutputIam();
-            //    DAActivity = ConfigUtilities.GetDAAssemblyActivity();
-            //    actualJsonParam = $"{{\"assemblyPath\":\"input\\\\{inputFilename}.iam\", \"projectPath\":\"input\\\\{inputFilename}.ipj\", \"values\": {jsonParam1}}}";
-
-            //    inputSignedUrl = inputSignedUrl.Replace("iam", "zip");
-
-            //    ret = GetWorkItemJsonForZip(DAActivity, inputSignedUrl, actualJsonParam, itemParamOutput, outputSignedUrl);
-            //}
-
             //if (outputSignedUrlExtension == ".zip")
             if (inputSignedUrlExtension == ".zip")
-            {                
+            {
                 itemParamOutput = ConfigUtilities.GetDAWorkItemParamsOutputIam();
                 DAActivity = ConfigUtilities.GetDAAssemblyActivity();
-                //actualJsonParam = $"{{\"assemblyPath\":\"input\\\\Workspace\\\\Libraries_DH_Assembly_unit_frame_01\\\\Frame_Assy1.iam\", \"projectPath\":\"input\\\\Frame_Assy1.ipj\", \"values\": {jsonParam1}}}";
+
                 actualJsonParam = $"{{\"assemblyPath\":\"input\\\\{inputFilename}.iam\", \"projectPath\":\"input\\\\{inputFilename}.ipj\", \"values\": {jsonParam1}}}";
+
+                string outFileStorageObj = daStructureRow.OutputFileStructurelist.First(l => l.OutMainFileName == outFileName)
+                                            .OutFileStructure.First(l => l.OutFileCategory == OutputFileCategory.Assembly).OutFileStorageobject;
+
+                string outputSignedUrl = GetOutputLinks(outFileStorageObj);
+
+                string outZipFileStorageObj = daStructureRow.OutputFileStructurelist.First(l => l.OutMainFileName == outFileName)
+                                            .OutFileStructure.First(l => l.OutFileCategory == OutputFileCategory.Zip).OutFileStorageobject;
+
+                string outputZipSignedUrl = GetOutputLinks(outZipFileStorageObj);
+
                 outputSignedUrl = outputSignedUrl.Replace("zip", "iam");
 
-                ret = GetWorkItemJsonForZip(DAActivity, inputSignedUrl, actualJsonParam, itemParamOutput, outputSignedUrl);
+                ret = GetWorkItemJsonForZip_2(DAActivity, inputSignedUrl, actualJsonParam, itemParamOutput, outputSignedUrl, outputZipSignedUrl);
             }
 
-            //JObject payload = new JObject(
-            //    new JProperty("activityId", DAActivity),
-            //    new JProperty("arguments", new JObject(
-            //        new JProperty(ConfigUtilities.GetDAWorkItemDocInputArgument(), new JObject(
-            //            new JProperty("url", inputSignedUrl),
-            //            new JProperty("localName", "input"),
-            //            new JProperty("Headers", new JObject(
-            //                new JProperty("Authorization", forgeDAClient.Authorization)
-            //                ))
-            //        )),
-            //        new JProperty(ConfigUtilities.GetDAWorkItemParamsInputArgument(), new JObject(
-            //            new JProperty("url", $"data:application/json, {actualJsonParam}")
-            //        )),
-            //        new JProperty(itemParamOutput, new JObject(
-            //            new JProperty("url", outputSignedUrl),
-            //            new JProperty("verb", "put"),
-            //            new JProperty("Headers", new JObject(
-            //                new JProperty("Authorization", forgeDAClient.Authorization),
-            //                new JProperty("Content-type", "application/octet-stream")
-            //            ))
-            //        ))
-            //    ))
-            //);
-
-            //var ret = payload.ToString();
-
-            NLogger.LogText("Exit CreateWorkItemPayload1");
+            NLogger.LogText("Exit CreateModelWorkItemPayload1_2");
 
             return ret;
         }
 
-        private string GetWorkItemJsonForZip(string DAActivity, string inputSignedUrl, string actualJsonParam, string itemParamOutput, string outputSignedUrl)
+
+
+
+        //private string GetWorkItemJsonForZip(string DAActivity, string inputSignedUrl, string actualJsonParam, string itemParamOutput, string outputSignedUrl)
+        //{
+        //    NLogger.LogText("Entered GetWorkItemJsonForZip");
+
+        //    JObject payload = new JObject(
+        //        new JProperty("activityId", DAActivity),
+        //        new JProperty("arguments", new JObject(
+        //            new JProperty(ConfigUtilities.GetDAWorkItemDocInputArgument(), new JObject(
+        //                new JProperty("url", inputSignedUrl),
+        //                new JProperty("localName", "input"),
+        //                new JProperty("Headers", new JObject(
+        //                    new JProperty("Authorization", forgeDAClient.Authorization)
+        //                    ))
+        //            )),
+        //            new JProperty(ConfigUtilities.GetDAWorkItemParamsInputArgument(), new JObject(
+        //                new JProperty("url", $"data:application/json, {actualJsonParam}")
+        //            )),
+        //            new JProperty(itemParamOutput, new JObject(
+        //                new JProperty("url", outputSignedUrl),
+        //                new JProperty("verb", "put"),
+        //                new JProperty("Headers", new JObject(
+        //                    new JProperty("Authorization", forgeDAClient.Authorization),
+        //                    new JProperty("Content-type", "application/octet-stream")
+        //                ))
+        //            ))
+        //        ))
+        //    );
+
+        //    var ret = payload.ToString();
+
+        //    NLogger.LogText("Exit GetWorkItemJsonForZip");
+
+        //    return ret;
+        //}
+
+        private string GetWorkItemJsonForZip_2(string DAActivity, string inputSignedUrl, string actualJsonParam, string itemParamOutput, string outputSignedUrl, string outputZipSignedUrl)
         {
-            NLogger.LogText("Entered GetWorkItemJsonForZip");
+            NLogger.LogText("Entered GetWorkItemJsonForZip_2");
 
             JObject payload = new JObject(
                 new JProperty("activityId", DAActivity),
@@ -672,15 +895,24 @@ namespace RevitInventorExchange.CoreBusinessLayer
                             new JProperty("Content-type", "application/octet-stream")
                         ))
                     ))
+                    ,  //  Create intermediate output zip for Drawings
+                    new JProperty("OutputZip", new JObject(
+                        new JProperty("url", outputZipSignedUrl),
+                        new JProperty("verb", "put"),
+                        new JProperty("Headers", new JObject(
+                            new JProperty("Authorization", forgeDAClient.Authorization),
+                            new JProperty("Content-type", "application/octet-stream")
+                        ))
+                    ))
                 ))
             );
 
             var ret = payload.ToString();
 
-            NLogger.LogText("Exit GetWorkItemJsonForZip");
+            NLogger.LogText("Exit GetWorkItemJsonForZip_2");
 
             return ret;
-        }
+        }       
 
         private string GetWorkItemJsonForIamIpt(string DAActivity, string inputSignedUrl, string actualJsonParam, string itemParamOutput, string outputSignedUrl)
         {
@@ -792,18 +1024,92 @@ namespace RevitInventorExchange.CoreBusinessLayer
 
         //  Extract data from Parameters values json file and put them into an internal structure to keep togehter data regarding input files and output files for Forge API automation
         
-        private DesignAutomationStructure GetDataFromInputJson1(string jsonStruct)
+        //private DesignAutomationStructure GetDataFromInputJson1(string jsonStruct)
+        //{
+        //    NLogger.LogText("Entered GetDataFromInputJson1");
+
+        //    //  Initialize internal structure keepin Forge relevant informations for output files creation
+        //    NLogger.LogText("initialize internal structre for Design Automation files creation");
+        //    var daStructure = new DesignAutomationStructure();
+        //    daStructure.FilesStructure = new List<DesignAutomationFileStructure>();
+
+        //    JObject res = JObject.Parse(jsonStruct);
+        //    var items = res.SelectTokens("$.ILogicParams").Children();
+
+        //    foreach (var item in items)
+        //    {
+        //        var inventorFileName = ((string)item.SelectToken("$.InventorTemplate"));
+        //        var parametersInfo = item.SelectTokens("$.ParametersInfo");
+
+        //        foreach (var paramInfo in parametersInfo.Children())
+        //        {
+        //            var paramValues = paramInfo.SelectToken("$.paramsValues").ToString();
+        //            var elementId = paramInfo.SelectToken("$.elementId").ToString();
+        //            string inputLink = GetInputLink(inventorFileName);
+        //            var outputFileNameParts = inventorFileName.Split(new char[] { '.' });
+        //            var outputZipFileName = "";
+        //            var outputFileName = "";
+        //            var timeStamp = DateTime.Now.ToString("yyyyMMddHHmmssffff");
+
+        //            //  If input file has .zip extension, change the output extension to .iam and create also an output zip file which contains the output .iam
+        //            if (outputFileNameParts[1] == "zip")
+        //            {
+        //                outputFileName = outputFileNameParts[0] + $"_Out_{elementId}_{timeStamp}.iam";
+        //                outputZipFileName = outputFileNameParts[0] + $"_Out_{elementId}_{timeStamp}.zip";
+        //            }
+        //            else
+        //            {
+        //                outputFileName = outputFileNameParts[0] + $"_Out_{elementId}_{timeStamp}." + outputFileNameParts[1];
+        //            }
+
+        //            //  Get path selected from the user where Inventor Templates are stored
+        //            var relativePath = inventorTemplatesFolder;
+
+        //            //  Split path in folders
+        //            var outputFolders = relativePath.Split(new char[] { '\\' });
+        //            var outputFileFolderId = bIM360DocsStructBuilder.GetFolderIdByName(outputFolders[outputFolders.Length - 1]);
+
+        //            NLogger.LogText($"Currently processing {inventorFileName} Inventor file");
+        //            NLogger.LogText($"Output file: {outputFileName}");
+        //            NLogger.LogText($"Output zip file: {outputZipFileName}");
+        //            NLogger.LogText($"Output folder: {outputFileFolderId}");
+
+        //            //daStructure.FilesStructure = new List<DesignAutomationFileStructure>() { new DesignAutomationFileStructure
+        //            daStructure.FilesStructure.Add(new DesignAutomationFileStructure
+        //            {
+        //                InputFilename = inventorFileName,
+        //                ParamValues = paramValues,
+        //                InputLink = inputLink,
+        //                OutputFileStructurelist = new List<DesignAutomationOutFileStructure>(){ new DesignAutomationOutFileStructure
+        //                    {
+        //                        OutFileName = outputFileName,
+        //                        OutFileFolder = outputFileFolderId,
+        //                        OutZipFileName = outputZipFileName
+        //                    }
+        //                }
+        //            });
+        //        }
+        //    }
+
+        //    NLogger.LogText("Exit GetDataFromInputJson1");
+
+        //    return daStructure;
+        //}
+
+
+        private DesignAutomationStructure1 GetDataFromInputJson_2(string jsonStruct)
         {
-            NLogger.LogText("Entered GetDataFromInputJson1");
+            NLogger.LogText("Entered GetDataFromInputJson_2");
 
             //  Initialize internal structure keepin Forge relevant informations for output files creation
             NLogger.LogText("initialize internal structre for Design Automation files creation");
-            var daStructure = new DesignAutomationStructure();
-            daStructure.FilesStructure = new List<DesignAutomationFileStructure>();
+            var daStructure = new DesignAutomationStructure1();
+            daStructure.FilesStructure = new List<DesignAutomationFileStructure1>();
 
             JObject res = JObject.Parse(jsonStruct);
             var items = res.SelectTokens("$.ILogicParams").Children();
 
+            //  loop on input files (normally there should be only one)
             foreach (var item in items)
             {
                 var inventorFileName = ((string)item.SelectToken("$.InventorTemplate"));
@@ -814,39 +1120,93 @@ namespace RevitInventorExchange.CoreBusinessLayer
                     var paramValues = paramInfo.SelectToken("$.paramsValues").ToString();
                     var elementId = paramInfo.SelectToken("$.elementId").ToString();
                     string inputLink = GetInputLink(inventorFileName);
-                    var outputFileNameParts = inventorFileName.Split(new char[] { '.' });
-
-                    //  If input file has .zip extension, change the output extension to .iam
-                    if (outputFileNameParts[1] == "zip")
-                    {
-                        outputFileNameParts[1] = "iam";
-                    }
-
-                    var outputFileName = outputFileNameParts[0] + $"_Out_{elementId}_{DateTime.Now.ToString("yyyyMMddHHmmssffff")}." + outputFileNameParts[1];
+                    var outputFileNameParts = inventorFileName.Split(new char[] { '.' });                    
+                    var outputFileName = "";
+                    var timeStamp = DateTime.Now.ToString("yyyyMMddHHmmssffff");
 
                     //  Get path selected from the user where Inventor Templates are stored
                     var relativePath = inventorTemplatesFolder;
 
                     //  Split path in folders
                     var outputFolders = relativePath.Split(new char[] { '\\' });
+
+                    //  Extract the BIM 360 folder Id of the folder containing input Inventor file
                     var outputFileFolderId = bIM360DocsStructBuilder.GetFolderIdByName(outputFolders[outputFolders.Length - 1]);
+
+                    //  create output files structure
+                    var _designAutomationOutFileStructure1 = new List<DesignAutomationOutFileStructure1>();
+                    
+                    //  If input file has .zip extension, change the output extension to .iam and create also an output zip file which contains the output .iam
+                    if (outputFileNameParts[1] == "zip")
+                    {
+                        outputFileName = outputFileNameParts[0] + $"_Out_{elementId}_{timeStamp}.iam";
+
+                        _designAutomationOutFileStructure1.Add(new DesignAutomationOutFileStructure1
+                        {
+                            OutFileName = outputFileName,
+                            OutFileFolder = outputFileFolderId,
+                            OutFileCategory = OutputFileCategory.Assembly
+
+                        });
+
+                        _designAutomationOutFileStructure1.Add(new DesignAutomationOutFileStructure1
+                        {
+                            OutFileName = outputFileNameParts[0] + $"_Out_{elementId}_{timeStamp}.zip",
+                            OutFileFolder = outputFileFolderId,
+                            OutFileCategory = OutputFileCategory.Zip
+
+                        });                       
+                    }
+                    else
+                    {
+                        outputFileName = outputFileNameParts[0] + $"_Out_{elementId}_{timeStamp}." + outputFileNameParts[1];
+
+                        _designAutomationOutFileStructure1.Add(new DesignAutomationOutFileStructure1
+                        {
+                            OutFileName = outputFileName,
+                            OutFileFolder = outputFileFolderId,
+                            OutFileCategory = OutputFileCategory.Part
+
+                        });
+                        
+                    }
+
+                    _designAutomationOutFileStructure1.Add(new DesignAutomationOutFileStructure1
+                    {
+                        OutFileName = outputFileNameParts[0] + $"_Out_{elementId}_{timeStamp}.dwg",
+                        OutFileFolder = outputFileFolderId,
+                        OutFileCategory = OutputFileCategory.Drawing
+
+                    });
+
+                    _designAutomationOutFileStructure1.Add(new DesignAutomationOutFileStructure1
+                    {
+                        OutFileName = outputFileNameParts[0] + $"_Out_{elementId}_{timeStamp}.csv",
+                        OutFileFolder = outputFileFolderId,
+                        OutFileCategory = OutputFileCategory.BOM
+
+                    });
 
                     NLogger.LogText($"Currently processing {inventorFileName} Inventor file");
                     NLogger.LogText($"Output file: {outputFileName}");
                     NLogger.LogText($"Output folder: {outputFileFolderId}");
-
-                    //daStructure.FilesStructure = new List<DesignAutomationFileStructure>() { new DesignAutomationFileStructure
-                    daStructure.FilesStructure.Add(new DesignAutomationFileStructure
+                                                            
+                    daStructure.FilesStructure.Add(new DesignAutomationFileStructure1
                     {
                         InputFilename = inventorFileName,
                         ParamValues = paramValues,
                         InputLink = inputLink,
-                        OutputFileStructurelist = new List<DesignAutomationOutFileStructure>(){ new DesignAutomationOutFileStructure {  OutFileName = outputFileName, OutFileFolder = outputFileFolderId } }
-                    });
+                        OutputFileStructurelist = new List<DesignAutomationOutMainFileStructure1>(){ new DesignAutomationOutMainFileStructure1
+                        {
+                             OutMainFileName = outputFileName,
+                             OutFileStructure = _designAutomationOutFileStructure1
+                        }
+                    }
+                    });                   
                 }
             }
 
-            NLogger.LogText("Exit GetDataFromInputJson1");
+            NLogger.LogText("Exit GetDataFromInputJson_2");
 
             return daStructure;
         }
@@ -941,15 +1301,63 @@ namespace RevitInventorExchange.CoreBusinessLayer
             return outLink;
         }
 
-        private async Task<string> CreateStorageObject(string projId, string inputFile, string outputFile)
+        //private async Task<string> CreateStorageObject(string projId, string inputFile, string outputFile)
+        //{
+        //    NLogger.LogText("Entered CreateStorageObject");
+
+        //    string OutFileStorageobjectId = "";
+
+        //    forgeDMClient.SetBaseURL(ConfigUtilities.GetDMBaseDataURL());
+
+        //    var parameters = new Dictionary<string, string>() { { "projectId", projId }, { "payload", CreateStorageObjectPayload1(inputFile, outputFile) } };
+
+
+
+        //    //var res = RetryHelper.Retry(HTTPNumberOfRetries, HTTPCallRetryWaitTime, forgeDMClient.CreateStorageObject, parameters);
+
+
+        //    //var ret = forgeDMClient.CreateStorageObject(projId, CreateStorageObjectPayload1(inputFile, outputFile));
+        //    //ret.Wait(ConfigUtilities.GetAsyncHTTPCallWaitTime());
+        //    //var res = ret.Result;
+
+
+        //    //var ret = await forgeDMClient.CreateStorageObject(projId, CreateStorageObjectPayload1(inputFile, outputFile));
+        //    //var res = ret;
+
+
+        //    var res = await RetryHelper.Retry(HTTPNumberOfRetries, HTTPCallRetryWaitTime, forgeDMClient.CreateStorageObject, parameters);
+
+
+        //    if (res.IsSuccessStatusCode())
+        //    {
+        //        JObject root = JObject.Parse(res.ResponseContent);
+
+        //        //  Extract the created storage object identisfier. It is needed to create item versions
+        //        OutFileStorageobjectId = root["data"]["id"].ToString();
+
+        //        NLogger.LogText($"Storage object {OutFileStorageobjectId} created");
+
+        //        daEventHandler.TriggerDACurrentStepHandler("Storage object created");             
+        //    }
+        //    else
+        //    {
+        //        Utility.HandleErrorInForgeResponse("CreateStorageObject", res);
+        //    }
+            
+        //    NLogger.LogText("Exit CreateStorageObject");
+
+        //    return OutFileStorageobjectId;
+        //}
+
+        private async Task<string> CreateStorageObject_2(string projId, string inputFile, DesignAutomationOutFileStructure1 outputFile)
         {
-            NLogger.LogText("Entered CreateStorageObject");
+            NLogger.LogText("Entered CreateStorageObject_2");
 
             string OutFileStorageobjectId = "";
 
             forgeDMClient.SetBaseURL(ConfigUtilities.GetDMBaseDataURL());
 
-            var parameters = new Dictionary<string, string>() { { "projectId", projId }, { "payload", CreateStorageObjectPayload1(inputFile, outputFile) } };
+            var parameters = new Dictionary<string, string>() { { "projectId", projId }, { "payload", CreateStorageObjectPayload_2(inputFile, outputFile) } };
 
 
 
@@ -977,44 +1385,116 @@ namespace RevitInventorExchange.CoreBusinessLayer
 
                 NLogger.LogText($"Storage object {OutFileStorageobjectId} created");
 
-                daEventHandler.TriggerDACurrentStepHandler("Storage object created");             
+                daEventHandler.TriggerDACurrentStepHandler("Storage object created");
             }
             else
             {
-                Utility.HandleErrorInForgeResponse("CreateStorageObject", res);
+                Utility.HandleErrorInForgeResponse("CreateStorageObject_2", res);
             }
-            
-            NLogger.LogText("Exit CreateStorageObject");
+
+            NLogger.LogText("Exit CreateStorageObject_2");
 
             return OutFileStorageobjectId;
         }
 
+        ////  Create Storage Object for output files to be generated
+        //private async Task HandleDesignAutomationFlow(string projId)
+        //{
+        //    NLogger.LogText("Entered HandleDesignAutomationFlow");
+
+        //    forgeDMClient.SetBaseURL(ConfigUtilities.GetDMBaseDataURL());
+
+        //    //  Below BL processes every input - output files. If some errors occur on a specific input-output file, the system goes on with the rest of files
+        //    foreach (var item in daStructure.FilesStructure)
+        //    {
+        //        foreach (var el in item.OutputFileStructurelist)
+        //        {
+        //            string inputFile = item.InputFilename;
+        //            string outputFile = el.OutFileName;
+        //            string outputZipFile = el.OutZipFileName;
+
+        //            try
+        //            {
+        //                NLogger.LogText($"Started Design automation Flow for input file: {inputFile} with corresponding output file {outputFile}");
+        //                daEventHandler.TriggerDACurrentStepHandler($"Started Design automation Flow for input file: {inputFile} with corresponding output file {outputFile}");
+
+        //                //  Create Storage Objects, Submit workItem and Create File version
+        //                el.OutFileStorageobject = await CreateStorageObject(projId, inputFile, outputFile);
+        //                el.OutZipFileStorageobject = await CreateStorageObject(projId, inputFile, outputZipFile);
+
+        //                await SubmitWokItem(inputFile, outputFile);
+        //                await CreateFileVersion(projId, inputFile, outputFile, el.OutFileFolder);
+
+
+
+
+
+
+
+
+
+        //                NLogger.LogText($"Design automation Flow for input file: {inputFile} with corresponding output file {outputFile} completed sucessfully");
+        //                daEventHandler.TriggerDACurrentStepHandler($"Design automation Flow for input file: {inputFile} with corresponding output file {outputFile} completed sucessfully");
+        //            }
+        //            catch (Exception ex)
+        //            {
+        //                NLogger.LogText($"Design automation Flow for input file: {inputFile} with corresponding output file {outputFile} completed with error");
+        //                daEventHandler.TriggerDACurrentStepHandler($"Design automation Flow for input file: {inputFile} with corresponding output file {outputFile} completed with error, please check logs");
+
+        //                NLogger.LogError(ex);
+        //            }
+        //        }
+        //    }
+        
+        //    NLogger.LogText("Exit HandleDesignAutomationFlow");
+        //}
+
         //  Create Storage Object for output files to be generated
-        private async Task HandleDesignAutomationFlow(string projId)
+
+
+        private async Task HandleDesignAutomationFlow_2(string projId)
         {
-            NLogger.LogText("Entered HandleDesignAutomationFlow");
+            NLogger.LogText("Entered HandleDesignAutomationFlow_2");
 
             forgeDMClient.SetBaseURL(ConfigUtilities.GetDMBaseDataURL());
 
+            //  WARNING: Here the code handles ONLY the ASSEMBLY, NOT the PART
+            var outFileCategory = OutputFileCategory.Assembly;
+
             //  Below BL processes every input - output files. If some errors occur on a specific input-output file, the system goes on with the rest of files
-            foreach (var item in daStructure.FilesStructure)
+            foreach (var item in daStructure1.FilesStructure)
             {
                 foreach (var el in item.OutputFileStructurelist)
                 {
                     string inputFile = item.InputFilename;
-                    string outputFile = el.OutFileName;
 
+                    var outFileStruct = el.OutFileStructure;
+                    string outputFile = el.OutMainFileName;
+                                        
                     try
                     {
                         NLogger.LogText($"Started Design automation Flow for input file: {inputFile} with corresponding output file {outputFile}");
                         daEventHandler.TriggerDACurrentStepHandler($"Started Design automation Flow for input file: {inputFile} with corresponding output file {outputFile}");
 
-                        //  Create Storage Object, Submit workItem and Create File version
-                        el.OutFileStorageobject = await CreateStorageObject(projId, inputFile, outputFile);
+                        //  Create Storage Objects: loop on all output files to be created
+                        foreach (var el1 in outFileStruct)
+                        {
+                            el1.OutFileStorageobject = await CreateStorageObject_2(projId, inputFile, el1);
+                        }
+                                                
+                        // Submit workItem for Model 
+                        //await SubmitWokItem_2(inputFile, outputFile, outFileCategory);
+                        await SubmitWokItem_2(inputFile, outputFile, CreateModelWorkItemPayload1_2);
+
+                        //  Create File version for Model
+                        var assyOutStruct = el.OutFileStructure.First(m => m.OutFileCategory == outFileCategory);
+                        await CreateFileVersion_2(projId, inputFile, outputFile, assyOutStruct);
+
+                        //  Create intermediate zip file version. ONLY FOR TESTS
+                        //var zipOutStruct = el.OutFileStructure.First(m => m.OutFileCategory == OutputFileCategory.Zip);
+                        //await CreateFileVersion_2(projId, inputFile, outputFile, zipOutStruct);
 
 
-                        await SubmitWokItem(inputFile, outputFile);
-                        await CreateFileVersion(projId, inputFile, outputFile, el.OutFileFolder);
 
 
                         NLogger.LogText($"Design automation Flow for input file: {inputFile} with corresponding output file {outputFile} completed sucessfully");
@@ -1029,20 +1509,67 @@ namespace RevitInventorExchange.CoreBusinessLayer
                     }
                 }
             }
-        
-            NLogger.LogText("Exit HandleDesignAutomationFlow");
-        }       
 
-        //  Create json for Object storage creation
-        //  TODO: Check if all pieces are generic enough
-        private string CreateStorageObjectPayload1(string inFileName, string outFileName)
+            NLogger.LogText("Exit HandleDesignAutomationFlow_2");
+        }
+
+
+        ////  Create json for Object storage creation
+        ////  TODO: Check if all pieces are generic enough
+        //private string CreateStorageObjectPayload1(string inFileName, string outFileName)
+        //{
+        //    NLogger.LogText("Entered CreateStorageObjectPayload1");
+
+        //    var ext = System.IO.Path.GetExtension(outFileName);
+        //    DesignAutomationFileStructure daStructureRow = null;
+        //    string outputFileName = "";
+        //    string outputFileFolderId = "";
+
+        //    if (ext != ".zip")
+        //    {
+        //        daStructureRow = daStructure.FilesStructure.First(p => p.InputFilename == inFileName && p.OutputFileStructurelist.Any(k => k.OutFileName == outFileName));
+        //        outputFileName = daStructureRow.OutputFileStructurelist.First(l => l.OutFileName == outFileName).OutFileName;
+        //        outputFileFolderId = daStructureRow.OutputFileStructurelist.First(l => l.OutFileName == outFileName).OutFileFolder;
+        //    }
+        //    else
+        //    {
+        //        daStructureRow = daStructure.FilesStructure.First(p => p.InputFilename == inFileName && p.OutputFileStructurelist.Any(k => k.OutZipFileName == outFileName));
+        //        outputFileName = daStructureRow.OutputFileStructurelist.First(l => l.OutZipFileName == outFileName).OutZipFileName;
+        //        outputFileFolderId = daStructureRow.OutputFileStructurelist.First(l => l.OutZipFileName == outFileName).OutFileFolder;
+        //    }           
+
+        //    JObject payload = new JObject(
+        //        new JProperty("jsonapi", new JObject(
+        //            new JProperty("version", "1.0")
+        //        )),
+        //        new JProperty("data", new JObject(
+        //            new JProperty("type", "objects"),
+        //            new JProperty("attributes", new JObject(
+        //                new JProperty("name", outputFileName)
+        //                )),
+        //            new JProperty("relationships", new JObject(
+        //                new JProperty("target", new JObject(
+        //                    new JProperty("data", new JObject(
+        //                        new JProperty("type", "folders"),
+        //                        new JProperty("id", outputFileFolderId)
+        //                    ))
+        //                ))
+        //            ))
+        //        )
+        //        ));
+
+        //    NLogger.LogText("Exit CreateStorageObjectPayload1");
+
+        //    return payload.ToString();
+        //}
+
+        private string CreateStorageObjectPayload_2(string inFileName, DesignAutomationOutFileStructure1 outFileName)
         {
-            NLogger.LogText("Entered CreateStorageObjectPayload1");
-
-            var daStructureRow = daStructure.FilesStructure.First(p => p.InputFilename == inFileName && p.OutputFileStructurelist.Any(k => k.OutFileName == outFileName));
-            string inputFileName = daStructureRow.InputFilename;
-            string outputFileName = daStructureRow.OutputFileStructurelist.First(l => l.OutFileName == outFileName).OutFileName;
-            string outputFileFolderId = daStructureRow.OutputFileStructurelist.First(l => l.OutFileName == outFileName).OutFileFolder;
+            NLogger.LogText("Entered CreateStorageObjectPayload_2");
+            
+            string outputFileName = outFileName.OutFileName;
+            string outputFileFolderId = outFileName.OutFileFolder;
+        
 
             JObject payload = new JObject(
                 new JProperty("jsonapi", new JObject(
@@ -1064,156 +1591,263 @@ namespace RevitInventorExchange.CoreBusinessLayer
                 )
                 ));
 
-            NLogger.LogText("Exit CreateStorageObjectPayload1");
+            NLogger.LogText("Exit CreateStorageObjectPayload_2");
 
             return payload.ToString();
         }
 
+        ////  Create first version of generated files
+        //private async Task CreateFileVersion(string projectId, string inFileName, string outFileName, string outFilefolder)
+        //{
+        //    NLogger.LogText("Entered CreateFileVersion");
+
+        //    //  Check if BIM 360 already contains at least one version of intended output file
+        //    var alreadyExistingOutFiles = bIM360DocsStructBuilder.bIM360DocsStructure1.BIM360DataRows1.FirstOrDefault(l => l.Name == outFileName && l.ParentId == outFilefolder && l.Type == BIM360Type.File);
+        //    //var alreadyExistingOutFileVersion = bIM360DocsStructBuilder.bIM360DocsStructure1.BIM360DataRows1.FirstOrDefault(l => l.ParentId == alreadyExistingOutFiles.Id && l.Type == BIM360Type.FileVersion);
+
+        //    if (alreadyExistingOutFiles == null)
+        //    {
+        //        NLogger.LogText($"Create first version of file {outFileName}");
+
+        //        string payload = CreateFileFirstVersionPayload(inFileName, outFileName);
+
+        //        forgeDMClient.SetBaseURL(ConfigUtilities.GetDMBaseDataURL());
+
+
+        //        var parameters = new Dictionary<string, string>() { { "projectId", projectId }, { "payload", payload } };
+
+
+        //        //var resCreateFileVer = RetryHelper.Retry(HTTPNumberOfRetries, HTTPCallRetryWaitTime, forgeDMClient.CreateFileFirstVersion, parameters);
+
+
+        //        //var retCreateFileVer = forgeDMClient.CreateFileFirstVersion(projectId, payload);
+        //        //retCreateFileVer.Wait(ConfigUtilities.GetAsyncHTTPCallWaitTime());
+        //        //var resCreateFileVer = retCreateFileVer.Result;
+
+
+        //        //var retCreateFileVer = await forgeDMClient.CreateFileFirstVersion(projectId, payload);
+        //        //var resCreateFileVer = retCreateFileVer;
+
+
+        //        var resCreateFileVer = await RetryHelper.Retry(HTTPNumberOfRetries, HTTPCallRetryWaitTime, forgeDMClient.CreateFileFirstVersion, parameters);
+
+
+
+        //        if (resCreateFileVer.IsSuccessStatusCode())
+        //        {
+        //            daEventHandler.TriggerDACurrentStepHandler("CreateFileVersion processing completed sucessfully");
+        //            NLogger.LogText("Exit CreateFileVersion sucessfully");
+        //        }
+        //        else
+        //        {
+        //            Utility.HandleErrorInForgeResponse("CreateFileVersion", resCreateFileVer);
+        //        }
+        //    }
+        //    else
+        //    {
+        //        NLogger.LogText($"Create additional version of file {outFileName}");
+
+        //        string payload = CreateFileAdditionalVersionPayload(inFileName, outFileName, alreadyExistingOutFiles.Id);
+
+        //        forgeDMClient.SetBaseURL(ConfigUtilities.GetDMBaseDataURL());
+
+        //        var parameters = new Dictionary<string, string>() { { "projectId", projectId }, { "payload", payload } };
+
+
+        //        //var resCreateFileVer = RetryHelper.Retry(HTTPNumberOfRetries, HTTPCallRetryWaitTime, forgeDMClient.CreateFileAdditionalVersion, parameters);
+
+
+        //        //var retCreateFileVer = forgeDMClient.CreateFileAdditionalVersion(projectId, payload);
+        //        //retCreateFileVer.Wait(ConfigUtilities.GetAsyncHTTPCallWaitTime());
+        //        //var resCreateFileVer = retCreateFileVer.Result;
+
+
+        //        //var retCreateFileVer = await forgeDMClient.CreateFileAdditionalVersion(projectId, payload);
+        //        //var resCreateFileVer = retCreateFileVer;
+
+
+        //        var resCreateFileVer = await RetryHelper.Retry(HTTPNumberOfRetries, HTTPCallRetryWaitTime, forgeDMClient.CreateFileAdditionalVersion, parameters);
+
+
+
+        //        if (resCreateFileVer.IsSuccessStatusCode())
+        //        {
+        //            daEventHandler.TriggerDACurrentStepHandler("CreateFileVersion processing completed sucessfully");
+        //            NLogger.LogText("Exit CreateFileVersion sucessfully");
+        //        }
+        //        else
+        //        {
+        //            Utility.HandleErrorInForgeResponse("CreateFileVersion", resCreateFileVer);
+        //        }
+        //    }
+        //}
+
+
         //  Create first version of generated files
-        private async Task CreateFileVersion(string projectId, string inFileName, string outFileName, string outFilefolder)
+        
+        private async Task CreateFileVersion_2(string projectId, string inFileName, string outFileName, DesignAutomationOutFileStructure1 outFileStructure)
         {
-            NLogger.LogText("Entered CreateFileVersion");
+            NLogger.LogText("Entered CreateFileVersion_2");
 
-            //  Check if BIM 360 already contains at least one version of intended output file
-            var alreadyExistingOutFiles = bIM360DocsStructBuilder.bIM360DocsStructure1.BIM360DataRows1.FirstOrDefault(l => l.Name == outFileName && l.ParentId == outFilefolder && l.Type == BIM360Type.File);
-            //var alreadyExistingOutFileVersion = bIM360DocsStructBuilder.bIM360DocsStructure1.BIM360DataRows1.FirstOrDefault(l => l.ParentId == alreadyExistingOutFiles.Id && l.Type == BIM360Type.FileVersion);
 
-            if (alreadyExistingOutFiles == null)
+            NLogger.LogText($"Create first version of file {outFileName}");
+
+            //  Create the json
+            string payload = CreateFileFirstVersionPayload_2(inFileName, outFileStructure);
+
+            //  Prepare Forge API with parameters
+            forgeDMClient.SetBaseURL(ConfigUtilities.GetDMBaseDataURL());
+            var parameters = new Dictionary<string, string>() { { "projectId", projectId }, { "payload", payload } };
+
+
+            //var resCreateFileVer = RetryHelper.Retry(HTTPNumberOfRetries, HTTPCallRetryWaitTime, forgeDMClient.CreateFileFirstVersion, parameters);
+
+
+            //var retCreateFileVer = forgeDMClient.CreateFileFirstVersion(projectId, payload);
+            //retCreateFileVer.Wait(ConfigUtilities.GetAsyncHTTPCallWaitTime());
+            //var resCreateFileVer = retCreateFileVer.Result;
+
+
+            //var retCreateFileVer = await forgeDMClient.CreateFileFirstVersion(projectId, payload);
+            //var resCreateFileVer = retCreateFileVer;
+
+
+            var resCreateFileVer = await RetryHelper.Retry(HTTPNumberOfRetries, HTTPCallRetryWaitTime, forgeDMClient.CreateFileFirstVersion, parameters);
+
+            if (resCreateFileVer.IsSuccessStatusCode())
             {
-                NLogger.LogText($"Create first version of file {outFileName}");
-
-                string payload = CreateFileFirstVersionPayload(inFileName, outFileName);
-
-                forgeDMClient.SetBaseURL(ConfigUtilities.GetDMBaseDataURL());
-
-
-                var parameters = new Dictionary<string, string>() { { "projectId", projectId }, { "payload", payload } };
-
-
-                //var resCreateFileVer = RetryHelper.Retry(HTTPNumberOfRetries, HTTPCallRetryWaitTime, forgeDMClient.CreateFileFirstVersion, parameters);
-
-
-                //var retCreateFileVer = forgeDMClient.CreateFileFirstVersion(projectId, payload);
-                //retCreateFileVer.Wait(ConfigUtilities.GetAsyncHTTPCallWaitTime());
-                //var resCreateFileVer = retCreateFileVer.Result;
-
-
-                //var retCreateFileVer = await forgeDMClient.CreateFileFirstVersion(projectId, payload);
-                //var resCreateFileVer = retCreateFileVer;
-
-
-                var resCreateFileVer = await RetryHelper.Retry(HTTPNumberOfRetries, HTTPCallRetryWaitTime, forgeDMClient.CreateFileFirstVersion, parameters);
-
-
-
-                if (resCreateFileVer.IsSuccessStatusCode())
-                {
-                    daEventHandler.TriggerDACurrentStepHandler("CreateFileVersion processing completed sucessfully");
-                    NLogger.LogText("Exit CreateFileVersion sucessfully");
-                }
-                else
-                {
-                    Utility.HandleErrorInForgeResponse("CreateFileVersion", resCreateFileVer);
-                }
+                daEventHandler.TriggerDACurrentStepHandler("CreateFileVersion_2 processing completed sucessfully");
+                NLogger.LogText("Exit CreateFileVersion_2 sucessfully");
             }
             else
             {
-                NLogger.LogText($"Create additional version of file {outFileName}");
-
-                string payload = CreateFileAdditionalVersionPayload(inFileName, outFileName, alreadyExistingOutFiles.Id);
-
-                forgeDMClient.SetBaseURL(ConfigUtilities.GetDMBaseDataURL());
-
-                var parameters = new Dictionary<string, string>() { { "projectId", projectId }, { "payload", payload } };
-
-
-                //var resCreateFileVer = RetryHelper.Retry(HTTPNumberOfRetries, HTTPCallRetryWaitTime, forgeDMClient.CreateFileAdditionalVersion, parameters);
-
-
-                //var retCreateFileVer = forgeDMClient.CreateFileAdditionalVersion(projectId, payload);
-                //retCreateFileVer.Wait(ConfigUtilities.GetAsyncHTTPCallWaitTime());
-                //var resCreateFileVer = retCreateFileVer.Result;
-
-
-                //var retCreateFileVer = await forgeDMClient.CreateFileAdditionalVersion(projectId, payload);
-                //var resCreateFileVer = retCreateFileVer;
-
-
-                var resCreateFileVer = await RetryHelper.Retry(HTTPNumberOfRetries, HTTPCallRetryWaitTime, forgeDMClient.CreateFileAdditionalVersion, parameters);
-
-
-
-                if (resCreateFileVer.IsSuccessStatusCode())
-                {
-                    daEventHandler.TriggerDACurrentStepHandler("CreateFileVersion processing completed sucessfully");
-                    NLogger.LogText("Exit CreateFileVersion sucessfully");
-                }
-                else
-                {
-                    Utility.HandleErrorInForgeResponse("CreateFileVersion", resCreateFileVer);
-                }
+                Utility.HandleErrorInForgeResponse("CreateFileVersion_2", resCreateFileVer);
             }
         }
 
-        private string CreateFileAdditionalVersionPayload(string inFileName, string outFileName, string itemId)
+
+        //private string CreateFileAdditionalVersionPayload(string inFileName, string outFileName, string itemId)
+        //{
+        //    NLogger.LogText("Entered CreateFileAdditionalVersionPayload");
+
+        //    var daStructureRow = daStructure.FilesStructure.First(p => p.InputFilename == inFileName && p.OutputFileStructurelist.Any(k => k.OutFileName == outFileName));
+
+        //    string inputFileName = daStructureRow.InputFilename;
+        //    var daStructureRowOutputFileStruct = daStructureRow.OutputFileStructurelist.First(l => l.OutFileName == outFileName);
+        //    string outputFileName = daStructureRowOutputFileStruct.OutFileName;
+        //    string outputFileFolderId = daStructureRowOutputFileStruct.OutFileFolder;
+        //    string storageObjectId = daStructureRowOutputFileStruct.OutFileStorageobject;
+
+        //    JObject payload = new JObject(
+        //       new JProperty("jsonapi", new JObject(
+        //           new JProperty("version", "1.0")
+        //       )),
+        //       new JProperty("data", new JObject(
+        //           new JProperty("type", "versions"),
+        //           new JProperty("attributes", new JObject(
+        //                new JProperty("name", outputFileName),
+        //                new JProperty("extension", new JObject(
+        //                    new JProperty("type", "versions:autodesk.bim360:File"),
+        //                    new JProperty("version", "1.0")
+        //                ))
+        //            )),
+        //            new JProperty("relationships", new JObject(
+        //                new JProperty("item", new JObject(
+        //                    new JProperty("data", new JObject(
+        //                        new JProperty("type", "items"),
+        //                        new JProperty("id", itemId)
+        //                    ))
+        //                )),
+        //                new JProperty("storage", new JObject(
+        //                    new JProperty("data", new JObject(
+        //                        new JProperty("type", "objects"),
+        //                        new JProperty("id", storageObjectId)
+        //                    ))
+        //               ))
+        //            ))                   
+        //       ))
+        //    );
+
+
+        //    NLogger.LogText("Exit CreateFileAdditionalVersionPayload");
+
+        //    return payload.ToString();
+        //}
+
+        //private string CreateFileFirstVersionPayload(string inFileName, string outFileName)
+        //{
+        //    NLogger.LogText("Entered CreateFileFirstVersionPayload");
+
+        //    var daStructureRow = daStructure.FilesStructure.First(p => p.InputFilename == inFileName && p.OutputFileStructurelist.Any(k => k.OutFileName == outFileName));
+
+        //    string inputFileName = daStructureRow.InputFilename;
+        //    var daStructureRowOutputFileStruct = daStructureRow.OutputFileStructurelist.First(l => l.OutFileName == outFileName);
+        //    string outputFileName = daStructureRowOutputFileStruct.OutFileName;
+        //    string outputFileFolderId = daStructureRowOutputFileStruct.OutFileFolder;
+        //    string storageObjectId = daStructureRowOutputFileStruct.OutFileStorageobject;
+
+        //    JObject payload = new JObject(
+        //       new JProperty("jsonapi", new JObject(
+        //           new JProperty("version", "1.0")
+        //       )),
+        //       new JProperty("data", new JObject(
+        //           new JProperty("type", "items"),
+        //           new JProperty("attributes", new JObject(
+        //                new JProperty("displayName", outputFileName),
+        //                new JProperty("extension", new JObject(
+        //                    new JProperty("type", "items:autodesk.bim360:File"),
+        //                    new JProperty("version", "1.0")
+        //                    ))
+        //                )),
+        //           new JProperty("relationships", new JObject(
+        //               new JProperty("tip", new JObject(
+        //                    new JProperty("data", new JObject(
+        //                        new JProperty("type", "versions"),
+        //                        new JProperty("id", "1")
+        //                    ))
+        //               )),
+        //               new JProperty("parent", new JObject(
+        //                    new JProperty("data", new JObject(
+        //                        new JProperty("type", "folders"),
+        //                        new JProperty("id", outputFileFolderId)
+        //                    ))
+        //               ))
+        //           ))
+        //       )),
+        //       new JProperty("included", new JArray(new JObject(
+        //           new JProperty("type", "versions"),
+        //           new JProperty("id", "1"),
+        //           new JProperty("attributes", new JObject(
+        //                new JProperty("name", outputFileName),
+        //                new JProperty("extension", new JObject(
+        //                    new JProperty("type", "versions:autodesk.bim360:File"),
+        //                    new JProperty("version", "1.0")
+        //                ))
+        //           )),
+        //           new JProperty("relationships", new JObject(
+        //               new JProperty("storage", new JObject(
+        //                    new JProperty("data", new JObject(
+        //                        new JProperty("type", "objects"),
+        //                        new JProperty("id", storageObjectId)
+        //                    ))
+        //               ))
+        //           ))
+        //        )))
+        //    );
+
+        //    NLogger.LogText("Exit CreateFileFirstVersionPayload");
+
+        //    return payload.ToString();
+        //}
+
+
+        private string CreateFileFirstVersionPayload_2(string inFileName, DesignAutomationOutFileStructure1 outFileStructure)
         {
-            NLogger.LogText("Entered CreateFileAdditionalVersionPayload");
-
-            var daStructureRow = daStructure.FilesStructure.First(p => p.InputFilename == inFileName && p.OutputFileStructurelist.Any(k => k.OutFileName == outFileName));
-
-            string inputFileName = daStructureRow.InputFilename;
-            var daStructureRowOutputFileStruct = daStructureRow.OutputFileStructurelist.First(l => l.OutFileName == outFileName);
-            string outputFileName = daStructureRowOutputFileStruct.OutFileName;
-            string outputFileFolderId = daStructureRowOutputFileStruct.OutFileFolder;
-            string storageObjectId = daStructureRowOutputFileStruct.OutFileStorageobject;
-
-            JObject payload = new JObject(
-               new JProperty("jsonapi", new JObject(
-                   new JProperty("version", "1.0")
-               )),
-               new JProperty("data", new JObject(
-                   new JProperty("type", "versions"),
-                   new JProperty("attributes", new JObject(
-                        new JProperty("name", outputFileName),
-                        new JProperty("extension", new JObject(
-                            new JProperty("type", "versions:autodesk.bim360:File"),
-                            new JProperty("version", "1.0")
-                        ))
-                    )),
-                    new JProperty("relationships", new JObject(
-                        new JProperty("item", new JObject(
-                            new JProperty("data", new JObject(
-                                new JProperty("type", "items"),
-                                new JProperty("id", itemId)
-                            ))
-                        )),
-                        new JProperty("storage", new JObject(
-                            new JProperty("data", new JObject(
-                                new JProperty("type", "objects"),
-                                new JProperty("id", storageObjectId)
-                            ))
-                       ))
-                    ))                   
-               ))
-            );
-
-
-            NLogger.LogText("Exit CreateFileAdditionalVersionPayload");
-
-            return payload.ToString();
-        }
-
-        private string CreateFileFirstVersionPayload(string inFileName, string outFileName)
-        {
-            NLogger.LogText("Entered CreateFileFirstVersionPayload");
-
-            var daStructureRow = daStructure.FilesStructure.First(p => p.InputFilename == inFileName && p.OutputFileStructurelist.Any(k => k.OutFileName == outFileName));
-
-            string inputFileName = daStructureRow.InputFilename;
-            var daStructureRowOutputFileStruct = daStructureRow.OutputFileStructurelist.First(l => l.OutFileName == outFileName);
-            string outputFileName = daStructureRowOutputFileStruct.OutFileName;
-            string outputFileFolderId = daStructureRowOutputFileStruct.OutFileFolder;
-            string storageObjectId = daStructureRowOutputFileStruct.OutFileStorageobject;
+            NLogger.LogText("Entered CreateFileFirstVersionPayload_2");
+           
+            string outputFileName = outFileStructure.OutFileName;
+            string outputFileFolderId = outFileStructure.OutFileFolder;
+            string storageObjectId = outFileStructure.OutFileStorageobject;
 
             JObject payload = new JObject(
                new JProperty("jsonapi", new JObject(
@@ -1264,7 +1898,7 @@ namespace RevitInventorExchange.CoreBusinessLayer
                 )))
             );
 
-            NLogger.LogText("Exit CreateFileFirstVersionPayload");
+            NLogger.LogText("Exit CreateFileFirstVersionPayload_2");
 
             return payload.ToString();
         }

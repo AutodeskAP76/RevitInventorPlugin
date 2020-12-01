@@ -255,6 +255,10 @@
     <value>１つの行を選択してください。</value>
   </data>
   
+  <data name="msgBox_BIM360NotSync" xml:space="preserve">
+    <value></value>
+  </data>
+  
   <!--  Revit Inventor Mapping popup  -->
   <data name="RevInventor_Popup_Text" xml:space="preserve">
     <value>Revitファミリ</value>

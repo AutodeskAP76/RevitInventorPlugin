@@ -282,35 +282,42 @@ namespace RevitInventorExchange.WindowsFormUI
         //  Load the list of all Inventor files found at specified location and load them into grid
         private void btnBrowse_Click(object sender, EventArgs e)
         {
-            NLogger.LogText("Entered btnBrowse_Click");           
+            NLogger.LogText("Entered btnBrowse_Click");
 
-            DialogResult result = folderBrowserDialogInventorTemplates.ShowDialog();
-
-            if (result == DialogResult.OK)
+            try
             {
-                //  Handle selected path
-                invTemplFolder = folderBrowserDialogInventorTemplates.SelectedPath;
-                //string selectedPath = rootPath ;
-                txtInventorTemplatesPath.Text = invTemplFolder;                
+                DialogResult result = folderBrowserDialogInventorTemplates.ShowDialog();
 
-                //  handle internal structure creation
-                var dataSource = offsitePanelHandler.GetInvRevitMappingDataGridSource(invTemplFolder);
-                var elementList = dataSource["InvRevMapping"];
-
-                NLogger.LogText("Fill InventorRevitMapping grid");
-                offsitePanelHandler.FillGrid(dgInvRevMapping, elementList);
-
-                //  Select first row of inventor - Revit mapping grid by default
-                if (dgInvRevMapping.Rows.Count > 0)
+                if (result == DialogResult.OK)
                 {
-                    dgInvRevMapping.ClearSelection();
-                    dgInvRevMapping.Rows[0].Selected = true;
+                    //  Handle selected path
+                    invTemplFolder = folderBrowserDialogInventorTemplates.SelectedPath;
+                    //string selectedPath = rootPath ;
+                    txtInventorTemplatesPath.Text = invTemplFolder;
+
+                    //  handle internal structure creation
+                    var dataSource = offsitePanelHandler.GetInvRevitMappingDataGridSource(invTemplFolder);
+                    var elementList = dataSource["InvRevMapping"];
+
+                    NLogger.LogText("Fill InventorRevitMapping grid");
+                    offsitePanelHandler.FillGrid(dgInvRevMapping, elementList);
+
+                    //  Select first row of inventor - Revit mapping grid by default
+                    if (dgInvRevMapping.Rows.Count > 0)
+                    {
+                        dgInvRevMapping.ClearSelection();
+                        dgInvRevMapping.Rows[0].Selected = true;
+                    }
+                }
+
+                if (result == DialogResult.Cancel)
+                {
+
                 }
             }
-
-            if (result == DialogResult.Cancel)
+            catch(UIRelevantException ex)
             {
-
+                MessageBox.Show(ex.Message);
             }
 
             NLogger.LogText("Exit btnBrowse_Click");

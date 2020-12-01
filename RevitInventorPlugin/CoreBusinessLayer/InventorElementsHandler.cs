@@ -78,18 +78,26 @@ namespace RevitInventorExchange.CoreBusinessLayer
         {
             NLogger.LogText("Entered GetInventorTemplates method with path {path}", path);
 
-            List<FileInfo> inventorTemplates;
+            List<FileInfo> inventorTemplates = null;
             List<string> fileExtensions = new List<string> { ".iam", ".ipt", ".zip" };
 
-            var g = Directory.EnumerateFiles(path).Select(p => new FileInfo(p));
+            try
+            {
+                var g = Directory.EnumerateFiles(path).Select(p => new FileInfo(p));
 
-            NLogger.LogText("Retrieved Inventor files {InventorFiles}", g.ToList().Count.ToString());
+                NLogger.LogText("Retrieved Inventor files {InventorFiles}", g.ToList().Count.ToString());
 
-            inventorTemplates = g.Where(j => fileExtensions.Contains(j.Extension)).ToList();
+                inventorTemplates = g.Where(j => fileExtensions.Contains(j.Extension)).ToList();
 
-            NLogger.LogText("Filtered Inventor files {InventorFiles}", inventorTemplates.Count.ToString());
+                NLogger.LogText("Filtered Inventor files {InventorFiles}", inventorTemplates.Count.ToString());
 
-            NLogger.LogText("Exit GetInventorTemplates method");
+                NLogger.LogText("Exit GetInventorTemplates method");                
+            }
+            catch(Exception ex)
+            {
+                NLogger.LogError($"Following error occurred in GetInventorTemplates: {ex}");
+                throw new UIRelevantException(LanguageHandler.GetString("msgBox_BIM360NotSync"));
+            }
 
             return inventorTemplates;
         }

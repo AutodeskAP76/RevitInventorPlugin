@@ -256,6 +256,10 @@
     <value>You have to select one row</value>
   </data>
   
+  <data name="msgBox_BIM360NotSync" xml:space="preserve">
+    <value>It seems the selected folder is not synchronized with BIM 360 cloud. Please verify. </value>
+  </data>
+  
   <!--  Revit Inventor Mapping popup  -->
   <data name="RevInventor_Popup_Text" xml:space="preserve">
     <value>Revit Families</value>
