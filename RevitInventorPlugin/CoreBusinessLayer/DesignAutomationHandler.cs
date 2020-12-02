@@ -806,10 +806,7 @@ namespace RevitInventorExchange.CoreBusinessLayer
 
             //if (outputSignedUrlExtension == ".zip")
             if (inputSignedUrlExtension == ".zip")
-            {
-                itemParamOutput = ConfigUtilities.GetDAWorkItemParamsOutputIam();
-                DAActivity = ConfigUtilities.GetDAAssemblyActivity();
-
+            {              
                 actualJsonParam = $"{{\"assemblyPath\":\"input\\\\{inputFilename}.iam\", \"projectPath\":\"input\\\\{inputFilename}.ipj\", \"values\": {jsonParam1}}}";
 
                 string outFileStorageObj = daStructureRow.OutputFileStructurelist.First(l => l.OutMainFileName == outFileName)
@@ -824,7 +821,7 @@ namespace RevitInventorExchange.CoreBusinessLayer
 
                 outputSignedUrl = outputSignedUrl.Replace("zip", "iam");
 
-                ret = GetWorkItemJsonForZip_2(DAActivity, inputSignedUrl, actualJsonParam, itemParamOutput, outputSignedUrl, outputZipSignedUrl);
+                ret = GetModelWorkItemJsonForZip_2(inputSignedUrl, actualJsonParam, outputSignedUrl, outputZipSignedUrl);
             }
 
             NLogger.LogText("Exit CreateModelWorkItemPayload1_2");
@@ -870,9 +867,13 @@ namespace RevitInventorExchange.CoreBusinessLayer
         //    return ret;
         //}
 
-        private string GetWorkItemJsonForZip_2(string DAActivity, string inputSignedUrl, string actualJsonParam, string itemParamOutput, string outputSignedUrl, string outputZipSignedUrl)
+        private string GetModelWorkItemJsonForZip_2(string inputSignedUrl, string actualJsonParam, string outputSignedUrl, string outputZipSignedUrl)
         {
-            NLogger.LogText("Entered GetWorkItemJsonForZip_2");
+            NLogger.LogText("Entered GetModelWorkItemJsonForZip_2");
+
+            string DAActivity = ConfigUtilities.GetDAAssemblyActivity();
+            string itemIamParamOutput = ConfigUtilities.GetDAWorkItemParamsOutputIam();
+            string itemZipParamOutput = ConfigUtilities.GetDAWorkItemParamsOutputZip();            
 
             JObject payload = new JObject(
                 new JProperty("activityId", DAActivity),
@@ -887,7 +888,7 @@ namespace RevitInventorExchange.CoreBusinessLayer
                     new JProperty(ConfigUtilities.GetDAWorkItemParamsInputArgument(), new JObject(
                         new JProperty("url", $"data:application/json, {actualJsonParam}")
                     )),
-                    new JProperty(itemParamOutput, new JObject(
+                    new JProperty(itemIamParamOutput, new JObject(
                         new JProperty("url", outputSignedUrl),
                         new JProperty("verb", "put"),
                         new JProperty("Headers", new JObject(
@@ -896,7 +897,7 @@ namespace RevitInventorExchange.CoreBusinessLayer
                         ))
                     ))
                     ,  //  Create intermediate output zip for Drawings
-                    new JProperty("OutputZip", new JObject(
+                    new JProperty(itemZipParamOutput, new JObject(
                         new JProperty("url", outputZipSignedUrl),
                         new JProperty("verb", "put"),
                         new JProperty("Headers", new JObject(
@@ -909,7 +910,7 @@ namespace RevitInventorExchange.CoreBusinessLayer
 
             var ret = payload.ToString();
 
-            NLogger.LogText("Exit GetWorkItemJsonForZip_2");
+            NLogger.LogText("Exit GetModelWorkItemJsonForZip_2");
 
             return ret;
         }       
@@ -1485,9 +1486,10 @@ namespace RevitInventorExchange.CoreBusinessLayer
                         // Submit workItem for Model 
                         //await SubmitWokItem_2(inputFile, outputFile, outFileCategory);
                         await SubmitWokItem_2(inputFile, outputFile, CreateModelWorkItemPayload1_2);
+                        //await SubmitWokItem_2(inputFile, outputFile, CreateDrawingWorkItemPayload1_2);
 
                         //  Create File version for Model
-                        var assyOutStruct = el.OutFileStructure.First(m => m.OutFileCategory == outFileCategory);
+                        var assyOutStruct = el.OutFileStructure.First(m => m.OutFileCategory == OutputFileCategory.Assembly);
                         await CreateFileVersion_2(projId, inputFile, outputFile, assyOutStruct);
 
                         //  Create intermediate zip file version. ONLY FOR TESTS
@@ -1511,6 +1513,79 @@ namespace RevitInventorExchange.CoreBusinessLayer
             }
 
             NLogger.LogText("Exit HandleDesignAutomationFlow_2");
+        }
+
+        private string CreateDrawingWorkItemPayload1_2(string inFileName, string outFileName)
+        {
+            NLogger.LogText("Entered CreateDrawingWorkItemPayload1_2");
+
+            string ret = "";
+
+            var inputFilename = System.IO.Path.GetFileNameWithoutExtension(inFileName);
+            var daStructureRow = daStructure1.FilesStructure.First(p => p.InputFilename == inFileName && p.OutputFileStructurelist.Any(k => k.OutMainFileName == outFileName));            
+
+            var itemParamOutput = "";
+            var DAActivity = "";
+            var actualJsonParam = "";
+
+            itemParamOutput = ConfigUtilities.GetDAWorkItemParamsOutputDwg();
+            DAActivity = ConfigUtilities.GetDADrawingActivity();
+
+            actualJsonParam = $"{{\"assemblyPath\":\"input\\\\{inputFilename}.iam\", \"projectPath\":\"input\\\\{inputFilename}.ipj\" }}";
+
+            //  Here the input file is the intermediate zip file produced at previous step
+            string inputFileStorageObj = daStructureRow.OutputFileStructurelist.First(l => l.OutMainFileName == outFileName)
+                                        .OutFileStructure.First(l => l.OutFileCategory == OutputFileCategory.Zip).OutFileStorageobject;
+
+            string inputSignedUrl = GetOutputLinks(inputFileStorageObj);
+
+            //  Here the putput file is the dwg file
+            string outFileStorageObj = daStructureRow.OutputFileStructurelist.First(l => l.OutMainFileName == outFileName)
+                                        .OutFileStructure.First(l => l.OutFileCategory == OutputFileCategory.Drawing).OutFileStorageobject;
+
+            string outputSignedUrl = GetOutputLinks(outFileStorageObj);
+                        
+            ret = GetDrawingWorkItemJsonForZip_2(DAActivity, inputSignedUrl, actualJsonParam, itemParamOutput, outputSignedUrl);
+
+
+            NLogger.LogText("Exit CreateDrawingWorkItemPayload1_2");
+
+            return ret;
+        }
+
+        private string GetDrawingWorkItemJsonForZip_2(string DAActivity, string inputSignedUrl, string actualJsonParam, string itemParamOutput, string outputSignedUrl)
+        {
+            NLogger.LogText("Entered GetDrawingWorkItemJsonForZip_2");
+
+            JObject payload = new JObject(
+                new JProperty("activityId", DAActivity),
+                new JProperty("arguments", new JObject(
+                    new JProperty(ConfigUtilities.GetDAWorkItemDocInputArgument(), new JObject(
+                        new JProperty("url", inputSignedUrl),
+                        new JProperty("localName", "input"),
+                        new JProperty("Headers", new JObject(
+                            new JProperty("Authorization", forgeDAClient.Authorization)
+                            ))
+                    )),
+                    new JProperty(ConfigUtilities.GetDAWorkItemParamsInputArgument(), new JObject(
+                        new JProperty("url", $"data:application/json, {actualJsonParam}")
+                    )),
+                    new JProperty(itemParamOutput, new JObject(
+                        new JProperty("url", outputSignedUrl),
+                        new JProperty("verb", "put"),
+                        new JProperty("Headers", new JObject(
+                            new JProperty("Authorization", forgeDAClient.Authorization),
+                            new JProperty("Content-type", "application/octet-stream")
+                        ))
+                    ))                   
+                ))
+            );
+
+            var ret = payload.ToString();
+
+            NLogger.LogText("Exit GetDrawingWorkItemJsonForZip_2");
+
+            return ret;
         }
 
 

@@ -3,22 +3,31 @@
   <key name="DEVMODE" value="true">
     <key name="SaveRevitParamsValueFile" value="true"/>
   </key>
+  <key name="Application">
+    <!-- Language: Language of UI. Possible values are 'en', 'ja' -->
+    <key name="Language" value="en"/>
+    <!-- InventorElementShowOnlyKeys: show only Inventor key parameters toggle -->
+    <key name="InventorElementShowOnlyKeys" value="false"/>
+  </key>
   <key name="BIM360">
+    <!--key name="HUB" value="Daiwa House" />
+    <key name="Project" value="DH_DfMA+IC PoC"/>
+    <key name="InventorTemplateFolder" value="Project Files\DH_Assembly_Floor_Panel_9.0"/-->
     <key name="HUB" value="ATDSK DEV" />
     <key name="Project" value="Sample Project"/>
     <key name="InventorTemplateFolder" value="Project Files\Libraries_DH_Assembly_wall"/>
   </key>
   <key name="Forge">
-    <key name="ClientID" value="txSv5RooCcXxTpkMM2AvwMzQR13iHRdW"/>
-    <key name="ClientSecret" value="57EQiy8kSi63HeLV"/>
+    <key name="ClientID" value=""/>
+    <key name="ClientSecret" value=""/>
     <!-- HTTPAsyncCallsWaitingTime: number of milliseconds waited when executing async call to Forge APIs -->
-    <key name="HTTPAsyncCallsWaitingTime" value="2000"/>
+    <key name="HTTPAsyncCallsWaitingTime" value="10000"/>
     <!-- HTTPRetryAsyncCallsWaitingTime: number of milliseconds waited when retry async call due to previous error to Forge APIs -->
-    <key name="HTTPRetryAsyncCallsWaitingTime" value="2000"/>
+    <key name="HTTPRetryAsyncCallsWaitingTime" value="3000"/>
     <!-- HTTPRetryAsyncCallsNumberOfRetries: number of retries when retry async call due to previous error to Forge APIs -->
     <key name="HTTPRetryAsyncCallsNumberOfRetries" value="3"/>
     <!-- WorkItemCreationPollingTime: number of milliseconds waited when polling on WorkItem execution status -->
-    <key name="WorkItemCreationPollingTime" value="2000"/>
+    <key name="WorkItemCreationPollingTime" value="3000"/>
     <!--  PLEASE DO NOT MODIFY BELOW VALUES -->
     <key name="DABaseURL" value="https://developer.api.autodesk.com/da/us-east/v3/"/>
     <key name="DABaseLinkURL" value="https://developer.api.autodesk.com/oss/v2/" />
@@ -26,11 +35,17 @@
     <key name="DMBaseDataURL" value="https://developer.api.autodesk.com/data/v1/"/>
     <!--<key name="PartActivityId" value="DH_POC_App.DHIlogicPartActivity+version1" />
     <key name="AssemblyActivityId" value="DH_POC_App.DHIlogicAssemblyActivity+version1" />-->
-    <key name="PartActivityId" value="DH_POC_App.DHIlogicPart_TEMP_Activity+version1" />
-    <key name="AssemblyActivityId" value="DH_POC_App.DHIlogicAssembly_TEMP_Activity+version1" />
+    <key name="PartActivityId" value="DH_POC_App1.DHIlogicPart_TEMP_Activity+version1" />
+    <key name="AssemblyActivityId" value="DH_POC_App1.DHIlogicAssembly__Activity+version1" />
+    <!-- DrawingActivityId: Id of the Activity used to handle drawing files -->
+    <key name="DrawingActivityId" value="DH_POC_App1.DHIlogicDrawing__Activity+version1" />
     <key name="RequestDocInputArgName" value="InventorDoc" />
     <key name="RequestParamInputArgName" value="InventorParams" />
     <key name="RequestParamOutputIpt" value="OutputIpt" />
     <key name="RequestParamOutputIam" value="OutputIam" />
+    <!-- RequestDocInputArgName: Name of Activity parameter specifying output Drawing document -->
+    <key name="RequestParamOutputDwg" value="OutputDwg" />
+    <!-- RequestDocInputArgName: Name of Activity parameter specifying output Drawing document -->
+    <key name="RequestParamOutputZip" value="OutputZip" />
   </key>
 </Configuration>

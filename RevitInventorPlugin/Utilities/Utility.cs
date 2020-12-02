@@ -232,6 +232,16 @@ namespace RevitInventorExchange.Utilities
                     json["arguments"][ConfigUtilities.GetDAWorkItemParamsOutputIam()]["Headers"]["Authorization"] = "***";
                 }
 
+                if (json["arguments"][ConfigUtilities.GetDAWorkItemParamsOutputDwg()] != null)
+                {
+                    json["arguments"][ConfigUtilities.GetDAWorkItemParamsOutputDwg()]["Headers"]["Authorization"] = "***";
+                }
+
+                if (json["arguments"][ConfigUtilities.GetDAWorkItemParamsOutputZip()] != null)
+                {
+                    json["arguments"][ConfigUtilities.GetDAWorkItemParamsOutputZip()]["Headers"]["Authorization"] = "***";
+                }
+
                 retJson = json.ToString();
             }
             catch

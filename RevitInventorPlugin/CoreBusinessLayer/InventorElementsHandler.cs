@@ -118,7 +118,25 @@ namespace RevitInventorExchange.CoreBusinessLayer
             {
                 NLogger.LogText($"Try opening assembly document {fullPath}");
 
-                m_AssemblyDocument = (AssemblyDocument)m_InventorApplication.Documents.Open(fullPath, false);
+                try
+                {
+                    NLogger.LogText($"Try opening assembly document {fullPath} with LOD specified");
+
+                    NameValueMap oOptions = m_InventorApplication.TransientObjects.CreateNameValueMap();
+                    oOptions.Add("LevelOfDetailRepresentation", "LOD1");                    
+
+                    m_AssemblyDocument = (AssemblyDocument)m_InventorApplication.Documents.OpenWithOptions(fullPath, oOptions, false);
+
+                    NLogger.LogText($"Opening assembly document {fullPath} with LOD specified suceeded");
+                }
+                catch
+                {
+                    NLogger.LogText($"Failed opening assembly document {fullPath} with LOD specified. Try to open it without LOD specified");
+
+                    m_AssemblyDocument = (AssemblyDocument)m_InventorApplication.Documents.Open(fullPath, false);
+
+                    NLogger.LogText($"Opening assembly document {fullPath} without LOD specified suceeded");
+                }
 
                 //  Load params
                 NLogger.LogText("Load assembly document parameters");
@@ -133,6 +151,8 @@ namespace RevitInventorExchange.CoreBusinessLayer
                     NLogger.LogText($"Try opening part document {fullPath}");
 
                     m_PartDocument = (PartDocument)m_InventorApplication.Documents.Open(fullPath, false);
+
+                    NLogger.LogText($"Opening part document {fullPath} suceeded");
 
                     //  Load params
                     NLogger.LogText("Load Part document parameters");

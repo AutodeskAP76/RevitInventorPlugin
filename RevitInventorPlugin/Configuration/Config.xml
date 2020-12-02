@@ -7,9 +7,12 @@
     <!-- Language: Language of UI. Possible values are 'en', 'ja' -->
     <key name="Language" value="en"/>
     <!-- InventorElementShowOnlyKeys: show only Inventor key parameters toggle -->
-    <key name="InventorElementShowOnlyKeys" value="true"/>
+    <key name="InventorElementShowOnlyKeys" value="false"/>
   </key>
   <key name="BIM360">
+    <!--key name="HUB" value="Daiwa House" />
+    <key name="Project" value="DH_DfMA+IC PoC"/>
+    <key name="InventorTemplateFolder" value="Project Files\DH_Assembly_Floor_Panel_9.0"/-->
     <key name="HUB" value="ATDSK DEV" />
     <key name="Project" value="Sample Project"/>
     <key name="InventorTemplateFolder" value="Project Files\Libraries_DH_Assembly_wall"/>
@@ -29,17 +32,23 @@
     <key name="WorkItemCreationPollingTime" value="3000"/>
     <!-- PartActivityId: Id of the Activity used to handle Part files -->
     <key name="PartActivityId" value="DH_POC_App1.DHIlogicPartActivity+version1" />
-    <!-- AssemblyActivityId: Id of the Activity used to handle assembly files -->
-    <!--<key name="AssemblyActivityId" value="DH_POC_App1.DHIlogicAssemblyActivity+version1" />-->
-    <key name="AssemblyActivityId" value="DH_POC_App1.DHIlogicAssembly_TEMP_Activity+version1" />
+    <!-- AssemblyActivityId: Id of the Activity used to handle assembly files -->    
+    <key name="AssemblyActivityId" value="DH_POC_App1.DHIlogicAssembly__Activity+version1" />
+    <!-- DrawingActivityId: Id of the Activity used to handle drawing files -->
+    <key name="DrawingActivityId" value="DH_POC_App1.DHIlogicDrawing__Activity+version1" />        
     <!-- RequestDocInputArgName: Name of Activity parameter specifying input document -->
     <key name="RequestDocInputArgName" value="InventorDoc" />
     <!-- RequestParamInputArgName:  Name of Activity parameter specifying input json containing extracted Revit values, based on Revit - Inventor mapping -->
     <key name="RequestParamInputArgName" value="InventorParams" />
-    <!-- RequestDocInputArgName: Name of Activity parameter specifying output Part document -->
+    <!-- RequestParamOutputIpt: Name of Activity parameter specifying output Part document -->
     <key name="RequestParamOutputIpt" value="OutputIpt" />
-    <!-- RequestDocInputArgName: Name of Activity parameter specifying output Assembly document -->
+    <!-- RequestParamOutputIam: Name of Activity parameter specifying output Assembly document -->
     <key name="RequestParamOutputIam" value="OutputIam" />
+    <!-- RequestParamOutputDwg: Name of Activity parameter specifying output Drawing document -->
+    <key name="RequestParamOutputDwg" value="OutputDwg" />
+    <!-- RequestParamOutputZip: Name of Activity parameter specifying output Intermediate zip document -->
+    <key name="RequestParamOutputZip" value="OutputZip" />
+    
     <!--  PLEASE DO NOT MODIFY BELOW VALUES -->
     <key name="DABaseURL" value="https://developer.api.autodesk.com/da/us-east/v3/"/>
     <key name="DABaseLinkURL" value="https://developer.api.autodesk.com/oss/v2/" />

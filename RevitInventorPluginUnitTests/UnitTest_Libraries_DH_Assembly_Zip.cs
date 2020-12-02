@@ -55,6 +55,7 @@ namespace RevitInventorPluginUnitTests
 
             string json = GetJson_Ceiling_Panel();
             string InventorFilePath = @"C:\Users\parodiaadmin\BIM 360\ATDSK DEV\Sample Project\Project Files\Libraries_DH_Assembly_Ceiling_Panel_3.0_zip";
+            //string InventorFilePath = @"C:\Users\parodiaadmin\BIM 360\Daiwa House\DH_DfMA+IC PoC\Project Files\DH_Assembly_Ceiling_Panel_3.0";
             DesignAutomationHandler daHandler = new DesignAutomationHandler();
 
             var ret = daHandler.RunDesignAutomationForgeWorkflow(json, InventorFilePath);
@@ -176,6 +177,46 @@ namespace RevitInventorPluginUnitTests
             ret.Wait();
         }
 
+
+
+
+
+        [TestMethod]
+        public void UnitTest_Libraries_DH_Assembly_Wall_Panel_1_1_Zip_Tests()
+        {
+            NLogger.Initialize();
+
+            //  PLEASE NOTE:THE CONFIGURATION FILE MUST BE COPIED IN FOLDER "CONFIGURATION OF UNIT TESTS"
+            ConfigUtilities.LoadConfig();
+
+            string json = GetJson_Wall_1_1();
+            string InventorFilePath = @"C:\Users\parodiaadmin\BIM 360\ATDSK DEV\Sample Project\Project Files\Libraries_DH_Assembly_wall_1.1_zip";
+            DesignAutomationHandler daHandler = new DesignAutomationHandler();
+
+            var ret = daHandler.RunDesignAutomationForgeWorkflow(json, InventorFilePath);
+            ret.Wait();
+        }
+
+
+        [TestMethod]
+        public void UnitTest_Libraries_DH_Assembly_Wall_Panel_2_0_Zip_Tests()
+        {
+            NLogger.Initialize();
+
+            //  PLEASE NOTE:THE CONFIGURATION FILE MUST BE COPIED IN FOLDER "CONFIGURATION OF UNIT TESTS"
+            ConfigUtilities.LoadConfig();
+
+            string json = GetJson_Wall();
+            string InventorFilePath = @"C:\Users\parodiaadmin\BIM 360\ATDSK DEV\Sample Project\Project Files\Libraries_DH_Assembly_Wall_2.0_zip";
+            DesignAutomationHandler daHandler = new DesignAutomationHandler();
+
+            var ret = daHandler.RunDesignAutomationForgeWorkflow(json, InventorFilePath);
+            ret.Wait();
+        }
+
+
+
+
         [TestMethod]
         public void UnitTest_Libraries_Assembly_Wheel_1_0_zip_Tests()
         {
@@ -191,12 +232,6 @@ namespace RevitInventorPluginUnitTests
             var ret = daHandler.RunDesignAutomationForgeWorkflow(json, InventorFilePath);
             ret.Wait();
         }
-
-
-
-
-
-
 
         [TestMethod]
         public void UnitTest_Libraries_DH_Assembly_Structure_LGS_Tests()
@@ -373,8 +408,10 @@ namespace RevitInventorPluginUnitTests
                           "'elementName': ''," +
                           "'elementId': '627668'," +
                           "'paramsValues': {" +
-                                "'long_length': '3030'," +
-                                "'short_length': '1010'" +
+                                "'pipe_on_off': 'False'," +
+                                "'wire_on_off': 'True'," +
+                                "'long_length': '3800'," +
+                                "'short_length': '1500'" +
                             "}" +
                           "}" +
                         "]" +
@@ -397,6 +434,33 @@ namespace RevitInventorPluginUnitTests
                           "'elementName': ''," +
                           "'elementId': '627668'," +
                           "'paramsValues': {" +
+                                "'length': '5000'," +
+                                "'height': '3500'," +
+                                "'open_on_off': 'False'," +
+                                "'window_length': '2500'," +
+                                "'window_height': '1500'" +
+                            "}" +
+                          "}" +
+                        "]" +
+                      "}" +
+                    "]" +
+                "}";
+
+            return json;
+        }
+
+        private string GetJson_Wall_1_1()
+        {
+            string json = "{ " +
+                  "'ILogicParams': [" +
+                    "{" +
+                      "'RevitFamily': 'Frame_Assy1: Standard'," +
+                      "'InventorTemplate': 'wall_assy.zip'," +
+                      "'ParametersInfo': [" +
+                        "{" +
+                          "'elementName': ''," +
+                          "'elementId': '627668'," +
+                          "'paramsValues': {" +
                                 "'length': '3500'," +
                                 "'height': '2500'" +
                             "}" +
@@ -408,7 +472,6 @@ namespace RevitInventorPluginUnitTests
 
             return json;
         }
-
 
         private string GetJson_Wheel()
         {

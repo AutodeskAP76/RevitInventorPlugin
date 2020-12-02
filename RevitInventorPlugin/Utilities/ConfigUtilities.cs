@@ -142,6 +142,13 @@ namespace RevitInventorExchange
             return doc.SelectSingleNode("/Configuration/key[@name='Forge']/key[@name='AssemblyActivityId']/@value").Value;
         }
 
+
+        public static string GetDADrawingActivity()
+        {
+            return doc.SelectSingleNode("/Configuration/key[@name='Forge']/key[@name='DrawingActivityId']/@value").Value;
+        }
+
+
         public static string GetDAWorkItemDocInputArgument()
         {
             return doc.SelectSingleNode("/Configuration/key[@name='Forge']/key[@name='RequestDocInputArgName']/@value").Value;
@@ -160,6 +167,17 @@ namespace RevitInventorExchange
         public static string GetDAWorkItemParamsOutputIam()
         {
             return doc.SelectSingleNode("/Configuration/key[@name='Forge']/key[@name='RequestParamOutputIam']/@value").Value;
+        }
+
+
+        public static string GetDAWorkItemParamsOutputDwg()
+        {
+            return doc.SelectSingleNode("/Configuration/key[@name='Forge']/key[@name='RequestParamOutputDwg']/@value").Value;
+        }
+
+        internal static string GetDAWorkItemParamsOutputZip()
+        {
+            return doc.SelectSingleNode("/Configuration/key[@name='Forge']/key[@name='RequestParamOutputZip']/@value").Value;
         }
     }
 }

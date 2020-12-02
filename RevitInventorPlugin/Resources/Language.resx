@@ -257,7 +257,7 @@
   </data>
   
   <data name="msgBox_BIM360NotSync" xml:space="preserve">
-    <value>It seems the selected folder is not synchronized with BIM 360 cloud. Please verify. </value>
+    <value>It seems the selected folder is not synchronized with BIM 360 cloud. Please verify.</value>
   </data>
   
   <!--  Revit Inventor Mapping popup  -->
