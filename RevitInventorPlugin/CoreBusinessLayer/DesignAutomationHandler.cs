@@ -887,16 +887,18 @@ namespace RevitInventorExchange.CoreBusinessLayer
                     )),
                     new JProperty(ConfigUtilities.GetDAWorkItemParamsInputArgument(), new JObject(
                         new JProperty("url", $"data:application/json, {actualJsonParam}")
-                    )),
-                    new JProperty(itemIamParamOutput, new JObject(
-                        new JProperty("url", outputSignedUrl),
-                        new JProperty("verb", "put"),
-                        new JProperty("Headers", new JObject(
-                            new JProperty("Authorization", forgeDAClient.Authorization),
-                            new JProperty("Content-type", "application/octet-stream")
-                        ))
                     ))
-                    ,  //  Create intermediate output zip for Drawings
+                    ,
+                    //new JProperty(itemIamParamOutput, new JObject(
+                    //    new JProperty("url", outputSignedUrl),
+                    //    new JProperty("verb", "put"),
+                    //    new JProperty("Headers", new JObject(
+                    //        new JProperty("Authorization", forgeDAClient.Authorization),
+                    //        new JProperty("Content-type", "application/octet-stream")
+                    //    ))
+                    //))
+                    //,  
+                    //  Create intermediate output zip for Drawings
                     new JProperty(itemZipParamOutput, new JObject(
                         new JProperty("url", outputZipSignedUrl),
                         new JProperty("verb", "put"),
@@ -1483,18 +1485,31 @@ namespace RevitInventorExchange.CoreBusinessLayer
                             el1.OutFileStorageobject = await CreateStorageObject_2(projId, inputFile, el1);
                         }
                                                 
-                        // Submit workItem for Model 
-                        //await SubmitWokItem_2(inputFile, outputFile, outFileCategory);
+                        // Submit workItem for MODEL 
                         await SubmitWokItem_2(inputFile, outputFile, CreateModelWorkItemPayload1_2);
-                        //await SubmitWokItem_2(inputFile, outputFile, CreateDrawingWorkItemPayload1_2);
 
-                        //  Create File version for Model
-                        var assyOutStruct = el.OutFileStructure.First(m => m.OutFileCategory == OutputFileCategory.Assembly);
-                        await CreateFileVersion_2(projId, inputFile, outputFile, assyOutStruct);
+                        //  Create File version for MODEL
+                        //var assyOutStruct = el.OutFileStructure.First(m => m.OutFileCategory == OutputFileCategory.Assembly);
+                        //await CreateFileVersion_2(projId, outputFile, assyOutStruct);
+
 
                         //  Create intermediate zip file version. ONLY FOR TESTS
-                        //var zipOutStruct = el.OutFileStructure.First(m => m.OutFileCategory == OutputFileCategory.Zip);
-                        //await CreateFileVersion_2(projId, inputFile, outputFile, zipOutStruct);
+                        var zipOutStruct = el.OutFileStructure.First(m => m.OutFileCategory == OutputFileCategory.Zip);
+                        await CreateFileVersion_2(projId, outputFile, zipOutStruct);
+
+
+
+
+
+
+                        //// Submit workItem for DRAWING 
+                        //await SubmitWokItem_2(inputFile, outputFile, CreateDrawingWorkItemPayload1_2);
+
+                        ////  Create File version for DRAWING
+                        //var dwgOutStruct = el.OutFileStructure.First(m => m.OutFileCategory == OutputFileCategory.Drawing);
+                        //await CreateFileVersion_2(projId, outputFile, dwgOutStruct);
+
+
 
 
 
@@ -1760,7 +1775,7 @@ namespace RevitInventorExchange.CoreBusinessLayer
 
         //  Create first version of generated files
         
-        private async Task CreateFileVersion_2(string projectId, string inFileName, string outFileName, DesignAutomationOutFileStructure1 outFileStructure)
+        private async Task CreateFileVersion_2(string projectId, string outFileName, DesignAutomationOutFileStructure1 outFileStructure)
         {
             NLogger.LogText("Entered CreateFileVersion_2");
 
@@ -1768,7 +1783,7 @@ namespace RevitInventorExchange.CoreBusinessLayer
             NLogger.LogText($"Create first version of file {outFileName}");
 
             //  Create the json
-            string payload = CreateFileFirstVersionPayload_2(inFileName, outFileStructure);
+            string payload = CreateFileFirstVersionPayload_2(outFileStructure);
 
             //  Prepare Forge API with parameters
             forgeDMClient.SetBaseURL(ConfigUtilities.GetDMBaseDataURL());
@@ -1916,7 +1931,7 @@ namespace RevitInventorExchange.CoreBusinessLayer
         //}
 
 
-        private string CreateFileFirstVersionPayload_2(string inFileName, DesignAutomationOutFileStructure1 outFileStructure)
+        private string CreateFileFirstVersionPayload_2(DesignAutomationOutFileStructure1 outFileStructure)
         {
             NLogger.LogText("Entered CreateFileFirstVersionPayload_2");
            

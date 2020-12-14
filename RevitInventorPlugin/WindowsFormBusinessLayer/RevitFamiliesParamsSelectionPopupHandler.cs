@@ -29,11 +29,18 @@ namespace RevitInventorExchange.WindowsFormBusinesslayer
                 sourceData = revitFamilySource.Select(o => new RevitFamiliesParamsDataGridSourceData { RevitFamilyParam = o }).ToList();
             }
             else
-            {
-                var revitEl = elementStructureList.First(o => o.ElementTypeSingleParameters.Any(l => l.ParameterName == "SYMBOL_FAMILY_AND_TYPE_NAMES_PARAM" && l.ParameterValue == selRevFamily))
-                    .ElementTypeOrderedParameters;
+            {               
+                //  ADDED CODE FOR INCLUDING ALSO ELEMENT PARAMETERS
+                var revitElParams = elementStructureList.First(o => o.ElementTypeSingleParameters.Any(l => l.ParameterName == "SYMBOL_FAMILY_AND_TYPE_NAMES_PARAM" && l.ParameterValue == selRevFamily))
+                    .ElementOrderedParameters;
 
-                sourceData = revitEl.Select(o => new RevitFamiliesParamsDataGridSourceData { RevitFamilyParam = o.ParameterName }).ToList();
+                sourceData.AddRange(revitElParams.Select(o => new RevitFamiliesParamsDataGridSourceData { RevitFamilyParam = o.ParameterName }).ToList());
+
+                var revitElTypeParams = elementStructureList.First(o => o.ElementTypeSingleParameters.Any(l => l.ParameterName == "SYMBOL_FAMILY_AND_TYPE_NAMES_PARAM" && l.ParameterValue == selRevFamily))
+                   .ElementTypeOrderedParameters;
+
+                //sourceData = revitElTypeParams.Select(o => new RevitFamiliesParamsDataGridSourceData { RevitFamilyParam = o.ParameterName }).ToList();
+                sourceData.AddRange(revitElTypeParams.Select(o => new RevitFamiliesParamsDataGridSourceData { RevitFamilyParam = o.ParameterName }).ToList());
             }            
 
             ret.Add("RevitFamilyParams", sourceData);

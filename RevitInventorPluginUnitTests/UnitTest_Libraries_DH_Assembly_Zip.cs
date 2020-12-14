@@ -216,6 +216,73 @@ namespace RevitInventorPluginUnitTests
 
 
 
+        [TestMethod]
+        public void UnitTest_Libraries_DH_Assembly_Wall_Panel_Drg_2_0_Zip_Tests()
+        {
+            NLogger.Initialize();
+
+            //  PLEASE NOTE:THE CONFIGURATION FILE MUST BE COPIED IN FOLDER "CONFIGURATION OF UNIT TESTS"
+            ConfigUtilities.LoadConfig();
+
+            string json = GetJson_Wall_1_1();
+            string InventorFilePath = @"C:\Users\parodiaadmin\BIM 360\ATDSK DEV\Sample Project\Project Files\Libraries_DH_Assembly_Wall_Drg_2.0_zip";
+            DesignAutomationHandler daHandler = new DesignAutomationHandler();
+
+            var ret = daHandler.RunDesignAutomationForgeWorkflow(json, InventorFilePath);
+            ret.Wait();
+        }
+
+        [TestMethod]
+        public void UnitTest_Libraries_DH_Assembly_Wall_Panel_Drg_3_0_Zip_Tests()
+        {
+            NLogger.Initialize();
+
+            //  PLEASE NOTE:THE CONFIGURATION FILE MUST BE COPIED IN FOLDER "CONFIGURATION OF UNIT TESTS"
+            ConfigUtilities.LoadConfig();
+
+            string json = GetJson_Wall_Drg_3_0();
+            string InventorFilePath = @"C:\Users\parodiaadmin\BIM 360\ATDSK DEV\Sample Project\Project Files\Libraries_DH_Assembly_Wall_Drg_3.0_zip";
+            DesignAutomationHandler daHandler = new DesignAutomationHandler();
+
+            var ret = daHandler.RunDesignAutomationForgeWorkflow(json, InventorFilePath);
+            ret.Wait();
+        }
+
+
+        [TestMethod]
+        public void UnitTest_Libraries_DH_Assembly_Wall_Panel_Drg_5_0_Zip_Tests()
+        {
+            NLogger.Initialize();
+
+            //  PLEASE NOTE:THE CONFIGURATION FILE MUST BE COPIED IN FOLDER "CONFIGURATION OF UNIT TESTS"
+            ConfigUtilities.LoadConfig();
+
+            string json = GetJson_Wall_Drg_3_0();
+            string InventorFilePath = @"C:\Users\parodiaadmin\BIM 360\ATDSK DEV\Sample Project\Project Files\Libraries_DH_Assembly_Wall_Drg_5.0_zip";
+            DesignAutomationHandler daHandler = new DesignAutomationHandler();
+
+            var ret = daHandler.RunDesignAutomationForgeWorkflow(json, InventorFilePath);
+            ret.Wait();
+        }
+
+
+        [TestMethod]
+        public void UnitTest_Libraries_DH_Assembly_Wall_Panel_Drg_6_0_Zip_Tests()
+        {
+            NLogger.Initialize();
+
+            //  PLEASE NOTE:THE CONFIGURATION FILE MUST BE COPIED IN FOLDER "CONFIGURATION OF UNIT TESTS"
+            ConfigUtilities.LoadConfig();
+
+            string json = GetJson_Wall_Drg_3_0();
+            string InventorFilePath = @"C:\Users\parodiaadmin\BIM 360\ATDSK DEV\Sample Project\Project Files\Libraries_DH_Assembly_Wall_Drg_6.0_zip";
+            DesignAutomationHandler daHandler = new DesignAutomationHandler();
+
+            var ret = daHandler.RunDesignAutomationForgeWorkflow(json, InventorFilePath);
+            ret.Wait();
+        }
+
+
 
         [TestMethod]
         public void UnitTest_Libraries_Assembly_Wheel_1_0_zip_Tests()
@@ -436,7 +503,7 @@ namespace RevitInventorPluginUnitTests
                           "'paramsValues': {" +
                                 "'length': '5000'," +
                                 "'height': '3500'," +
-                                "'open_on_off': 'False'," +
+                                "'open_on_off': 'True'," +
                                 "'window_length': '2500'," +
                                 "'window_height': '1500'" +
                             "}" +
@@ -461,6 +528,37 @@ namespace RevitInventorPluginUnitTests
                           "'elementName': ''," +
                           "'elementId': '627668'," +
                           "'paramsValues': {" +
+                                "'Generate_Drawing': 'True'," +
+                                "'length': '3500'," +
+                                "'height': '2500'" +                                
+                            "}" +
+                          "}" +
+                        "]" +
+                      "}" +
+                    "]" +
+                "}";
+
+            return json;
+        }
+
+        private string GetJson_Wall_Drg_3_0()
+        {
+            string json = "{ " +
+                  "'ILogicParams': [" +
+                    "{" +
+                      "'RevitFamily': 'Frame_Assy1: Standard'," +
+                      "'InventorTemplate': 'wall_assy.zip'," +
+                      "'ParametersInfo': [" +
+                        "{" +
+                          "'elementName': ''," +
+                          "'elementId': '627668'," +
+                          "'paramsValues': {" +
+                                "'Generate_Drawing': 'True'," +
+                                "'open_on_off': 'True'," +
+                                "'window_length': '1000'," +
+                                "'window_height': '500'," +
+                                "'window_x': '300'," +
+                                "'window_y': '200'," +
                                 "'length': '3500'," +
                                 "'height': '2500'" +
                             "}" +

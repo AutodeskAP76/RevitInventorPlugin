@@ -267,12 +267,22 @@ namespace RevitInventorExchange.CoreBusinessLayer
 
                             var elTypePropList = elStructFamType.ElementTypeOrderedParameters;
 
-                            var propValue = elTypePropList.First(o => o.ParameterName == revProp).ParameterValue;
+                            var propValue = elTypePropList.FirstOrDefault(o => o.ParameterName == revProp)?.ParameterValue;
+
+                            if (propValue == null)
+                            {
+                                elTypePropList = elStructFamType.ElementOrderedParameters;
+
+                                propValue = elTypePropList.FirstOrDefault(o => o.ParameterName == revProp)?.ParameterValue;
+                            }
 
                             JProperty prop = new JProperty(invParam, propValue);
                             parameterInfo.paramsValues.Add(prop);
                         }
                     }
+
+                    JProperty prop1 = new JProperty("Generate_Drawing", "True");
+                    parameterInfo.paramsValues.Add(prop1);
 
                     familyJson.ParametersInfo.Add(parameterInfo);
                 }
