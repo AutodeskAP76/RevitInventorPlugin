@@ -809,18 +809,18 @@ namespace RevitInventorExchange.CoreBusinessLayer
             {              
                 actualJsonParam = $"{{\"assemblyPath\":\"input\\\\{inputFilename}.iam\", \"projectPath\":\"input\\\\{inputFilename}.ipj\", \"values\": {jsonParam1}}}";
 
-                string outFileStorageObj = daStructureRow.OutputFileStructurelist.First(l => l.OutMainFileName == outFileName)
-                                            .OutFileStructure.First(l => l.OutFileCategory == OutputFileCategory.Assembly).OutFileStorageobject;
+                //string outFileStorageObj = daStructureRow.OutputFileStructurelist.First(l => l.OutMainFileName == outFileName)
+                //                            .OutFileStructure.First(l => l.OutFileCategory == OutputFileCategory.Assembly).OutFileStorageobject;
 
-                string outputSignedUrl = GetOutputLinks(outFileStorageObj);
+                //string outputSignedUrl = GetOutputLinks(outFileStorageObj);
+                //outputSignedUrl = outputSignedUrl.Replace("zip", "iam");
+                string outputSignedUrl = "";
 
                 string outZipFileStorageObj = daStructureRow.OutputFileStructurelist.First(l => l.OutMainFileName == outFileName)
                                             .OutFileStructure.First(l => l.OutFileCategory == OutputFileCategory.Zip).OutFileStorageobject;
 
                 string outputZipSignedUrl = GetOutputLinks(outZipFileStorageObj);
-
-                outputSignedUrl = outputSignedUrl.Replace("zip", "iam");
-
+                
                 ret = GetModelWorkItemJsonForZip_2(inputSignedUrl, actualJsonParam, outputSignedUrl, outputZipSignedUrl);
             }
 
@@ -1471,13 +1471,13 @@ namespace RevitInventorExchange.CoreBusinessLayer
                 {
                     string inputFile = item.InputFilename;
 
-                    var outFileStruct = el.OutFileStructure;
+                    var outFileStruct = el.OutFileStructure.Where(p => p.OutFileCategory == OutputFileCategory.Zip);
                     string outputFile = el.OutMainFileName;
                                         
                     try
                     {
                         NLogger.LogText($"Started Design automation Flow for input file: {inputFile} with corresponding output file {outputFile}");
-                        daEventHandler.TriggerDACurrentStepHandler($"Started Design automation Flow for input file: {inputFile} with corresponding output file {outputFile}");
+                        daEventHandler.TriggerDACurrentStepHandler($"Started Design automation Flow for input file: {inputFile} with corresponding output file {System.IO.Path.GetFileNameWithoutExtension(outputFile)}");
 
                         //  Create Storage Objects: loop on all output files to be created
                         foreach (var el1 in outFileStruct)
@@ -1515,12 +1515,12 @@ namespace RevitInventorExchange.CoreBusinessLayer
 
 
                         NLogger.LogText($"Design automation Flow for input file: {inputFile} with corresponding output file {outputFile} completed sucessfully");
-                        daEventHandler.TriggerDACurrentStepHandler($"Design automation Flow for input file: {inputFile} with corresponding output file {outputFile} completed sucessfully");
+                        daEventHandler.TriggerDACurrentStepHandler($"Design automation Flow for input file: {inputFile} with corresponding output file {System.IO.Path.GetFileNameWithoutExtension(outputFile)} completed sucessfully");
                     }
                     catch (Exception ex)
                     {
                         NLogger.LogText($"Design automation Flow for input file: {inputFile} with corresponding output file {outputFile} completed with error");
-                        daEventHandler.TriggerDACurrentStepHandler($"Design automation Flow for input file: {inputFile} with corresponding output file {outputFile} completed with error, please check logs");
+                        daEventHandler.TriggerDACurrentStepHandler($"Design automation Flow for input file: {inputFile} with corresponding output file {System.IO.Path.GetFileNameWithoutExtension(outputFile)} completed with error, please check logs");
 
                         NLogger.LogError(ex);
                     }
